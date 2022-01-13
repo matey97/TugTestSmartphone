@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/template-hello-world-ts",
-  "main": "app/app.ts",
+  "main": "app.js",
   "version": "8.1.1",
   "author": "NativeScript Team <oss@nativescript.org>",
   "description": "NativeScript Application",
@@ -30,12 +30,16 @@
   },
   "homepage": "https://github.com/NativeScript/nativescript-app-templates",
   "dependencies": {
-    "@nativescript/core": "~8.1.1",
-    "@nativescript/theme": "~3.0.1"
+    "@nativescript/core": "~7.3.0",
+    "@nativescript/theme": "~2.3.0",
+    "nativescript-couchbase-plugin": "^0.9.6",
+    "nativescript-task-dispatcher": "^2.0.1",
+    "nativescript-wearos-sensors": "file:vendor/nativescript-wearos-sensors-1.0.0.tgz"
   },
   "devDependencies": {
-    "@nativescript/types": "~8.1.1",
-    "@nativescript/webpack": "~5.0.0",
+    "@nativescript/android": "8.0.0",
+    "@nativescript/types": "~7.3.0",
+    "@nativescript/webpack": "~3.0.0",
     "typescript": "~4.3.5"
   },
   "private": "true",

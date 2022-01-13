@@ -1,4 +1,10 @@
 // Add your native dependencies here:
+dependencies {
+  implementation platform('com.google.firebase:firebase-bom:29.0.3')
+  implementation 'com.google.firebase:firebase-ml-modeldownloader'
+  implementation 'org.tensorflow:tensorflow-lite:2.0.0'
+  implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
+}
 
 // Uncomment to add recyclerview-v7 dependency
 //dependencies {
@@ -11,10 +17,13 @@
 
 android {
   defaultConfig {
-    minSdkVersion 17
+    minSdkVersion 19
     generatedDensities = []
   }
   aaptOptions {
     additionalParameters "--no-version-vectors"
+    noCompress "tflite"
   }
 }
+
+apply plugin: 'com.google.gms.google-services'
