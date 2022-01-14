@@ -1,0 +1,53 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+  <ActionBar title="AuTUG Test" backgroundColor="GreenYellow"/>
+
+  <StackLayout visibility="{{ resultVM ? 'visible' : 'collapsed' }}" width="80%">
+    <Label text="TUG Test Results" class="label-title"></Label>
+    <Label horizontalAlignment="center">
+      <FormattedString>
+        <Span text="Execution date: " class="label-header bold"></Span>
+        <Span text="{{ resultVM.date }}" class="label-header"></Span>
+      </FormattedString>
+    </Label>
+    <GridLayout columns="*,3*" rows="*,*" class="simple-card">
+      <Label col="0" row="0" rowSpan="2" text="&#xe425;" class="mdi-ro"></Label>
+      <Label col="1" row="0" text="Total time" class="label-header bold v-align"></Label>
+      <Label col="1" row="1" text="{{ resultVM.duration }}" class="label-header v-align"></Label>
+    </GridLayout>
+    <Label text="Test sub-phases" class="label-title"></Label>
+    <ScrollView scrollBarIndicatorVisible="false">
+      <StackLayout>
+        <GridLayout columns="*,3*" rows="*,*" class="simple-card margin-bottom">
+          <Label col="0" row="0" rowSpan="2" text="&#xe634;" class="mdi-ro"></Label>
+          <Label col="1" row="0" text="Stand up" class="label-header bold v-align"></Label>
+          <Label col="1" row="1" text="{{ resultVM.standUp }}" class="label-header v-align"></Label>
+        </GridLayout>
+        <GridLayout columns="*,3*" rows="*,*" class="simple-card margin-bottom">
+          <Label col="0" row="0" rowSpan="2" text="&#xe536;" class="mdi-ro"></Label>
+          <Label col="1" row="0" text="First walk" class="label-header bold v-align"></Label>
+          <Label col="1" row="1" text="{{ resultVM.firstWalk }}" class="label-header v-align"></Label>
+        </GridLayout>
+        <GridLayout columns="*,3*" rows="*,*" class="simple-card margin-bottom">
+          <Label col="0" row="0" rowSpan="2" text="&#xe41a;" class="mdi-ro"></Label>
+          <Label col="1" row="0" text="First turn" class="label-header bold v-align"></Label>
+          <Label col="1" row="1" text="{{ resultVM.firstTurn }}" class="label-header v-align"></Label>
+        </GridLayout>
+        <GridLayout columns="*,3*" rows="*,*" class="simple-card margin-bottom">
+          <Label col="0" row="0" rowSpan="2" text="&#xe536;" class="mdi-ro"></Label>
+          <Label col="1" row="0" text="Second walk" class="label-header bold v-align"></Label>
+          <Label col="1" row="1" text="{{ resultVM.secondWalk }}" class="label-header v-align"></Label>
+        </GridLayout>
+        <GridLayout columns="*,3*" rows="*,*" class="simple-card margin-bottom">
+          <Label col="0" row="0" rowSpan="2" text="&#xe41a;" class="mdi-ro"></Label>
+          <Label col="1" row="0" text="Second Trun" class="label-header bold v-align"></Label>
+          <Label col="1" row="1" text="{{ resultVM.secondTurn }}" class="label-header v-align"></Label>
+        </GridLayout>
+        <GridLayout columns="*,3*" rows="*,*" class="simple-card margin-bottom">
+          <Label col="0" row="0" rowSpan="2" text="&#xe634;" class="mdi-ro"></Label>
+          <Label col="1" row="0" text="Sit down" class="label-header bold v-align"></Label>
+          <Label col="1" row="1" text="{{ resultVM.sitDown }}" class="label-header v-align"></Label>
+        </GridLayout>
+      </StackLayout>
+    </ScrollView>
+  </StackLayout>
+</Page>
