@@ -1,29 +1,27 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { getTugManager, TugManager } from "~/tug-test/manager";
 import { ApplicationMode, setApplicationMode } from "~/mode";
 
-export class StartTugTestRequestTask extends Task {
+export class StartCollectionTask extends Task {
 
-  constructor(
-    private tugManager: TugManager = getTugManager()
-  ) {
-    super("startTugTestRequestTask", {
-      outputEventNames: ["tugTestStarted"]
+  constructor() {
+    super("startCollectionTask", {
+      outputEventNames: ["collectionStarted"]
     });
   }
 
-  protected async  onRun(
+  protected async onRun(
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<void | TaskOutcome> {
-    setApplicationMode(ApplicationMode.INFERENCE);
-    this.tugManager.startExecution(invocationEvent.data.deviceId);
+    setApplicationMode(ApplicationMode.DATA_COLLECTION);
 
     return {
       eventName: this.outputEventNames[0],
       result: invocationEvent.data
-    };
+    }
   }
+
+
 
 }
