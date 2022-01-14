@@ -13,6 +13,10 @@ class Database {
     return this.db.createDocument(doc, id);
   }
 
+  getDocument(id: string): any {
+    return this.db.getDocument(id);
+  }
+
   query(q: Query = { select: [QueryMeta.ALL, QueryMeta.ID] }): Array<any> {
     return this.db.query(q);
   }

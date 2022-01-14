@@ -11,6 +11,11 @@ export class ResultsStore {
     this.db.createDocument(result);
   }
 
+  getById(id: string): TugResult {
+    const doc = this.db.getDocument(id);
+    return doc as TugResult;
+  }
+
   queryAllSuccessful(): Array<TugResult> {
     const results = this.db.query({
       select: [QueryMeta.ALL],
