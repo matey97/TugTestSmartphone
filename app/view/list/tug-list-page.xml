@@ -14,7 +14,7 @@
 
     <StackLayout width="85%">
         <StackLayout visibility="{{ resultsVM.length === 0 ? 'visible' : 'collapsed' }}">
-            <Label text="There are TUG executions" class="label-title"/>
+            <Label text="There are no TUG executions" class="label-title"/>
             <Label text="Start a TUG execution from your smartwatch to see the results"
                 class="label-header"
             ></Label>
