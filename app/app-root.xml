@@ -1,2 +1,2 @@
-<Frame defaultPage="main-page">
+<Frame id="main-frame" defaultPage="view/list/tug-list-page">
 </Frame>

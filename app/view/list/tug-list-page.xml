@@ -1,0 +1,37 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+    <ActionBar title="AuTUG Test" backgroundColor="GreenYellow"/>
+
+    <StackLayout>
+        <Label visibility="{{ resultsVM.length === 0 ? 'visible' : 'collapsed' }}"
+                text="There are no results"
+                class="label-title"/>
+
+        <StackLayout visibility="{{ resultsVM.length !== 0 ? 'visible' : 'collapsed' }}" width="85%">
+            <Label text="Results from TUG tests perfomed" class="label-title" ></Label>
+            <Label text="Tap on a TUG test result to see more information" class="label-header"></Label>
+            <ListView items="{{ resultsVM }}" itemTap="onTugResultTap" separatorColor="Transparent">
+                <ListView.itemTemplate>
+                    <StackLayout>
+                        <GridLayout columns="*,3*" rows="*,*" class="simple-card">
+                            <Label col="0" row="0" rowSpan="2" text="&#xe634;" class="mdi-ro">
+
+                            </Label>
+                            <Label col="1" row="0">
+                                <FormattedString>
+                                    <Span text="Date: " class="label-header bold"></Span>
+                                    <Span text="{{ date }}" class="label-header"></Span>
+                                </FormattedString>
+                            </Label>
+                            <Label col="1" row="1">
+                                <FormattedString>
+                                    <Span text="Duration: " class="label-header bold"></Span>
+                                    <Span text="{{ duration }}" class="label-header"></Span>
+                                </FormattedString>
+                            </Label>
+                        </GridLayout>
+                    </StackLayout>
+                </ListView.itemTemplate>
+            </ListView>
+        </StackLayout>
+    </StackLayout>
+</Page>

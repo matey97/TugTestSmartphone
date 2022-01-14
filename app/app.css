@@ -23,3 +23,43 @@ The following CSS rule changes the font size of all Buttons that have the
 Button.-primary {
   font-size: 18;
 }
+
+.simple-card {
+  border-radius: 10;
+  border-width: 5px;
+  height: 80;
+}
+
+.simple-card.margin-bottom {
+  margin-bottom: 5;
+}
+
+.mdi-ro {
+  font-family: "Material Icons Round", "MaterialIconsRound-Regular";
+  font-size: 60;
+  text-align: center;
+  vertical-align: center;
+}
+
+.label-title {
+  font-size: 28;
+  font-weight: bold;
+  white-space: normal;
+  text-align: center;
+  margin-top: 10;
+  margin-bottom: 10;
+}
+
+.label-header {
+  font-size: 18;
+  white-space: normal;
+  text-align: center;
+}
+
+.label-header.bold {
+  font-weight: bold;
+}
+
+.label-header.v-align {
+  vertical-align: center;
+}
