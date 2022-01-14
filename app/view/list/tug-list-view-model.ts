@@ -24,9 +24,25 @@ export class TugListViewModel extends Observable {
     return this.tugResults[index];
   }
 
+  onDeleteExecutions() {
+    resultsStore.clear();
+    this.tugResults = [];
+    this.resultsVM = new ObservableArray([]);
+    this.notifyPropertyChange("resultsVM", this.resultsVM);
+  }
+
+  addFakeExecution() {
+    this.fakeDataIn(100);
+  }
+
   private updateTugResults(changes?: string[]) {
     if (changes) {
-      const newResults = changes.map((change) => this.tugResultsStore.getById(change));
+      const newResults = changes
+        .map((change) => this.tugResultsStore.getById(change))
+        .filter((result) => result !== null);
+      if (newResults.length === 0)
+        return;
+
       const newResultsVM = this.toResultVM(newResults);
       this.tugResults.unshift(...newResults);
       this.resultsVM.unshift(...newResultsVM);
@@ -51,59 +67,66 @@ export class TugListViewModel extends Observable {
 
   private fakeDataIn(timeout: number) {
     setTimeout(() => {
-      this.resultsVM.unshift({
-        date: toLegibleDate(Date.now()),
-        duration: toLegibleDuration(15231)
-      });
-      this.tugResults.unshift({
-        deviceId: "fake",
-        successful: true,
-        startTime: Date.now(),
-        duration: 15231,
-        durationFromActivities: 15231,
-        activitiesDuration: [
-          {
-            name: Activity.STANDING_UP,
-            start: 0,
-            end: 0,
-            duration: 1200
-          },
-          {
-            name: Activity.WALKING,
-            start: 0,
-            end: 0,
-            duration: 3400
-          },
-          {
-            name: Activity.TURNING,
-            start: 0,
-            end: 0,
-            duration: 1600
-          },
-          {
-            name: Activity.WALKING,
-            start: 0,
-            end: 0,
-            duration: 3600
-          },
-          {
-            name: Activity.TURNING,
-            start: 0,
-            end: 0,
-            duration: 1400
-          },
-          {
-            name: Activity.SITTING,
-            start: 0,
-            end: 0,
-            duration: 900
-          }
-        ]
-      })
+      const fakeResult = generateFakeData();
+      resultsStore.store(fakeResult);
+      //this.resultsVM.unshift(...this.toResultVM([fakeResult]));
+      //this.tugResults.unshift(fakeResult);
 
-      this.notifyPropertyChange("resultsVM", this.resultsVM);
+      //this.notifyPropertyChange("resultsVM", this.resultsVM);
     }, timeout);
   }
+}
+
+function generateFakeData() {
+  return {
+    deviceId: "fake",
+    successful: true,
+    startTime: Date.now(),
+    duration: getRandomInt(12000, 16000),
+    durationFromActivities: 15231,
+    activitiesDuration: [
+      {
+        name: Activity.STANDING_UP,
+        start: 0,
+        end: 0,
+        duration: getRandomInt(800, 1200)
+      },
+      {
+        name: Activity.WALKING,
+        start: 0,
+        end: 0,
+        duration: getRandomInt(2500, 3500)
+      },
+      {
+        name: Activity.TURNING,
+        start: 0,
+        end: 0,
+        duration: getRandomInt(1200, 1800)
+      },
+      {
+        name: Activity.WALKING,
+        start: 0,
+        end: 0,
+        duration: getRandomInt(2500, 3500)
+      },
+      {
+        name: Activity.TURNING,
+        start: 0,
+        end: 0,
+        duration: getRandomInt(1200, 1800)
+      },
+      {
+        name: Activity.SITTING,
+        start: 0,
+        end: 0,
+        duration: getRandomInt(800, 1200)
+      }
+    ]
+  }
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 interface TugResultVM {

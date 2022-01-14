@@ -1,12 +1,27 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
-    <ActionBar title="AuTUG Test" backgroundColor="GreenYellow"/>
+    <ActionBar title="AuTUG Test" backgroundColor="GreenYellow">
+        <ActionItem
+                text="Delete TUG executions"
+                tap="{{ onDeleteExecutions }}"
+                android.position="popup"
+        ></ActionItem>
+        <ActionItem
+                text="Add fake execution"
+                tap="{{ addFakeExecution }}"
+                android.position="popup"
+        ></ActionItem>
+    </ActionBar>
 
-    <StackLayout>
-        <Label visibility="{{ resultsVM.length === 0 ? 'visible' : 'collapsed' }}"
-                text="There are no results"
-                class="label-title"/>
+    <StackLayout width="85%">
+        <StackLayout visibility="{{ resultsVM.length === 0 ? 'visible' : 'collapsed' }}">
+            <Label text="There are TUG executions" class="label-title"/>
+            <Label text="Start a TUG execution from your smartwatch to see the results"
+                class="label-header"
+            ></Label>
+        </StackLayout>
 
-        <StackLayout visibility="{{ resultsVM.length !== 0 ? 'visible' : 'collapsed' }}" width="85%">
+
+        <StackLayout visibility="{{ resultsVM.length !== 0 ? 'visible' : 'collapsed' }}">
             <Label text="Results from TUG tests perfomed" class="label-title" ></Label>
             <Label text="Tap on a TUG test result to see more information" class="label-header"></Label>
             <ListView items="{{ resultsVM }}" itemTap="onTugResultTap" separatorColor="Transparent">

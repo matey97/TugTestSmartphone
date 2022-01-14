@@ -24,6 +24,13 @@ class Database {
   listenForChanges(callback: (changes: any) => void) {
     this.db.addDatabaseChangeListener(callback);
   }
+
+  clear(){
+    this.db.inBatch(() => {
+      const all = this.query();
+      all.map((doc) => this.db.deleteDocument(doc.id));
+    })
+  }
 }
 
 export const database = new Database();

@@ -29,6 +29,10 @@ export class ResultsStore {
   onChanges(callback: (changes: any) => void) {
     this.db.listenForChanges(callback);
   }
+
+  clear(){
+    this.db.clear();
+  }
 }
 
 export const resultsStore = new ResultsStore();
