@@ -9,6 +9,8 @@ import { StartTugTestRequestTask } from "~/tasks/start-tug-test-request";
 import { EndTugTestTask } from "~/tasks/end-tug-test";
 import { resultsStore } from "~/store/results-store";
 import { TugResult } from "~/tug-test/result";
+import { StartCollectionTask } from "~/tasks/start-collection-task";
+import { ForwardRecordsTask } from "~/tasks/forward-records-task";
 
 export const appTasks: Array<Task> = [
   new SimpleTask("evtLogger", async({ evt}) => {
@@ -28,4 +30,7 @@ export const appTasks: Array<Task> = [
   new SimpleTask("recordsReceiverClearStateTask", async () => {
     getRecordsReceiver().clear();
   }),
+
+  new StartCollectionTask(),
+  new ForwardRecordsTask(),
 ];

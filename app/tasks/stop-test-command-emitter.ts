@@ -5,7 +5,7 @@ export class StopTestCommandEmitterTask extends Task {
 
   constructor() {
     super("stopTestCommandEmitter", {
-      outputEventNames: ["stopTestCommand"]
+      outputEventNames: ["stopExecutionCommand"]
     });
   }
 

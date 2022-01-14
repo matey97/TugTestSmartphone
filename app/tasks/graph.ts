@@ -9,15 +9,22 @@ class TugTestTaskGraph implements TaskGraph {
     on: EventListenerGenerator,
     run: RunnableTaskDescriptor
   ): Promise<void> {
-    // Start TUG test, data collection
-    on("startTestCommand", run("startTugTestRequestTask"));
+    // Start TUG execution (INFERENCE MODE) or data collection (DATA_COLLECTION MODE)
+    on("startExecutionCommand", run("startTugTestRequestTask"));
+    on("startCollectionCommand", run("startCollectionTask"));
 
+    // Handle data collected: for INFERENCE or DATA_COLLECTION
+    on("accelerometerRecordsAcquired", run("forwardRecordsTask"));
+    on("gyroscopeRecordsAcquired", run("forwardRecordsTask"));
+
+    //--------------------------
+    // TUG execution (INFERENCE)
+    //--------------------------
     on("tugTestStarted", run("accelerometerStartSensorTask"));
     on("tugTestStarted", run("gyroscopeStartSensorTask"));
 
-    // Receive data collected
-    on("accelerometerRecordsAcquired", run("recordsReceiverTask"));
-    on("gyroscopeRecordsAcquired", run("recordsReceiverTask"));
+    on("accelerometerRecordsForInference", run("recordsReceiverTask"));
+    on("gyroscopeRecordsForInference", run("recordsReceiverTask"));
 
     // Feature extraction, recognition and evaluation of TUG status
     on("enoughRecordsAcquired", run("featureExtractionTask"));
@@ -32,9 +39,22 @@ class TugTestTaskGraph implements TaskGraph {
     on("tugTestEnded", run("storeTugResult"));
 
     // Manual end TUG test
-    on("stopTestCommand", run("accelerometerStopSensorTask"));
-    on("stopTestCommand", run("gyroscopeStopSensorTask"));
-    on("stopTestCommand", run("recordsReceiverClearStateTask"));
+    on("stopExecutionCommand", run("accelerometerStopSensorTask"));
+    on("stopExecutionCommand", run("gyroscopeStopSensorTask"));
+    on("stopExecutionCommand", run("recordsReceiverClearStateTask"));
+
+    //----------------------
+    // Data collection mode
+    //----------------------
+    on("collectionStarted", run("accelerometerStartSensorTask"));
+    on("collectionStarted", run("gyroscopeStartSensorTask"));
+
+    on("accelerometerRecordsForCollection", run("accumulatorTask"));
+    on("gyroscopeRecordsForCollection", run("accumulatorTask"));
+
+    on("stopCollectionCommand", run("accelerometerStopSensorTask"));
+    on("stopCollectionCommand", run("gyroscopeStopSensorTask"));
+    on("stopCollectionCommand", run("storeCollectedDataTask"));
   }
 }
 
