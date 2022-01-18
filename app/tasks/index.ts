@@ -11,6 +11,7 @@ import { resultsStore } from "~/store/results-store";
 import { TugResult } from "~/tug-test/result";
 import { StartCollectionTask } from "~/tasks/start-collection-task";
 import { ForwardRecordsTask } from "~/tasks/forward-records-task";
+import { PrepareSimpleResultTask } from "~/tasks/prepare-simple-result-task";
 
 export const appTasks: Array<Task> = [
   new SimpleTask("evtLogger", async({ evt}) => {
@@ -23,7 +24,7 @@ export const appTasks: Array<Task> = [
   new RecognitionResultEvaluationTask(),
   new EndTugTestTask(),
   new StopTestCommandEmitterTask(),
-  // Clear remaining samples once the test has finished
+  new PrepareSimpleResultTask(),
   new SimpleTask("storeTugResult", async ({ evt}) => {
     resultsStore.store(evt.data as TugResult);
   }),
