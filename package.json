@@ -1,10 +1,10 @@
 {
-  "name": "@nativescript/template-hello-world-ts",
+  "name": "TUG Test",
   "main": "app.js",
-  "version": "8.1.1",
-  "author": "NativeScript Team <oss@nativescript.org>",
-  "description": "NativeScript Application",
-  "license": "SEE LICENSE IN <your-license-filename>",
+  "version": "1.0.0",
+  "author": "Miguel Matey Sanz",
+  "description": "NativeScript Application for automating the TUG test.",
+  "license": "SEE LICENSE IN LICENSE",
   "publishConfig": {
     "access": "public"
   },
@@ -24,11 +24,11 @@
     "{N}",
     "template"
   ],
-  "repository": "<fill-your-repository-here>",
+  "repository": "https://github.com/matey97/TugTestSmartphone",
   "bugs": {
-    "url": "https://github.com/NativeScript/NativeScript/issues"
+    "url": "https://github.com/matey97/TugTestSmartphone/issues"
   },
-  "homepage": "https://github.com/NativeScript/nativescript-app-templates",
+  "homepage": "https://github.com/matey97/TugTestSmartphone",
   "dependencies": {
     "@nativescript/core": "~7.3.0",
     "@nativescript/theme": "~2.3.0",
