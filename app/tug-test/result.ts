@@ -5,7 +5,6 @@ export interface TugResult {
   startTime: number,
   successful: boolean,
   duration: number
-  durationFromActivities: number,
   activitiesDuration: ActivityResult[],
 }
 

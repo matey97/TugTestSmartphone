@@ -123,9 +123,6 @@ export class TugExecution {
       startTime: this.starTime,
       successful: results.length === EXECUTION_SEQUENCE.length,
       duration: totalDuration,
-      durationFromActivities: results
-        .map((result) => result.duration)
-        .reduce((prev, curr) => prev + curr),
       activitiesDuration: results
     };
   }
