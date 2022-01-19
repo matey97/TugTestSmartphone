@@ -1,4 +1,4 @@
-import { Observable, ObservableArray } from "@nativescript/core";
+import { Dialogs, knownFolders, Observable, ObservableArray } from "@nativescript/core";
 import { TugResult } from "~/tug-test/result";
 import { resultsStore } from "~/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
@@ -24,11 +24,39 @@ export class TugListViewModel extends Observable {
     return this.tugResults[index];
   }
 
+  onSaveExecutions() {
+    Dialogs.prompt({
+      title: "Export executions",
+      message: "Enter a name for the file",
+      defaultText: "tug-executions",
+      okButtonText: "OK",
+      cancelButtonText: "CANCEL",
+    })
+      .then(async (r) => {
+        if (!r.result)
+          return;
+
+        const fileName = r.text + ".json";
+        await knownFolders.documents().getFile(fileName)
+          .writeText(JSON.stringify(this.tugResults))
+      });
+  }
+
   onDeleteExecutions() {
-    resultsStore.clear();
-    this.tugResults = [];
-    this.resultsVM = new ObservableArray([]);
-    this.notifyPropertyChange("resultsVM", this.resultsVM);
+    Dialogs.confirm({
+      title: "Delete executions?",
+      message: "This can not be undone",
+      okButtonText: "YES",
+      cancelButtonText: "NO"
+    })
+      .then((r) => {
+        if (r) {
+          resultsStore.clear();
+          this.tugResults = [];
+          this.resultsVM = new ObservableArray([]);
+          this.notifyPropertyChange("resultsVM", this.resultsVM);
+        }
+      });
   }
 
   addFakeExecution() {
