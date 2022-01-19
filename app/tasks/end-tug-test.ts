@@ -16,6 +16,9 @@ export class EndTugTestTask extends Task {
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<void | TaskOutcome> {
+    if (!this.tugManager.ongoing)
+      return;
+
     const tugResults = this.tugManager.endExecution();
 
     return {

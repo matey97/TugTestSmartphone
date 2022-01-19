@@ -1,11 +1,11 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 
-export class StopTestCommandEmitterTask extends Task {
+export class ExecutionFinishedEmitter extends Task {
 
   constructor() {
-    super("stopTestCommandEmitter", {
-      outputEventNames: ["stopExecutionCommand"]
+    super("executionFinishedEmitter", {
+      outputEventNames: ["executionFinished"]
     });
   }
 

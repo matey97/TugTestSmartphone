@@ -4,7 +4,7 @@ import { FeatureExtractionTask } from "~/tasks/feature-extraction";
 import { getRecordsReceiver } from "~/receiver/records-receiver";
 import { RecognizerTask } from "~/tasks/recognizer";
 import { RecognitionResultEvaluationTask } from "~/tasks/test-evaluation";
-import { StopTestCommandEmitterTask } from "~/tasks/stop-test-command-emitter";
+import { ExecutionFinishedEmitter } from "~/tasks/execution-finished-emitter";
 import { StartTugTestRequestTask } from "~/tasks/start-tug-test-request";
 import { EndTugTestTask } from "~/tasks/end-tug-test";
 import { resultsStore } from "~/store/results-store";
@@ -23,7 +23,7 @@ export const appTasks: Array<Task> = [
   new RecognizerTask(),
   new RecognitionResultEvaluationTask(),
   new EndTugTestTask(),
-  new StopTestCommandEmitterTask(),
+  new ExecutionFinishedEmitter(),
   new PrepareSimpleResultTask(),
   new SimpleTask("storeTugResult", async ({ evt}) => {
     resultsStore.store(evt.data as TugResult);

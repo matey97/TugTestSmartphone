@@ -34,7 +34,7 @@ class TugTestTaskGraph implements TaskGraph {
     // Automatically end TUG test
     //on("testEvaluationTaskFinished", run("evtLogger"));
     on("detectedTugTestEnding", run("endTugTestTask"));
-    on("tugTestEnded", run("stopTestCommandEmitter"));
+    on("tugTestEnded", run("executionFinishedEmitter"));
     on("tugTestEnded", run("prepareSimpleResultTask"));
     on("tugTestEnded", run("evtLogger"));
     on("tugTestEnded", run("storeTugResult"));
@@ -42,9 +42,11 @@ class TugTestTaskGraph implements TaskGraph {
     on("simpleResultPrepared", run("sendResultTask"));
 
     // Manual end TUG test
-    on("stopExecutionCommand", run("accelerometerStopSensorTask"));
-    on("stopExecutionCommand", run("gyroscopeStopSensorTask"));
-    on("stopExecutionCommand", run("recordsReceiverClearStateTask"));
+    on("stopExecutionCommand", run("executionFinishedEmitter"));
+
+    on("executionFinished", run("accelerometerStopSensorTask"));
+    on("executionFinished", run("gyroscopeStopSensorTask"));
+    on("executionFinished", run("recordsReceiverClearStateTask"));
 
     //----------------------
     // Data collection mode
