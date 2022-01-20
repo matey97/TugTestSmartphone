@@ -121,7 +121,7 @@ export class TugExecution {
     return {
       deviceId: this.sourceDeviceId,
       startTime: this.starTime,
-      successful: results.length === EXECUTION_SEQUENCE.length,
+      successful: results.length === EXECUTION_SEQUENCE.length - 2,
       duration: totalDuration,
       activitiesDuration: results
     };
