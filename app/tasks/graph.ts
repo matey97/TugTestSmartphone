@@ -42,7 +42,7 @@ class TugTestTaskGraph implements TaskGraph {
     on("simpleResultPrepared", run("sendResultTask"));
 
     // Manual end TUG test
-    on("stopExecutionCommand", run("executionFinishedEmitter"));
+    on("stopExecutionCommand", run("endTugTestTask"));
 
     on("executionFinished", run("accelerometerStopSensorTask"));
     on("executionFinished", run("gyroscopeStopSensorTask"));

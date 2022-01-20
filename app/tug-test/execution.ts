@@ -61,6 +61,9 @@ export class TugExecution {
 
   computeResults(): TugResult {
     const changes = this.computeChanges();
+    if (changes.length < 2) {
+      return this.buildTugResult([]);
+    }
 
     const results: ActivityResult[] = [];
     for (let i = 0; i < changes.length - 1; i++) {
@@ -74,10 +77,7 @@ export class TugExecution {
       })
     }
 
-    const globalStart = results[0].start;
-    const globalEnd = results[results.length - 1].end;
-
-    return this.buildTugResult(this.computeMillisecondsBetween(globalStart, globalEnd), results);
+    return this.buildTugResult(results);
   }
 
 
@@ -117,12 +117,31 @@ export class TugExecution {
     return Math.round((result.timestampEnd + result.timestampStart) / 2);
   }
 
-  private buildTugResult(totalDuration: number, results: ActivityResult[]): TugResult {
+  private buildTugResult(results: ActivityResult[]): TugResult {
+    return results.length === EXECUTION_SEQUENCE.length - 2
+      ? this.buildSuccessfulResult(results)
+      : this.buildUnsuccessfulResult(results);
+  }
+
+  private buildSuccessfulResult(results: ActivityResult[]): TugResult {
     return {
       deviceId: this.sourceDeviceId,
       startTime: this.starTime,
-      successful: results.length === EXECUTION_SEQUENCE.length - 2,
-      duration: totalDuration,
+      successful: true,
+      duration: this.computeMillisecondsBetween(
+        results[0].start,
+        results[results.length - 1].end
+      ),
+      activitiesDuration: results
+    };
+  }
+
+  private buildUnsuccessfulResult(results: ActivityResult[]): TugResult {
+    return {
+      deviceId: this.sourceDeviceId,
+      startTime: this.starTime,
+      successful: false,
+      duration: -1,
       activitiesDuration: results
     };
   }
