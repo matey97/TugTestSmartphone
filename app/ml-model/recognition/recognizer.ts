@@ -10,7 +10,7 @@ export class Recognizer {
   private model: Model
 
   constructor(
-    private modelName: string = "tug-test-meta"
+    private modelName: string = "tug-test-full"
   ) {
     this.initModel()
       .then(() => console.log("Model initialized!"));
