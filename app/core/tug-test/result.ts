@@ -1,4 +1,4 @@
-import { Activity } from "~/tug-test/activities";
+import { Activity } from "~/core/tug-test/activities";
 
 export interface TugResult {
   deviceId: string,

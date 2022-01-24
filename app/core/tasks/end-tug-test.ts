@@ -1,6 +1,6 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { getTugManager, TugManager } from "~/tug-test/manager";
+import { getTugManager, TugManager } from "~/core/tug-test/manager";
 
 export class EndTugTestTask extends Task {
 

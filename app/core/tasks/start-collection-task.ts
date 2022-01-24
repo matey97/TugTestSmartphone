@@ -1,12 +1,12 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { TugResult } from "~/tug-test/result";
+import { ApplicationMode, setApplicationMode } from "~/core/mode";
 
-export class PrepareSimpleResultTask extends Task {
+export class StartCollectionTask extends Task {
 
   constructor() {
-    super("prepareSimpleResultTask", {
-      outputEventNames: ["simpleResultPrepared"]
+    super("startCollectionTask", {
+      outputEventNames: ["collectionStarted"]
     });
   }
 
@@ -14,14 +14,14 @@ export class PrepareSimpleResultTask extends Task {
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<void | TaskOutcome> {
-    const results = invocationEvent.data as TugResult;
+    setApplicationMode(ApplicationMode.DATA_COLLECTION);
 
     return {
       eventName: this.outputEventNames[0],
-      result: {
-        nodeId: results.deviceId,
-        result: results.duration.toString(),
-      }
+      result: invocationEvent.data
     }
   }
+
+
+
 }

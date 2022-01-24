@@ -1,6 +1,6 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { ApplicationMode, getApplicationMode } from "~/mode";
+import { ApplicationMode, getApplicationMode } from "~/core/mode";
 
 const ACC_INF_EVT = "accelerometerRecordsForInference";
 const GYR_INF_EVT = "gyroscopeRecordsForInference";

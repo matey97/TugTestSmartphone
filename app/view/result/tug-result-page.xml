@@ -1,5 +1,5 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
-  <ActionBar title="AuTUG Test" backgroundColor="GreenYellow"/>
+  <ActionBar title="TUG Test" backgroundColor="GreenYellow"/>
 
   <StackLayout visibility="{{ resultVM ? 'visible' : 'collapsed' }}" width="80%">
     <Label text="TUG Test Results" class="label-title"></Label>

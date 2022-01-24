@@ -1,5 +1,5 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
-    <ActionBar title="AuTUG Test" backgroundColor="GreenYellow">
+    <ActionBar title="TUG Test" backgroundColor="GreenYellow">
         <ActionItem
                 icon="font://&#xe161;"
                 tap="{{ onSaveExecutions }}"

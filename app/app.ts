@@ -6,8 +6,8 @@ purpose of the file is to pass control to the app’s first module.
 
 import { Application } from '@nativescript/core'
 import { wearosSensors } from "nativescript-wearos-sensors";
-import { appTasks } from "~/tasks";
-import { taskGraph } from "~/tasks/graph";
+import { appTasks } from "~/core/tasks";
+import { taskGraph } from "~/core/tasks/graph";
 
 wearosSensors.init(appTasks, taskGraph);
 

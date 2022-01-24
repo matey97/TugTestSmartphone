@@ -1,7 +1,7 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { getRecognizer, Recognizer } from "~/ml-model/recognition/recognizer";
-import { TimedFeatures } from "~/feature-extraction";
+import { getRecognizer, Recognizer } from "~/core/ml-model/recognition/recognizer";
+import { TimedFeatures } from "~/core/feature-extraction";
 
 const DEFAULT_EVENT = "recognitionFinished";
 

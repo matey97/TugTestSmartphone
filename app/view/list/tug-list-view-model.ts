@@ -1,8 +1,8 @@
 import { Dialogs, knownFolders, Observable, ObservableArray } from "@nativescript/core";
-import { TugResult } from "~/tug-test/result";
-import { resultsStore } from "~/store/results-store";
+import { TugResult } from "~/core/tug-test/result";
+import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
-import { Activity } from "~/tug-test/activities";
+import { Activity } from "~/core/tug-test/activities";
 
 export class TugListViewModel extends Observable {
 

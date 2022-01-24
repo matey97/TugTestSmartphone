@@ -1,5 +1,5 @@
 import { Observable } from "@nativescript/core";
-import { TugResult } from "~/tug-test/result";
+import { TugResult } from "~/core/tug-test/result";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 
 export class TugResultViewModel extends Observable {

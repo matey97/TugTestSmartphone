@@ -1,7 +1,7 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { extractFeaturesFrom } from "~/feature-extraction";
-import { RecordsToProcess } from "~/feature-extraction/records-to-process";
+import { extractFeaturesFrom } from "~/core/feature-extraction";
+import { RecordsToProcess } from "~/core/feature-extraction/records-to-process";
 
 const DEFAULT_EVENT = "featuresExtracted";
 

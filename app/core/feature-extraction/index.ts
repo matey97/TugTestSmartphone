@@ -1,4 +1,4 @@
-import { RecordsToProcess } from "~/feature-extraction/records-to-process";
+import { RecordsToProcess } from "~/core/feature-extraction/records-to-process";
 
 type AxisData = number[];
 type FeatureExtractionFunction = (data: AxisData, param?: number) => number;

@@ -1,7 +1,7 @@
-import { Features, TimedFeatures } from "~/feature-extraction";
-import { ModelDownloader } from "~/ml-model/downloader";
-import { Model } from "~/ml-model/model";
-import {InferenceProbability, RecognitionResult} from "~/ml-model/recognition";
+import { Features, TimedFeatures } from "~/core/feature-extraction";
+import { ModelDownloader } from "~/core/ml-model/downloader";
+import { Model } from "~/core/ml-model/model";
+import {InferenceProbability, RecognitionResult} from "~/core/ml-model/recognition/index";
 
 import ByteBuffer = java.nio.ByteBuffer;
 

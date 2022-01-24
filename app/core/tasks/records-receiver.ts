@@ -1,8 +1,8 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { SensorRecords } from "nativescript-wearos-sensors/internal/sensors/sensor-record";
-import { getRecordsReceiver, RecordsReceiver } from "~/receiver/records-receiver";
-import { getTugManager, TugManager } from "~/tug-test/manager";
+import { getRecordsReceiver, RecordsReceiver } from "~/core/receiver/records-receiver";
+import { getTugManager, TugManager } from "~/core/tug-test/manager";
 
 export class RecordsReceiverTask extends Task {
 

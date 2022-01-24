@@ -1,6 +1,6 @@
-import { RecognitionResult } from "~/ml-model/recognition";
-import { Activity, fromString } from "~/tug-test/activities";
-import { ActivityResult, TugResult } from "~/tug-test/result";
+import { RecognitionResult } from "~/core/ml-model/recognition";
+import { Activity } from "~/core/tug-test/activities";
+import { ActivityResult, TugResult } from "~/core/tug-test/result";
 
 const EXECUTION_SEQUENCE = [
   Activity.SIT,

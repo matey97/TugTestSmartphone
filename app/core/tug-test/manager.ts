@@ -1,5 +1,5 @@
-import { Status, TugExecution } from "~/tug-test/execution";
-import { TugResult } from "~/tug-test/result";
+import { Status, TugExecution } from "~/core/tug-test/execution";
+import { TugResult } from "~/core/tug-test/result";
 
 export class TugManager {
 
