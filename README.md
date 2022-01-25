@@ -1,4 +1,4 @@
-#TUG Test Smartphone
+# TUG Test Smartphone
 
 This NativeScript application aims to automate the obtaining of results from the execution of the TUG test.
 
