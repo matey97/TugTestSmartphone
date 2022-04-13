@@ -15,6 +15,9 @@
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+
 	<application
 		android:name="com.tns.NativeScriptApplication"
 		android:allowBackup="true"
@@ -40,5 +43,7 @@
 			</intent-filter>
 		</activity>
 		<activity android:name="com.tns.ErrorReportActivity"/>
+
+		<service android:enabled="true" android:name="es.uji.geotec.tugtest.core.collection.LocalCollectionService" />
 	</application>
 </manifest>
