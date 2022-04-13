@@ -12,12 +12,20 @@ import { TugResult } from "~/core/tug-test/result";
 import { StartCollectionTask } from "~/core/tasks/start-collection-task";
 import { ForwardRecordsTask } from "~/core/tasks/forward-records-task";
 import { PrepareSimpleResultTask } from "~/core/tasks/prepare-simple-result-task";
+import { StartSensorFromDeviceTask } from "~/core/tasks/start-sensor-from-device-task";
+import { StopSensorFromDeviceTask } from "~/core/tasks/stop-sensor-from-device-task";
+import { StartLocalSensorServiceTask } from "~/core/tasks/start-local-sensor-service-task";
+import { StopLocalSensorServiceTask } from "~/core/tasks/stop-local-sensor-service-task";
 
 export const appTasks: Array<Task> = [
   new SimpleTask("evtLogger", async({ evt}) => {
     console.log(`[INFO LOGGER]: evt.name --> ${JSON.stringify(evt.name)}, evt.data --> ${JSON.stringify(evt.data)}`);
   }),
   new StartTugTestRequestTask(),
+  new StartSensorFromDeviceTask(),
+  new StopSensorFromDeviceTask(),
+  new StartLocalSensorServiceTask(),
+  new StopLocalSensorServiceTask(),
   new RecordsReceiverTask(),
   new FeatureExtractionTask(),
   new RecognizerTask(),
