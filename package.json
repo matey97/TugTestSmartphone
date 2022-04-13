@@ -30,11 +30,12 @@
   },
   "homepage": "https://github.com/matey97/TugTestSmartphone",
   "dependencies": {
+    "@master.technology/permissions": "^2.0.1",
     "@nativescript/core": "~7.3.0",
     "@nativescript/theme": "~2.3.0",
     "nativescript-couchbase-plugin": "^0.9.6",
     "nativescript-task-dispatcher": "^2.0.1",
-    "nativescript-wearos-sensors": "file:vendor/nativescript-wearos-sensors-1.0.0.tgz"
+    "nativescript-wearos-sensors": "file:vendor/nativescript-wearos-sensors-1.0.1.tgz"
   },
   "devDependencies": {
     "@nativescript/android": "8.0.0",
