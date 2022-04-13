@@ -64,7 +64,7 @@ class TugTestTaskGraph implements TaskGraph {
     on("gyroscopeRecordsForCollection", run("accumulatorTask"));
 
     on("stopCollectionCommand", run("stopSensorFromDeviceTask"));
-    //on("stopCollectionCommand", run("storeCollectedDataTask"));
+    on("stopCollectionCommand", run("storeCollectedDataTask"));
   }
 }
 

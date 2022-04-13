@@ -1,19 +1,18 @@
-import { COLLECTION_SERVICE_FULL_NAME } from "~/core/collection/index";
-import { getSensorListener } from "~/core/collection/local-sensor-listener";
+import { LocalSensorListener } from "~/core/collection/local-sensor-listener";
 
 const CHANNEL_ID = "TugTest_Service";
 const CHANNEL_NAME = "TugTest Collection Service";
 const NOTIFICATION_ID = 53;
 
 @NativeClass()
-@JavaProxy(COLLECTION_SERVICE_FULL_NAME)
+@JavaProxy("es.uji.geotec.tugtest.core.collection.LocalCollectionService")
 export class LocalCollectionService extends android.app.Service {
 
   private sensorManager: android.hardware.SensorManager;
   private notificationManager: android.app.NotificationManager;
   private wakeLock: android.os.PowerManager.WakeLock;
 
-  private sensorListener: android.hardware.SensorEventListener;
+  private sensorListener: LocalSensorListener;
 
   constructor() {
     super();
@@ -37,7 +36,7 @@ export class LocalCollectionService extends android.app.Service {
       "TugTestSmartphone:LocalCollectionService"
     );
 
-    this.sensorListener = getSensorListener();
+    this.sensorListener = new LocalSensorListener();
   }
 
   onStartCommand(intent: android.content.Intent, flags: number, startId: number): number {
@@ -91,11 +90,11 @@ export class LocalCollectionService extends android.app.Service {
   private registerListeners() {
     const accelerometer = this.sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER);
     const gyroscope = this.sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_GYROSCOPE);
-    this.sensorManager.registerListener(this.sensorListener, accelerometer, 10000);
-    this.sensorManager.registerListener(this.sensorListener, gyroscope, 10000);
+    this.sensorManager.registerListener(this.sensorListener.getListener(), accelerometer, 10000);
+    this.sensorManager.registerListener(this.sensorListener.getListener(), gyroscope, 10000);
   }
 
   private unregisterListeners() {
-    this.sensorManager.unregisterListener(this.sensorListener);
+    this.sensorManager.unregisterListener(this.sensorListener.getListener());
   }
 }
