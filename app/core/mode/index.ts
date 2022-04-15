@@ -1,4 +1,5 @@
 import { setNumber, getNumber, flush } from "@nativescript/core/application-settings"
+import { getNodeDiscoverer } from "nativescript-wearos-sensors/node";
 
 const APP_MODE_KEY = "app_mode";
 const SENSING_DATA_SOURCE_KEY = "sensing_data_source";
@@ -29,4 +30,11 @@ export function setSensingDataSource(source: SensingDataSource) {
 
 export function getSensingDataSource(): SensingDataSource {
   return getNumber(SENSING_DATA_SOURCE_KEY);
+}
+
+export async function dataSourceFromDeviceId(deviceId: string): Promise<SensingDataSource> {
+  const localNode = await getNodeDiscoverer().getLocalNode();
+  return deviceId === localNode.id
+    ? SensingDataSource.LOCAL_DEVICE
+    : SensingDataSource.PAIRED_DEVICE;
 }

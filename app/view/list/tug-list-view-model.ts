@@ -7,9 +7,7 @@ import { getNodeDiscoverer, Node, NodeDiscovered } from "nativescript-wearos-sen
 import {
   ApplicationMode,
   getApplicationMode,
-  SensingDataSource,
   setApplicationMode,
-  setSensingDataSource
 } from "~/core/mode";
 import { wearosSensors } from "nativescript-wearos-sensors";
 
@@ -99,7 +97,6 @@ export class TugListViewModel extends Observable {
   }
 
   onStartInLocalDevice() {
-    setSensingDataSource(SensingDataSource.LOCAL_DEVICE);
     const event = getApplicationMode() === ApplicationMode.INFERENCE
       ? "startExecutionCommand"
       : "startCollectionCommand";

@@ -1,6 +1,6 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { ApplicationMode, setApplicationMode } from "~/core/mode";
+import {ApplicationMode, dataSourceFromDeviceId, setApplicationMode, setSensingDataSource} from "~/core/mode";
 
 export class StartCollectionTask extends Task {
 
@@ -15,6 +15,10 @@ export class StartCollectionTask extends Task {
     invocationEvent: DispatchableEvent
   ): Promise<void | TaskOutcome> {
     setApplicationMode(ApplicationMode.DATA_COLLECTION);
+
+    const deviceId = invocationEvent.data.deviceId;
+    const dataSource = await dataSourceFromDeviceId(deviceId);
+    setSensingDataSource(dataSource);
 
     return {
       eventName: this.outputEventNames[0],

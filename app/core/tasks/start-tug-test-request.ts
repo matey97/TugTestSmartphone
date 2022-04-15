@@ -1,7 +1,12 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
-import { ApplicationMode, setApplicationMode } from "~/core/mode";
+import {
+  ApplicationMode,
+  dataSourceFromDeviceId,
+  setApplicationMode,
+  setSensingDataSource
+} from "~/core/mode";
 
 export class StartTugTestRequestTask extends Task {
 
@@ -18,7 +23,12 @@ export class StartTugTestRequestTask extends Task {
     invocationEvent: DispatchableEvent
   ): Promise<void | TaskOutcome> {
     setApplicationMode(ApplicationMode.INFERENCE);
-    this.tugManager.startExecution(invocationEvent.data.deviceId);
+
+    const deviceId = invocationEvent.data.deviceId;
+    const dataSource = await dataSourceFromDeviceId(deviceId);
+    setSensingDataSource(dataSource);
+
+    this.tugManager.startExecution(deviceId);
 
     return {
       eventName: this.outputEventNames[0],
