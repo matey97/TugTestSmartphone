@@ -1,9 +1,16 @@
 import { EventData, Frame, ItemEventData, Page } from "@nativescript/core";
 import { TugListViewModel } from "~/view/list/tug-list-view-model";
+import { wearosSensors } from "nativescript-wearos-sensors";
 
 export function navigatingTo(args: EventData) {
   const page = <Page>args.object;
-  page.bindingContext = getViewModel();
+  const model = getViewModel();
+  model.tugSelectorLabel = page.getViewById("tugSelector");
+  model.tugSelectorLabel.addPseudoClass("active");
+  model.collectionSelectorLabel = page.getViewById("collectionSelector");
+  page.bindingContext = model;
+
+  preparePlugin();
 }
 
 export function onTugResultTap(args: ItemEventData) {
@@ -14,6 +21,19 @@ export function onTugResultTap(args: ItemEventData) {
     moduleName: "/view/result/tug-result-page",
     context: { tugResult: selectedResult }
   })
+}
+
+async function preparePlugin() {
+  const isReady = await wearosSensors.isReady();
+  if (!isReady) {
+    console.log("Plugin was not ready! Going to prepare...");
+
+    try {
+      await wearosSensors.prepare();
+    } catch (e) {
+      console.log(`Could not prepare plugin. Reason: ${e}`);
+    }
+  }
 }
 
 let _vm;

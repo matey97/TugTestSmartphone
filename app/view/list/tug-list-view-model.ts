@@ -1,10 +1,27 @@
-import { Dialogs, knownFolders, Observable, ObservableArray } from "@nativescript/core";
+import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } from "@nativescript/core";
 import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { Activity } from "~/core/tug-test/activities";
+import { getNodeDiscoverer, Node, NodeDiscovered } from "nativescript-wearos-sensors/node";
+import {
+  ApplicationMode,
+  getApplicationMode,
+  SensingDataSource,
+  setApplicationMode,
+  setSensingDataSource
+} from "~/core/mode";
+import { wearosSensors } from "nativescript-wearos-sensors";
 
 export class TugListViewModel extends Observable {
+
+  tugSelectorLabel: Label;
+  collectionSelectorLabel: Label;
+
+  private localNode: Node;
+  private connectedNodes: Node[];
+
+  private runningLocal: boolean = false;
 
   private tugResults: TugResult[] = [];
   private resultsVM: ObservableArray<TugResultVM> = new ObservableArray([]);
@@ -13,6 +30,8 @@ export class TugListViewModel extends Observable {
     private tugResultsStore = resultsStore
   ) {
     super();
+    setApplicationMode(ApplicationMode.INFERENCE);
+    this.getLocalAndConnectedNodes();
     this.updateTugResults();
     tugResultsStore.onChanges((changes) => this.updateTugResults(changes));
   }
@@ -63,6 +82,63 @@ export class TugListViewModel extends Observable {
     this.fakeDataIn(100);
   }
 
+  modeSelected(evt: EventData) {
+    if (this.runningLocal) {
+      return;
+    }
+
+    const item = evt.object as Label;
+
+    if (item.id === "tugSelector") {
+      setApplicationMode(ApplicationMode.INFERENCE);
+      this.modeSelectionChange(this.tugSelectorLabel, this.collectionSelectorLabel);
+    } else {
+      setApplicationMode(ApplicationMode.DATA_COLLECTION);
+      this.modeSelectionChange(this.collectionSelectorLabel, this.tugSelectorLabel);
+    }
+  }
+
+  onStartInLocalDevice() {
+    setSensingDataSource(SensingDataSource.LOCAL_DEVICE);
+    const event = getApplicationMode() === ApplicationMode.INFERENCE
+      ? "startExecutionCommand"
+      : "startCollectionCommand";
+
+    wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
+
+    this.runningLocal = true;
+    this.notifyPropertyChange("runningLocal", this.runningLocal);
+  }
+
+  onStopInLocalDevice() {
+    const event = getApplicationMode() === ApplicationMode.INFERENCE
+      ? "stopExecutionCommand"
+      : "stopCollectionCommand";
+
+    wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
+
+    this.runningLocal = false;
+    this.notifyPropertyChange("runningLocal", this.runningLocal);
+  }
+
+  private async getLocalAndConnectedNodes() {
+    const nodeDiscoverer = getNodeDiscoverer();
+    this.localNode = await nodeDiscoverer.getLocalNode();
+    this.notifyPropertyChange("localNode", this.localNode);
+
+    nodeDiscoverer.getConnectedNodes().subscribe({
+      next: (nodeDiscovered: NodeDiscovered) => {
+        if (nodeDiscovered.error) {
+          return;
+        }
+
+        const node = nodeDiscovered.node;
+        this.connectedNodes.push(node);
+        this.notifyPropertyChange("connectedNodes", this.connectedNodes);
+      }
+    })
+  }
+
   private updateTugResults(changes?: string[]) {
     if (changes) {
       const newResults = changes
@@ -102,6 +178,11 @@ export class TugListViewModel extends Observable {
 
       //this.notifyPropertyChange("resultsVM", this.resultsVM);
     }, timeout);
+  }
+
+  private modeSelectionChange(toSelect: Label, toUnselect: Label) {
+    toSelect.addPseudoClass("active");
+    toUnselect.deletePseudoClass("active");
   }
 }
 
