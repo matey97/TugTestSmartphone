@@ -82,6 +82,8 @@ export class LocalCollectionService extends android.app.Service {
         name,
         android.app.NotificationManager.IMPORTANCE_HIGH
       );
+      channel.enableVibration(true);
+      channel.setVibrationPattern([1000, 1000, 1000, 1000, 1000]);
 
       this.notificationManager.createNotificationChannel(channel);
     }
