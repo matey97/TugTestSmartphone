@@ -93,3 +93,8 @@ Button.-primary {
   border-radius: 0 5 5 0;
   border-width: 2px;
 }
+
+Label.countdown {
+  font-size: 28;
+  font-weight: bold;
+}

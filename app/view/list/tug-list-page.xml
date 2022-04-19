@@ -35,8 +35,13 @@
                 </GridLayout>
                 <Button col="2" row="0" rowSpan="2" text="Start" class="-primary" tap="{{ onStartInLocalDevice }}"
                         visibility="{{ runningLocal ? 'collapsed' : 'visible' }}"></Button>
-                <Button col="2" row="0" rowSpan="2" text="Stop" class="-primary" tap="{{ onStopInLocalDevice }}"
-                        visibility="{{ runningLocal ? 'visible' : 'collapsed' }}"></Button>
+                <StackLayout col="2" row="0" rowSpan="2" orientation="horizontal" horizontalAlignment="center" verticalAlignment="center" visibility="{{ runningLocal ? 'visible' : 'collapsed' }}">
+                    <Label text="{{ countdown }}" class="countdown"
+                           visibility="{{ runningCountdown ? 'visible' : 'collapsed' }}"></Label>
+                    <Button text="Stop" class="-primary" tap="{{ onStopInLocalDevice }}"
+                            visibility="{{ runningCountdown ? 'collapsed' : 'visible' }}"></Button>
+                </StackLayout>
+
             </GridLayout>
             <Label text="Connected devices:" visibility="{{ connectedNodes.length !== 0 ? 'visible' : 'collapsed' }}"></Label>
             <ListView items="{{ connectedNodes }}" separatorColor="Transparent">
@@ -57,7 +62,7 @@
 
 
         <StackLayout visibility="{{ resultsVM.length !== 0 ? 'visible' : 'collapsed' }}">
-            <Label text="Results from TUG tests perfomed" class="label-title" ></Label>
+            <Label text="Results from TUG tests performed" class="label-title" ></Label>
             <Label text="Tap on a TUG test result to see more information" class="label-header"></Label>
             <ListView items="{{ resultsVM }}" itemTap="onTugResultTap" separatorColor="Transparent">
                 <ListView.itemTemplate>

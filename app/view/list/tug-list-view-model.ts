@@ -11,6 +11,8 @@ import {
 } from "~/core/mode";
 import { wearosSensors } from "nativescript-wearos-sensors";
 
+const COUNTDOWN = 5; // Seconds
+
 export class TugListViewModel extends Observable {
 
   tugSelectorLabel: Label;
@@ -20,7 +22,35 @@ export class TugListViewModel extends Observable {
   private localNode: Node;
   private connectedNodes: Node[] = [];
 
-  private runningLocal: boolean = false;
+  private _runningLocal: boolean = false;
+  get runningLocal(): boolean {
+    return this._runningLocal;
+  }
+
+  set runningLocal(value: boolean) {
+    this._runningLocal = value;
+    this.notifyPropertyChange("runningLocal", this.runningLocal);
+  }
+
+  private _runningCountdown: boolean = false;
+  get runningCountdown(): boolean {
+    return this._runningCountdown;
+  }
+
+  set runningCountdown(value: boolean) {
+    this._runningCountdown = value;
+    this.notifyPropertyChange("runningCountdown", this.runningCountdown);
+  }
+
+  private _countdown: number;
+  get countdown(): number {
+    return this._countdown;
+  }
+
+  set countdown(value: number) {
+    this._countdown = value;
+    this.notifyPropertyChange("countdown", this.countdown);
+  }
 
   private tugResults: TugResult[] = [];
   private resultsVM: ObservableArray<TugResultVM> = new ObservableArray([]);
@@ -100,25 +130,15 @@ export class TugListViewModel extends Observable {
   }
 
   onStartInLocalDevice() {
-    const event = getApplicationMode() === ApplicationMode.INFERENCE
-      ? "startExecutionCommand"
-      : "startCollectionCommand";
-
-    wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
-
     this.runningLocal = true;
-    this.notifyPropertyChange("runningLocal", this.runningLocal);
+    this.runCountdown();
   }
 
   onStopInLocalDevice() {
-    const event = getApplicationMode() === ApplicationMode.INFERENCE
-      ? "stopExecutionCommand"
-      : "stopCollectionCommand";
-
+    const event = this.buildLocalEvent("stop");
     wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
 
     this.runningLocal = false;
-    this.notifyPropertyChange("runningLocal", this.runningLocal);
   }
 
   private async getLocalNode() {
@@ -185,6 +205,27 @@ export class TugListViewModel extends Observable {
   private modeSelectionChange(toSelect: Label, toUnselect: Label) {
     toSelect.addPseudoClass("active");
     toUnselect.deletePseudoClass("active");
+  }
+
+  private buildLocalEvent(action: "start" | "stop") {
+    return getApplicationMode() === ApplicationMode.INFERENCE
+      ? `${action}ExecutionCommand`
+      : `${action}CollectionCommand`;
+  }
+
+  private runCountdown() {
+    this.countdown = COUNTDOWN;
+    this.runningCountdown = true;
+
+    const id = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        this.runningCountdown = false;
+        clearInterval(id);
+
+        wearosSensors.emitEvent(this.buildLocalEvent("start"), { deviceId: this.localNode.id });
+      }
+    }, 1000);
   }
 }
 
