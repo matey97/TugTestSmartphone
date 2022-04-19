@@ -45,6 +45,10 @@ Button.-primary {
   vertical-align: center;
 }
 
+.mdi-ro.small {
+  font-size: 55;
+}
+
 .label-title {
   font-size: 28;
   font-weight: bold;

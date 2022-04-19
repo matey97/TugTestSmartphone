@@ -3,7 +3,7 @@ import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { Activity } from "~/core/tug-test/activities";
-import { getNodeDiscoverer, Node, NodeDiscovered } from "nativescript-wearos-sensors/node";
+import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
 import {
   ApplicationMode,
   getApplicationMode,
@@ -16,8 +16,9 @@ export class TugListViewModel extends Observable {
   tugSelectorLabel: Label;
   collectionSelectorLabel: Label;
 
+  private nodeDiscoverer: NodeDiscoverer;
   private localNode: Node;
-  private connectedNodes: Node[];
+  private connectedNodes: Node[] = [];
 
   private runningLocal: boolean = false;
 
@@ -29,7 +30,9 @@ export class TugListViewModel extends Observable {
   ) {
     super();
     setApplicationMode(ApplicationMode.INFERENCE);
-    this.getLocalAndConnectedNodes();
+    this.nodeDiscoverer = getNodeDiscoverer();
+    this.getLocalNode();
+    this.getConnectedNodes();
     this.updateTugResults();
     tugResultsStore.onChanges((changes) => this.updateTugResults(changes));
   }
@@ -118,12 +121,14 @@ export class TugListViewModel extends Observable {
     this.notifyPropertyChange("runningLocal", this.runningLocal);
   }
 
-  private async getLocalAndConnectedNodes() {
-    const nodeDiscoverer = getNodeDiscoverer();
-    this.localNode = await nodeDiscoverer.getLocalNode();
+  private async getLocalNode() {
+    this.localNode = await this.nodeDiscoverer.getLocalNode();
     this.notifyPropertyChange("localNode", this.localNode);
+  }
 
-    nodeDiscoverer.getConnectedNodes().subscribe({
+  private getConnectedNodes() {
+    this.connectedNodes = [];
+    this.nodeDiscoverer.getConnectedNodes().subscribe({
       next: (nodeDiscovered: NodeDiscovered) => {
         if (nodeDiscovered.error) {
           return;
