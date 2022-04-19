@@ -39,7 +39,7 @@
                         visibility="{{ runningLocal ? 'visible' : 'collapsed' }}"></Button>
             </GridLayout>
             <Label text="Connected devices:" visibility="{{ connectedNodes.length !== 0 ? 'visible' : 'collapsed' }}"></Label>
-            <ListView items="{{ connectedNodes }}" itemTap="onTugResultTap" separatorColor="Transparent">
+            <ListView items="{{ connectedNodes }}" separatorColor="Transparent">
                 <ListView.itemTemplate>
                     <GridLayout columns="*,4*" rows="*,*" class="simple-card device">
                         <Label col="0" row="0" rowSpan="2" text="&#xe334;" class="mdi-ro small"></Label>
