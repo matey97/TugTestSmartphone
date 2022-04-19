@@ -21,6 +21,7 @@ export class PrepareSimpleResultTask extends Task {
       result: {
         nodeId: results.deviceId,
         result: results.duration.toString(),
+        messagePath: "/result"
       }
     }
   }
