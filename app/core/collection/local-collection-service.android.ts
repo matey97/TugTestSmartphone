@@ -77,13 +77,17 @@ export class LocalCollectionService extends android.app.Service {
 
   private setupNotificationChannelIfNeeded(id: string, name: string): void {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      if (this.notificationManager.getNotificationChannel(id) !== null) {
+        return;
+      }
+
       const channel = new android.app.NotificationChannel(
         id,
         name,
         android.app.NotificationManager.IMPORTANCE_HIGH
       );
       channel.enableVibration(true);
-      channel.setVibrationPattern([1000, 1000, 1000, 1000, 1000]);
+      channel.setVibrationPattern([500, 500, 500, 500]);
 
       this.notificationManager.createNotificationChannel(channel);
     }
