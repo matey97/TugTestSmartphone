@@ -8,9 +8,10 @@ const NOTIFICATION_ID = 53;
 @JavaProxy("es.uji.geotec.tugtest.core.collection.LocalCollectionService")
 export class LocalCollectionService extends android.app.Service {
 
+  private static wakeLock: android.os.PowerManager.WakeLock;
+
   private sensorManager: android.hardware.SensorManager;
   private notificationManager: android.app.NotificationManager;
-  private wakeLock: android.os.PowerManager.WakeLock;
 
   private sensorListener: LocalSensorListener;
 
@@ -31,7 +32,7 @@ export class LocalCollectionService extends android.app.Service {
       android.content.Context.POWER_SERVICE
     ) as android.os.PowerManager;
 
-    this.wakeLock = powerManager.newWakeLock(
+    LocalCollectionService.wakeLock = powerManager.newWakeLock(
       android.os.PowerManager.PARTIAL_WAKE_LOCK,
       "TugTestSmartphone:LocalCollectionService"
     );
@@ -40,7 +41,9 @@ export class LocalCollectionService extends android.app.Service {
   }
 
   onStartCommand(intent: android.content.Intent, flags: number, startId: number): number {
-    this.wakeLock.acquire();
+    if (!LocalCollectionService.wakeLock.isHeld()) {
+      LocalCollectionService.wakeLock.acquire();
+    }
     this.runInForegroundWithNotification();
     this.registerListeners();
 
@@ -49,7 +52,9 @@ export class LocalCollectionService extends android.app.Service {
 
   onDestroy() {
     this.unregisterListeners();
-    this.wakeLock.release();
+    if (LocalCollectionService.wakeLock.isHeld()) {
+      LocalCollectionService.wakeLock.release();
+    }
     this.stopForeground(true);
   }
 
