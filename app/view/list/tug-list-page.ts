@@ -31,7 +31,7 @@ async function preparePlugin() {
     try {
       await wearosSensors.prepare();
     } catch (e) {
-      console.log(`Could not prepare plugin. Reason: ${e}`);
+      console.log(`Could not prepare plugin. Reason: ${JSON.stringify(e)}`);
     }
   }
 }
