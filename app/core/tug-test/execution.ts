@@ -132,7 +132,8 @@ export class TugExecution {
         results[0].start,
         results[results.length - 1].end
       ),
-      activitiesDuration: results
+      activitiesDuration: results,
+      recognitionResults: this.recognitionResults
     };
   }
 
@@ -142,7 +143,8 @@ export class TugExecution {
       startTime: this.starTime,
       successful: false,
       duration: -1,
-      activitiesDuration: results
+      activitiesDuration: results,
+      recognitionResults: this.recognitionResults
     };
   }
 }

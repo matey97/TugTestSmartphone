@@ -273,7 +273,8 @@ function generateFakeData() {
         end: 0,
         duration: getRandomInt(800, 1200)
       }
-    ]
+    ],
+    recognitionResults: []
   }
 }
 
