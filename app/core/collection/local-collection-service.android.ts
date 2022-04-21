@@ -1,4 +1,6 @@
 import { LocalSensorListener } from "~/core/collection/local-sensor-listener";
+import { ApplicationMode, getApplicationMode } from "~/core/mode";
+import { Vibrate } from "nativescript-vibrate";
 
 const CHANNEL_ID = "TugTest_Service";
 const CHANNEL_NAME = "TugTest Collection Service";
@@ -52,6 +54,7 @@ export class LocalCollectionService extends android.app.Service {
 
   onDestroy() {
     this.unregisterListeners();
+    this.vibrateToNotifyExecutionEnd();
     if (LocalCollectionService.wakeLock.isHeld()) {
       LocalCollectionService.wakeLock.release();
     }
@@ -91,8 +94,8 @@ export class LocalCollectionService extends android.app.Service {
         name,
         android.app.NotificationManager.IMPORTANCE_HIGH
       );
-      channel.enableVibration(true);
-      channel.setVibrationPattern([500, 500, 500, 500]);
+      //channel.enableVibration(true);
+      //channel.setVibrationPattern([500, 500, 500, 500]);
 
       this.notificationManager.createNotificationChannel(channel);
     }
@@ -107,5 +110,15 @@ export class LocalCollectionService extends android.app.Service {
 
   private unregisterListeners() {
     this.sensorManager.unregisterListener(this.sensorListener.getListener());
+  }
+
+  private vibrateToNotifyExecutionEnd() {
+    const mode = getApplicationMode();
+    if (mode === ApplicationMode.DATA_COLLECTION) {
+      return;
+    }
+
+    const vibrator = new Vibrate();
+    vibrator.vibrate([1000, 500, 1000, 500]);
   }
 }
