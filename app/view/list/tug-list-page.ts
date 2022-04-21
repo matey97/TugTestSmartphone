@@ -1,6 +1,7 @@
 import { EventData, Frame, ItemEventData, Page } from "@nativescript/core";
 import { TugListViewModel } from "~/view/list/tug-list-view-model";
 import { wearosSensors } from "nativescript-wearos-sensors";
+import { PowerSavings } from "~/core/power-savings";
 
 export function navigatingTo(args: EventData) {
   const page = <Page>args.object;
@@ -34,6 +35,13 @@ async function preparePlugin() {
       console.log(`Could not prepare plugin. Reason: ${JSON.stringify(e)}`);
     }
   }
+
+  const powerSavings = new PowerSavings();
+  if (powerSavings.areDisabled()) {
+    return;
+  }
+
+  await powerSavings.requestDeactivationRationale();
 }
 
 let _vm;
