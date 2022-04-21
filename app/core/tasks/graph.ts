@@ -36,7 +36,11 @@ class TugTestTaskGraph implements TaskGraph {
 
     // Feature extraction, recognition and evaluation of TUG status
     on("enoughRecordsAcquired", run("featureExtractionTask"));
-    on("featuresExtracted", run("recognizerTask"));
+    on("featuresExtracted", run("forwardFeaturesToRecognitionTask"));
+
+    on("useLocalSourceDataRecognizer", run("recognitionForDataFromLocalDeviceTask"));
+    on("usePairedSourceDataRecognizer", run("recognitionForDataFromPairedDeviceTask"));
+
     on("recognitionFinished", run("recognitionResultEvaluationTask"));
 
     // Automatically end TUG test
