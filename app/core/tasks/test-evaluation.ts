@@ -1,6 +1,6 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { RecognitionResult } from "~/core/ml-model/recognition";
+import { RecognitionResult } from "~/core/recognition";
 import { Activity, fromString } from "~/core/tug-test/activities";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
 import { Status } from "~/core/tug-test/execution";

@@ -1,4 +1,4 @@
-import { RecognitionResult } from "~/core/ml-model/recognition";
+import { RecognitionResult } from "~/core/recognition";
 import { Activity } from "~/core/tug-test/activities";
 import { ActivityResult, TugResult } from "~/core/tug-test/result";
 

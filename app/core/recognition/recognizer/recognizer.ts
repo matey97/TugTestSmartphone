@@ -1,23 +1,24 @@
 import { Features, TimedFeatures } from "~/core/feature-extraction";
-import { ModelDownloader } from "~/core/ml-model/downloader";
-import { Model } from "~/core/ml-model/model";
-import {InferenceProbability, RecognitionResult} from "~/core/ml-model/recognition/index";
-
+import { ModelDownloader } from "~/core/recognition/downloader";
+import { Model } from "~/core/recognition/model";
+import { InferenceProbability, RecognitionResult } from "~/core/recognition";
+import { SensingDataSource } from "~/core/mode";
 import ByteBuffer = java.nio.ByteBuffer;
 
 export class Recognizer {
 
-  private model: Model
+  private model: Model;
 
   constructor(
-    private modelName: string = "tug-test-full"
+    private dataSource: SensingDataSource
   ) {
     this.initModel()
-      .then(() => console.log("Model initialized!"));
+      .then(() => console.log(`Model for data source ${this.dataSource} initialized!`))
+      .catch((e) => console.log(`Model for data source ${this.dataSource} was not initialized! Reason: ${JSON.stringify(e)}`));
   }
 
   private async initModel() {
-    const modelDownloader = new ModelDownloader(this.modelName);
+    const modelDownloader = new ModelDownloader(this.dataSource);
     const modelFilePath = await modelDownloader.getModelFilePath()
     this.model = new Model(modelFilePath)
   }
@@ -86,11 +87,4 @@ export class Recognizer {
 
     return recognitionProbas[0];
   }
-}
-
-let _instance;
-export function getRecognizer() {
-  if (!_instance)
-    _instance = new Recognizer();
-  return _instance;
 }
