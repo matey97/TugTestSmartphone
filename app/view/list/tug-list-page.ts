@@ -45,7 +45,7 @@ async function preparePlugin() {
 }
 
 let _vm;
-function getViewModel() {
+export function getViewModel(): TugListViewModel {
   if (!_vm)
     _vm = new TugListViewModel();
   return _vm;
