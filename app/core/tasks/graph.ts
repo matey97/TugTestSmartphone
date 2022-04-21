@@ -47,11 +47,11 @@ class TugTestTaskGraph implements TaskGraph {
     //on("testEvaluationTaskFinished", run("evtLogger"));
     on("detectedTugTestEnding", run("endTugTestTask"));
     on("tugTestEnded", run("executionFinishedEmitter"));
-    on("tugTestEnded", run("prepareSimpleResultTask"));
+    on("tugTestEnded", run("pairedDeviceResultSenderChecker"));
     on("tugTestEnded", run("evtLogger"));
     on("tugTestEnded", run("storeTugResult"));
 
-    on("simpleResultPrepared", run("sendSingleMessageTask"));
+    on("sendResultToPairedDevice", run("sendSingleMessageTask"));
 
     // Manual end TUG test
     on("stopExecutionCommand", run("endTugTestTask"));

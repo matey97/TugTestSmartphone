@@ -11,7 +11,7 @@ import { resultsStore } from "~/core/store/results-store";
 import { TugResult } from "~/core/tug-test/result";
 import { StartCollectionTask } from "~/core/tasks/start-collection-task";
 import { ForwardRecordsTask } from "~/core/tasks/forward-records-task";
-import { PrepareSimpleResultTask } from "~/core/tasks/prepare-simple-result-task";
+import { PairedDeviceResultSenderChecker } from "~/core/tasks/paired-device-result-sender-checker";
 import { StartSensorFromDeviceTask } from "~/core/tasks/start-sensor-from-device-task";
 import { StopSensorFromDeviceTask } from "~/core/tasks/stop-sensor-from-device-task";
 import { StartLocalSensorServiceTask } from "~/core/tasks/start-local-sensor-service-task";
@@ -43,7 +43,7 @@ export const appTasks: Array<Task> = [
   new RecognitionResultEvaluationTask(),
   new EndTugTestTask(),
   new ExecutionFinishedEmitter(),
-  new PrepareSimpleResultTask(),
+  new PairedDeviceResultSenderChecker(),
   new SimpleTask("storeTugResult", async ({ evt}) => {
     resultsStore.store(evt.data as TugResult);
   }),
