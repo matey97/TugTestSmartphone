@@ -31,7 +31,6 @@ export class LocalSensorListener {
           this.emitRecordsIfEnough(recordType);
         },
         onAccuracyChanged: (sensor: android.hardware.Sensor, accuracy: number) => {
-          console.log(`[LocalSensorListener]: AccuracyChanged: ${accuracy}`);
         }
       });
     }
@@ -87,7 +86,6 @@ export class LocalSensorListener {
         }
       }
     );
-    console.log(`${type} records emitted. Length: ${records.length}`);
   }
 
   private clear(type: SensorType) {
