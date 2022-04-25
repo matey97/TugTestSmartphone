@@ -1,6 +1,7 @@
 import { LocalSensorListener } from "~/core/collection/local-sensor-listener";
 import { ApplicationMode, getApplicationMode } from "~/core/mode";
 import { Vibrate } from "nativescript-vibrate";
+import { INTENT_TYPE, IntentType } from "~/core/collection/index";
 
 const CHANNEL_ID = "TugTest_Service";
 const CHANNEL_NAME = "TugTest Collection Service";
@@ -43,6 +44,14 @@ export class LocalCollectionService extends android.app.Service {
   }
 
   onStartCommand(intent: android.content.Intent, flags: number, startId: number): number {
+    const intentType = intent.getIntExtra(INTENT_TYPE, IntentType.START);
+
+    if (intentType === IntentType.STOP) {
+      this.unregisterListeners();
+      this.vibrateToNotifyExecutionEnd();
+      this.stopSelf();
+    }
+
     if (!LocalCollectionService.wakeLock.isHeld()) {
       LocalCollectionService.wakeLock.acquire();
     }
@@ -53,8 +62,6 @@ export class LocalCollectionService extends android.app.Service {
   }
 
   onDestroy() {
-    this.unregisterListeners();
-    this.vibrateToNotifyExecutionEnd();
     if (LocalCollectionService.wakeLock.isHeld()) {
       LocalCollectionService.wakeLock.release();
     }
@@ -119,6 +126,6 @@ export class LocalCollectionService extends android.app.Service {
     }
 
     const vibrator = new Vibrate();
-    vibrator.vibrate([1000, 500, 1000, 500]);
+    vibrator.vibrate([500, 500, 500, 500]);
   }
 }
