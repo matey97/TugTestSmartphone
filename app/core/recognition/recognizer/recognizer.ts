@@ -13,8 +13,8 @@ export class Recognizer {
     private dataSource: SensingDataSource
   ) {
     this.initModel()
-      .then(() => console.log(`Model for data source ${this.dataSource} initialized!`))
-      .catch((e) => console.log(`Model for data source ${this.dataSource} was not initialized! Reason: ${JSON.stringify(e)}`));
+      .then(() => console.log(`Model for ${this.dataSource} initialized!`))
+      .catch((e) => console.log(`Model for ${this.dataSource} was not initialized! Reason: ${JSON.stringify(e)}`));
   }
 
   private async initModel() {

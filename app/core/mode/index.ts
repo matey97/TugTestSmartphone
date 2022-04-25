@@ -1,4 +1,4 @@
-import { setNumber, getNumber, flush } from "@nativescript/core/application-settings"
+import { setNumber, getNumber, setString, getString, flush } from "@nativescript/core/application-settings"
 import { getNodeDiscoverer } from "nativescript-wearos-sensors/node";
 
 const APP_MODE_KEY = "app_mode";
@@ -10,8 +10,8 @@ export enum ApplicationMode {
 }
 
 export enum SensingDataSource {
-  LOCAL_DEVICE,
-  PAIRED_DEVICE,
+  LOCAL_DEVICE = "LOCAL_DEVICE",
+  PAIRED_DEVICE = "PAIRED_DEVICE",
 }
 
 export function setApplicationMode(mode: ApplicationMode) {
@@ -24,12 +24,12 @@ export function getApplicationMode(): ApplicationMode {
 }
 
 export function setSensingDataSource(source: SensingDataSource) {
-  setNumber(SENSING_DATA_SOURCE_KEY, source);
+  setString(SENSING_DATA_SOURCE_KEY, source);
   flush();
 }
 
 export function getSensingDataSource(): SensingDataSource {
-  return getNumber(SENSING_DATA_SOURCE_KEY);
+  return <SensingDataSource>getString(SENSING_DATA_SOURCE_KEY);
 }
 
 export async function dataSourceFromDeviceId(deviceId: string): Promise<SensingDataSource> {
