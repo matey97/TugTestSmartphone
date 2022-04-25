@@ -50,13 +50,13 @@ export class LocalCollectionService extends android.app.Service {
       this.unregisterListeners();
       this.vibrateToNotifyExecutionEnd();
       this.stopSelf();
+    } else {
+      if (!LocalCollectionService.wakeLock.isHeld()) {
+        LocalCollectionService.wakeLock.acquire();
+      }
+      this.runInForegroundWithNotification();
+      this.registerListeners();
     }
-
-    if (!LocalCollectionService.wakeLock.isHeld()) {
-      LocalCollectionService.wakeLock.acquire();
-    }
-    this.runInForegroundWithNotification();
-    this.registerListeners();
 
     return android.app.Service.START_STICKY;
   }
