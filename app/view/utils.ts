@@ -7,5 +7,7 @@ export function toLegibleDate(timestamp: number): string {
 }
 
 export function toLegibleDuration(duration: number): string {
-  return `${Math.round(duration/1000 * 100) / 100} seconds`
+  return duration !== -1
+    ? `${Math.round(duration/1000 * 100) / 100} seconds`
+    : "Unknown";
 }
