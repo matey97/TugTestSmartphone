@@ -173,7 +173,7 @@ export class TugListViewModel extends Observable {
       this.tugResults.unshift(...newResults);
       this.resultsVM.unshift(...newResultsVM);
     } else {
-      this.tugResults = this.tugResultsStore.queryAllSuccessful();
+      this.tugResults = this.tugResultsStore.queryAll();
       if (this.tugResults.length > 0) {
         this.resultsVM = new ObservableArray(this.toResultVM(this.tugResults));
       }

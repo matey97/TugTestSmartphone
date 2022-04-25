@@ -16,10 +16,9 @@ export class ResultsStore {
     return doc as TugResult;
   }
 
-  queryAllSuccessful(): Array<TugResult> {
+  queryAll(): Array<TugResult> {
     const results = this.db.query({
       select: [QueryMeta.ALL],
-      where: [{property: "successful", comparison: "equalTo", value: true}],
       order: [{property: "startTime", direction: "desc"}]
     });
 
