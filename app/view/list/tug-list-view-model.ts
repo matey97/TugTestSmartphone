@@ -109,10 +109,6 @@ export class TugListViewModel extends Observable {
       });
   }
 
-  addFakeExecution() {
-    this.fakeDataIn(100);
-  }
-
   modeSelected(evt: EventData) {
     if (this.runningLocal) {
       return;
@@ -191,17 +187,6 @@ export class TugListViewModel extends Observable {
     });
   }
 
-  private fakeDataIn(timeout: number) {
-    setTimeout(() => {
-      const fakeResult = generateFakeData();
-      resultsStore.store(fakeResult);
-      //this.resultsVM.unshift(...this.toResultVM([fakeResult]));
-      //this.tugResults.unshift(fakeResult);
-
-      //this.notifyPropertyChange("resultsVM", this.resultsVM);
-    }, timeout);
-  }
-
   private modeSelectionChange(toSelect: Label, toUnselect: Label) {
     toSelect.addPseudoClass("active");
     toUnselect.deletePseudoClass("active");
@@ -227,59 +212,6 @@ export class TugListViewModel extends Observable {
       }
     }, 1000);
   }
-}
-
-function generateFakeData() {
-  return {
-    deviceId: "fake",
-    successful: true,
-    startTime: Date.now(),
-    duration: getRandomInt(12000, 16000),
-    durationFromActivities: 15231,
-    activitiesDuration: [
-      {
-        name: Activity.STANDING_UP,
-        start: 0,
-        end: 0,
-        duration: getRandomInt(800, 1200)
-      },
-      {
-        name: Activity.WALKING,
-        start: 0,
-        end: 0,
-        duration: getRandomInt(2500, 3500)
-      },
-      {
-        name: Activity.TURNING,
-        start: 0,
-        end: 0,
-        duration: getRandomInt(1200, 1800)
-      },
-      {
-        name: Activity.WALKING,
-        start: 0,
-        end: 0,
-        duration: getRandomInt(2500, 3500)
-      },
-      {
-        name: Activity.TURNING,
-        start: 0,
-        end: 0,
-        duration: getRandomInt(1200, 1800)
-      },
-      {
-        name: Activity.SITTING,
-        start: 0,
-        end: 0,
-        duration: getRandomInt(800, 1200)
-      }
-    ],
-    recognitionResults: []
-  }
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 interface TugResultVM {
