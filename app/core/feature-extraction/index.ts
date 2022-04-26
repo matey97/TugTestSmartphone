@@ -10,22 +10,21 @@ export interface TimedFeatures {
   timestampEnd: number
 }
 
-interface Samples {
+export interface Samples {
   accX: AxisData,
   accY: AxisData,
   accZ: AxisData,
   gyroX: AxisData,
   gyroY: AxisData,
   gyroZ: AxisData,
-  timestamps: Date[],
+  timestampStart: number,
+  timestampEnd: number
 }
 
 const ACC_MAX_RANGE = 78.4532;
 const GYRO_MAX_RANGE = 34.906586;
 
-export function extractFeaturesFrom(recordsToProcess: RecordsToProcess): TimedFeatures {
-  const samples = normalize(toSamples(recordsToProcess));
-
+export function extractFeaturesFrom(samples: Samples): TimedFeatures {
   const [meanAccX, meanAccY, meanAccZ, meanGyroX, meanGyroY, meanGyroZ] = extractFeature(mean, samples);
   const [maxAccX, maxAccY, maxAccZ, maxGyroX, maxGyroY, maxGyroZ] = extractFeature(max, samples);
   const [minAccX, minAccY, minAccZ, minGyroX, minGyroY, minGyroZ] = extractFeature(min, samples);
@@ -44,12 +43,12 @@ export function extractFeaturesFrom(recordsToProcess: RecordsToProcess): TimedFe
 
   return {
     features,
-    timestampStart: samples.timestamps[0].getTime(),
-    timestampEnd: samples.timestamps[samples.timestamps.length - 1].getTime()
+    timestampStart: samples.timestampStart,
+    timestampEnd: samples.timestampEnd
   }
 }
 
-function toSamples(recordsToProcess: RecordsToProcess): Samples {
+export function toSamples(recordsToProcess: RecordsToProcess): Samples {
   return {
     accX: recordsToProcess.accelerometerRecords.map(value => value.x),
     accY: recordsToProcess.accelerometerRecords.map(value => value.y),
@@ -57,11 +56,12 @@ function toSamples(recordsToProcess: RecordsToProcess): Samples {
     gyroX: recordsToProcess.gyroscopeRecords.map(value => value.x),
     gyroY: recordsToProcess.gyroscopeRecords.map(value => value.y),
     gyroZ: recordsToProcess.gyroscopeRecords.map(value => value.z),
-    timestamps: recordsToProcess.accelerometerRecords.map(value => value.timestamp)
+    timestampStart: recordsToProcess.accelerometerRecords[0].timestamp.getTime(),
+    timestampEnd: recordsToProcess.accelerometerRecords[recordsToProcess.accelerometerRecords.length - 1].timestamp.getTime()
   }
 }
 
-function normalize(samples: Samples): Samples {
+export function normalize(samples: Samples): Samples {
   return {
     accX: samples.accX.map(value => normalizeInRange(value, ACC_MAX_RANGE, -ACC_MAX_RANGE)),
     accY: samples.accY.map(value => normalizeInRange(value, ACC_MAX_RANGE, -ACC_MAX_RANGE)),
@@ -69,7 +69,8 @@ function normalize(samples: Samples): Samples {
     gyroX: samples.gyroX.map(value => normalizeInRange(value, GYRO_MAX_RANGE, -GYRO_MAX_RANGE)),
     gyroY: samples.gyroY.map(value => normalizeInRange(value, GYRO_MAX_RANGE, -GYRO_MAX_RANGE)),
     gyroZ: samples.gyroZ.map(value => normalizeInRange(value, GYRO_MAX_RANGE, -GYRO_MAX_RANGE)),
-    timestamps: samples.timestamps
+    timestampStart: samples.timestampStart,
+    timestampEnd: samples.timestampEnd
   }
 }
 
