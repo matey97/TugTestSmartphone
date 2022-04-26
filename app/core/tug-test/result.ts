@@ -1,4 +1,5 @@
 import { Activity } from "~/core/tug-test/activities";
+import { RecognitionResult } from "~/core/recognition";
 
 export interface TugResult {
   deviceId: string,
@@ -6,6 +7,7 @@ export interface TugResult {
   successful: boolean,
   duration: number
   activitiesDuration: ActivityResult[],
+  recognitionResults: RecognitionResult[]
 }
 
 export interface ActivityResult {

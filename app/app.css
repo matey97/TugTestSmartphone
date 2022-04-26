@@ -30,6 +30,10 @@ Button.-primary {
   height: 80;
 }
 
+.simple-card.device {
+  height: 100;
+}
+
 .simple-card.margin-bottom {
   margin-bottom: 5;
 }
@@ -39,6 +43,10 @@ Button.-primary {
   font-size: 60;
   text-align: center;
   vertical-align: center;
+}
+
+.mdi-ro.small {
+  font-size: 55;
 }
 
 .label-title {
@@ -62,4 +70,31 @@ Button.-primary {
 
 .label-header.v-align {
   vertical-align: center;
+}
+
+.mode-selector {
+  width: 100%;
+  font-size: 16;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: center;
+}
+
+.mode-selector:active {
+  background-color: greenyellow;
+}
+
+.mode-selector.left {
+  border-radius: 5 0 0 5;
+  border-width: 2px;
+}
+
+.mode-selector.right {
+  border-radius: 0 5 5 0;
+  border-width: 2px;
+}
+
+Label.countdown {
+  font-size: 28;
+  font-weight: bold;
 }

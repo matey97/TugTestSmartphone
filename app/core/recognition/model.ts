@@ -2,7 +2,7 @@ import Interpreter = org.tensorflow.lite.Interpreter;
 import MetadataExtractor = org.tensorflow.lite.support.metadata.MetadataExtractor;
 type Labels = string[];
 
-const DEFAULT_LABELS_FILE = "test_labels.txt";
+const DEFAULT_LABELS_FILE = "labels.txt";
 
 export class Model {
 

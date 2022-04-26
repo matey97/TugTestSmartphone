@@ -19,16 +19,50 @@
     </ActionBar>
 
     <StackLayout width="85%">
+
+        <StackLayout>
+            <Label text="Start a TUG execution from an available device:"
+                   class="label-header"
+            ></Label>
+            <Label text="Local device:"></Label>
+            <GridLayout columns="2*,6*,3*" rows="*,2*" class="simple-card device">
+                <Label col="0" row="0" rowSpan="2" text="&#xe32c;" class="mdi-ro"></Label>
+                <Label col="0" row="0" colSpan="3" class="label-header bold" text="{{ localNode.name }}"></Label>
+                <GridLayout col="1" row="1" columns="*,*" rows="*,2*">
+                    <Label col="0" row="0" horizontalAlignment="center" colSpan="3" text="Operation mode:"></Label>
+                    <Label id="tugSelector" col="0" row="1" text="TUG" class="mode-selector left" tap="{{ modeSelected }}"></Label>
+                    <Label id="collectionSelector" col="1" row="1" text="Collection" class="mode-selector right" tap="{{ modeSelected }}"></Label>
+                </GridLayout>
+                <Button col="2" row="0" rowSpan="2" text="Start" class="-primary" tap="{{ onStartInLocalDevice }}"
+                        visibility="{{ runningLocal ? 'collapsed' : 'visible' }}"></Button>
+                <StackLayout col="2" row="0" rowSpan="2" orientation="horizontal" horizontalAlignment="center" verticalAlignment="center" visibility="{{ runningLocal ? 'visible' : 'collapsed' }}">
+                    <Label text="{{ countdown }}" class="countdown"
+                           visibility="{{ runningCountdown ? 'visible' : 'collapsed' }}"></Label>
+                    <Button text="Stop" class="-primary" tap="{{ onStopInLocalDevice }}"
+                            visibility="{{ runningCountdown ? 'collapsed' : 'visible' }}"></Button>
+                </StackLayout>
+
+            </GridLayout>
+            <Label text="Connected devices:" visibility="{{ connectedNodes.length !== 0 ? 'visible' : 'collapsed' }}"></Label>
+            <ListView items="{{ connectedNodes }}" separatorColor="Transparent">
+                <ListView.itemTemplate>
+                    <GridLayout columns="*,4*" rows="*,*" class="simple-card device">
+                        <Label col="0" row="0" rowSpan="2" text="&#xe334;" class="mdi-ro small"></Label>
+                        <Label col="1" row="0" class="label-header bold" text="{{ name }}"></Label>
+                        <Label col="1" row="1" textWrap="true" text="Open the smartwatch application and start a TUG execution following the instructions."></Label>
+                    </GridLayout>
+                </ListView.itemTemplate>
+            </ListView>
+
+        </StackLayout>
+
         <StackLayout visibility="{{ resultsVM.length === 0 ? 'visible' : 'collapsed' }}">
             <Label text="There are no TUG executions" class="label-title"/>
-            <Label text="Start a TUG execution from your smartwatch to see the results"
-                class="label-header"
-            ></Label>
         </StackLayout>
 
 
         <StackLayout visibility="{{ resultsVM.length !== 0 ? 'visible' : 'collapsed' }}">
-            <Label text="Results from TUG tests perfomed" class="label-title" ></Label>
+            <Label text="Results from TUG tests performed" class="label-title" ></Label>
             <Label text="Tap on a TUG test result to see more information" class="label-header"></Label>
             <ListView items="{{ resultsVM }}" itemTap="onTugResultTap" separatorColor="Transparent">
                 <ListView.itemTemplate>

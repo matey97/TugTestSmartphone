@@ -17,6 +17,7 @@ module.exports = env => {
   // Add your custom Activities, Services and other Android app components here.
   const appComponents = env.appComponents || [];
   appComponents.push(...[
+    "./core/collection/local-collection-service",
     "@nativescript/core/ui/frame",
     "@nativescript/core/ui/frame/activity",
   ]);

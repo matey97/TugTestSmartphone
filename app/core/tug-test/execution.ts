@@ -1,4 +1,4 @@
-import { RecognitionResult } from "~/core/ml-model/recognition";
+import { RecognitionResult } from "~/core/recognition";
 import { Activity } from "~/core/tug-test/activities";
 import { ActivityResult, TugResult } from "~/core/tug-test/result";
 
@@ -132,7 +132,8 @@ export class TugExecution {
         results[0].start,
         results[results.length - 1].end
       ),
-      activitiesDuration: results
+      activitiesDuration: results,
+      recognitionResults: this.recognitionResults
     };
   }
 
@@ -142,7 +143,8 @@ export class TugExecution {
       startTime: this.starTime,
       successful: false,
       duration: -1,
-      activitiesDuration: results
+      activitiesDuration: results,
+      recognitionResults: this.recognitionResults
     };
   }
 }

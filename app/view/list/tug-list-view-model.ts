@@ -1,10 +1,56 @@
-import { Dialogs, knownFolders, Observable, ObservableArray } from "@nativescript/core";
+import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } from "@nativescript/core";
 import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { Activity } from "~/core/tug-test/activities";
+import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
+import {
+  ApplicationMode,
+  getApplicationMode,
+  setApplicationMode,
+} from "~/core/mode";
+import { wearosSensors } from "nativescript-wearos-sensors";
+
+const COUNTDOWN = 5; // Seconds
 
 export class TugListViewModel extends Observable {
+
+  tugSelectorLabel: Label;
+  collectionSelectorLabel: Label;
+
+  private nodeDiscoverer: NodeDiscoverer;
+  private localNode: Node;
+  private connectedNodes: Node[] = [];
+
+  private _runningLocal: boolean = false;
+  get runningLocal(): boolean {
+    return this._runningLocal;
+  }
+
+  set runningLocal(value: boolean) {
+    this._runningLocal = value;
+    this.notifyPropertyChange("runningLocal", this.runningLocal);
+  }
+
+  private _runningCountdown: boolean = false;
+  get runningCountdown(): boolean {
+    return this._runningCountdown;
+  }
+
+  set runningCountdown(value: boolean) {
+    this._runningCountdown = value;
+    this.notifyPropertyChange("runningCountdown", this.runningCountdown);
+  }
+
+  private _countdown: number;
+  get countdown(): number {
+    return this._countdown;
+  }
+
+  set countdown(value: number) {
+    this._countdown = value;
+    this.notifyPropertyChange("countdown", this.countdown);
+  }
 
   private tugResults: TugResult[] = [];
   private resultsVM: ObservableArray<TugResultVM> = new ObservableArray([]);
@@ -13,6 +59,10 @@ export class TugListViewModel extends Observable {
     private tugResultsStore = resultsStore
   ) {
     super();
+    setApplicationMode(ApplicationMode.INFERENCE);
+    this.nodeDiscoverer = getNodeDiscoverer();
+    this.getLocalNode();
+    this.getConnectedNodes();
     this.updateTugResults();
     tugResultsStore.onChanges((changes) => this.updateTugResults(changes));
   }
@@ -63,6 +113,54 @@ export class TugListViewModel extends Observable {
     this.fakeDataIn(100);
   }
 
+  modeSelected(evt: EventData) {
+    if (this.runningLocal) {
+      return;
+    }
+
+    const item = evt.object as Label;
+
+    if (item.id === "tugSelector") {
+      setApplicationMode(ApplicationMode.INFERENCE);
+      this.modeSelectionChange(this.tugSelectorLabel, this.collectionSelectorLabel);
+    } else {
+      setApplicationMode(ApplicationMode.DATA_COLLECTION);
+      this.modeSelectionChange(this.collectionSelectorLabel, this.tugSelectorLabel);
+    }
+  }
+
+  onStartInLocalDevice() {
+    this.runningLocal = true;
+    this.runCountdown();
+  }
+
+  onStopInLocalDevice() {
+    const event = this.buildLocalEvent("stop");
+    wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
+
+    this.runningLocal = false;
+  }
+
+  private async getLocalNode() {
+    this.localNode = await this.nodeDiscoverer.getLocalNode();
+    this.notifyPropertyChange("localNode", this.localNode);
+  }
+
+  private getConnectedNodes() {
+    this.connectedNodes = [];
+    this.nodeDiscoverer.getConnectedNodes().subscribe({
+      next: (nodeDiscovered: NodeDiscovered) => {
+        if (nodeDiscovered.error) {
+          return;
+        }
+
+        const node = nodeDiscovered.node;
+        this.connectedNodes.push(node);
+        this.notifyPropertyChange("connectedNodes", this.connectedNodes);
+      }
+    })
+  }
+
   private updateTugResults(changes?: string[]) {
     if (changes) {
       const newResults = changes
@@ -102,6 +200,32 @@ export class TugListViewModel extends Observable {
 
       //this.notifyPropertyChange("resultsVM", this.resultsVM);
     }, timeout);
+  }
+
+  private modeSelectionChange(toSelect: Label, toUnselect: Label) {
+    toSelect.addPseudoClass("active");
+    toUnselect.deletePseudoClass("active");
+  }
+
+  private buildLocalEvent(action: "start" | "stop") {
+    return getApplicationMode() === ApplicationMode.INFERENCE
+      ? `${action}ExecutionCommand`
+      : `${action}CollectionCommand`;
+  }
+
+  private runCountdown() {
+    this.countdown = COUNTDOWN;
+    this.runningCountdown = true;
+
+    const id = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        this.runningCountdown = false;
+        clearInterval(id);
+
+        wearosSensors.emitEvent(this.buildLocalEvent("start"), { deviceId: this.localNode.id });
+      }
+    }, 1000);
   }
 }
 
@@ -149,7 +273,8 @@ function generateFakeData() {
         end: 0,
         duration: getRandomInt(800, 1200)
       }
-    ]
+    ],
+    recognitionResults: []
   }
 }
 

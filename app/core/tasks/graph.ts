@@ -13,6 +13,15 @@ class TugTestTaskGraph implements TaskGraph {
     on("startExecutionCommand", run("startTugTestRequestTask"));
     on("startCollectionCommand", run("startCollectionTask"));
 
+    on("startSensorFromPairedDevice", run("accelerometerStartSensorTask"));
+    on("startSensorFromPairedDevice", run("gyroscopeStartSensorTask"));
+
+    on("stopSensorFromPairedDevice", run("accelerometerStopSensorTask"));
+    on("stopSensorFromPairedDevice", run("gyroscopeStopSensorTask"));
+
+    on("startSensorFromLocalDevice", run("startLocalSensorServiceTask"));
+    on("stopSensorFromLocalDevice", run("stopLocalSensorServiceTask"));
+
     // Handle data collected: for INFERENCE or DATA_COLLECTION
     on("accelerometerRecordsAcquired", run("forwardRecordsTask"));
     on("gyroscopeRecordsAcquired", run("forwardRecordsTask"));
@@ -20,45 +29,45 @@ class TugTestTaskGraph implements TaskGraph {
     //--------------------------
     // TUG execution (INFERENCE)
     //--------------------------
-    on("tugTestStarted", run("accelerometerStartSensorTask"));
-    on("tugTestStarted", run("gyroscopeStartSensorTask"));
+    on("tugTestStarted", run("startSensorFromDeviceTask"));
 
     on("accelerometerRecordsForInference", run("recordsReceiverTask"));
     on("gyroscopeRecordsForInference", run("recordsReceiverTask"));
 
     // Feature extraction, recognition and evaluation of TUG status
     on("enoughRecordsAcquired", run("featureExtractionTask"));
-    on("featuresExtracted", run("recognizerTask"));
+    on("featuresExtracted", run("forwardFeaturesToRecognitionTask"));
+
+    on("useLocalSourceDataRecognizer", run("recognitionForDataFromLocalDeviceTask"));
+    on("usePairedSourceDataRecognizer", run("recognitionForDataFromPairedDeviceTask"));
+
     on("recognitionFinished", run("recognitionResultEvaluationTask"));
 
     // Automatically end TUG test
     //on("testEvaluationTaskFinished", run("evtLogger"));
     on("detectedTugTestEnding", run("endTugTestTask"));
     on("tugTestEnded", run("executionFinishedEmitter"));
-    on("tugTestEnded", run("prepareSimpleResultTask"));
+    on("tugTestEnded", run("pairedDeviceResultSenderChecker"));
     on("tugTestEnded", run("evtLogger"));
     on("tugTestEnded", run("storeTugResult"));
 
-    on("simpleResultPrepared", run("sendResultTask"));
+    on("sendResultToPairedDevice", run("sendSingleMessageTask"));
 
     // Manual end TUG test
     on("stopExecutionCommand", run("endTugTestTask"));
 
-    on("executionFinished", run("accelerometerStopSensorTask"));
-    on("executionFinished", run("gyroscopeStopSensorTask"));
+    on("executionFinished", run("stopSensorFromDeviceTask"));
     on("executionFinished", run("recordsReceiverClearStateTask"));
 
     //----------------------
     // Data collection mode
     //----------------------
-    on("collectionStarted", run("accelerometerStartSensorTask"));
-    on("collectionStarted", run("gyroscopeStartSensorTask"));
+    on("collectionStarted", run("startSensorFromDeviceTask"));
 
     on("accelerometerRecordsForCollection", run("accumulatorTask"));
     on("gyroscopeRecordsForCollection", run("accumulatorTask"));
 
-    on("stopCollectionCommand", run("accelerometerStopSensorTask"));
-    on("stopCollectionCommand", run("gyroscopeStopSensorTask"));
+    on("stopCollectionCommand", run("stopSensorFromDeviceTask"));
     on("stopCollectionCommand", run("storeCollectedDataTask"));
   }
 }
