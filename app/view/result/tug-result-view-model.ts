@@ -14,19 +14,25 @@ export class TugResultViewModel extends Observable {
 
   private toResultVM(tugResult: TugResult): ResultVM {
     return {
+      successful: tugResult.duration !== -1,
       date: toLegibleDate(tugResult.startTime),
       duration: toLegibleDuration(tugResult.duration),
-      standUp: toLegibleDuration(tugResult.activitiesDuration[0].duration),
-      firstWalk: toLegibleDuration(tugResult.activitiesDuration[1].duration),
-      firstTurn: toLegibleDuration(tugResult.activitiesDuration[2].duration),
-      secondWalk: toLegibleDuration(tugResult.activitiesDuration[3].duration),
-      secondTurn: toLegibleDuration(tugResult.activitiesDuration[4].duration),
-      sitDown: toLegibleDuration(tugResult.activitiesDuration[5].duration)
-    }
+      standUp: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[0])),
+      firstWalk: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[1])),
+      firstTurn: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[2])),
+      secondWalk: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[3])),
+      secondTurn: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[4])),
+      sitDown: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[5]))
+    };
+  }
+
+  private getDuration(property) {
+    return property ? property.duration : -1;
   }
 }
 
 interface ResultVM {
+  successful: boolean,
   date: string,
   duration: string,
   standUp: string,

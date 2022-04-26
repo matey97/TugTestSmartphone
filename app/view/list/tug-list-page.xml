@@ -11,11 +11,6 @@
                 tap="{{ onDeleteExecutions }}"
                 android.position="popup"
         ></ActionItem>
-        <ActionItem
-                text="Add fake execution"
-                tap="{{ addFakeExecution }}"
-                android.position="popup"
-        ></ActionItem>
     </ActionBar>
 
     <StackLayout width="85%">
