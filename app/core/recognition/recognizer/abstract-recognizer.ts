@@ -1,35 +1,40 @@
-import { Features, TimedFeatures } from "~/core/feature-extraction";
+import { Samples } from "~/core/feature-extraction";
 import { ModelDownloader } from "~/core/recognition/downloader";
 import { Model } from "~/core/recognition/model";
 import { InferenceProbability, RecognitionResult } from "~/core/recognition";
-import { SensingDataSource } from "~/core/mode";
+import { ModelType, SensingDataSource } from "~/core/mode";
 import ByteBuffer = java.nio.ByteBuffer;
 
-export class Recognizer {
+export abstract class AbstractRecognizer {
 
   private model: Model;
 
-  constructor(
-    private dataSource: SensingDataSource
+  protected constructor(
+    private dataSource: SensingDataSource,
+    private modelType: ModelType
   ) {
     this.initModel()
-      .then(() => console.log(`Model for ${this.dataSource} initialized!`))
-      .catch((e) => console.log(`Model for ${this.dataSource} was not initialized! Reason: ${JSON.stringify(e)}`));
+      .then(() => console.log(`${this.modelType} model for ${this.dataSource} initialized!`))
+      .catch((e) => console.log(`${this.modelType} model for ${this.dataSource} was not initialized! Reason: ${JSON.stringify(e)}`));
+  }
+
+  protected createBuffer(size: number, dataTypeSize: any): ByteBuffer {
+    const bufferSize: number = this.getSizeInBytes(size, dataTypeSize);
+
+    return ByteBuffer.allocateDirect(bufferSize).order(java.nio.ByteOrder.nativeOrder());
   }
 
   private async initModel() {
-    const modelDownloader = new ModelDownloader(this.dataSource);
+    const modelDownloader = new ModelDownloader(this.dataSource, this.modelType);
     const modelFilePath = await modelDownloader.getModelFilePath()
     this.model = new Model(modelFilePath)
   }
 
-  async recognize(timedFeatures: TimedFeatures): Promise<RecognitionResult> {
+  async recognize(samples: Samples): Promise<RecognitionResult> {
     if (!this.isReady())
       await this.initModel();
 
-    const features = timedFeatures.features;
-
-    const inputBuffer = this.createInputBuffer(features);
+    const inputBuffer = this.createInputBuffer(samples);
     const outputBuffer = this.createOutputBuffer();
 
     this.model.interpreter.run(inputBuffer, outputBuffer);
@@ -38,8 +43,8 @@ export class Recognizer {
 
     return {
       inference: mostProbable,
-      timestampStart: timedFeatures.timestampStart,
-      timestampEnd: timedFeatures.timestampEnd
+      timestampStart: samples.timestampStart,
+      timestampEnd: samples.timestampEnd
     }
   }
 
@@ -47,24 +52,8 @@ export class Recognizer {
     return !!this.model;
   }
 
-  private createInputBuffer(features: Features): ByteBuffer {
-    const input: ByteBuffer = this.createBuffer(features.length, java.lang.Float.SIZE);
-
-    for (let feature of features) {
-      input.putFloat(feature);
-    }
-
-    return input;
-  }
-
   private createOutputBuffer(): ByteBuffer {
     return this.createBuffer(this.model.labels.length, java.lang.Float.SIZE);
-  }
-
-  private createBuffer(size: number, dataTypeSize: any): ByteBuffer {
-    const bufferSize: number = this.getSizeInBytes(size, dataTypeSize);
-
-    return ByteBuffer.allocateDirect(bufferSize).order(java.nio.ByteOrder.nativeOrder());
   }
 
   private getSizeInBytes(size: number, dataTypeSize: any): number {
@@ -87,4 +76,6 @@ export class Recognizer {
 
     return recognitionProbas[0];
   }
+
+  protected abstract createInputBuffer(samples: Samples): ByteBuffer;
 }
