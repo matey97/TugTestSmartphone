@@ -1,6 +1,5 @@
 import { SimpleTask, Task } from "nativescript-task-dispatcher/tasks";
 import { RecordsReceiverTask } from "~/core/tasks/records-receiver";
-import { FeatureExtractionTask } from "~/core/tasks/feature-extraction";
 import { getRecordsReceiver } from "~/core/receiver/records-receiver";
 import { RecognitionTask } from "~/core/tasks/recognition-task";
 import { RecognitionResultEvaluationTask } from "~/core/tasks/test-evaluation";
@@ -31,7 +30,6 @@ export const appTasks: Array<Task> = [
   new StartLocalSensorServiceTask(),
   new StopLocalSensorServiceTask(),
   new RecordsReceiverTask(),
-  new FeatureExtractionTask(),
   new ForwardSamplesToRecognitionTask(),
   new RecognitionTask(
     ModelType.CNN,
