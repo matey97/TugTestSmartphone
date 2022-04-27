@@ -1,8 +1,8 @@
-import { Samples } from "~/core/feature-extraction";
 import { ModelDownloader } from "~/core/recognition/downloader";
 import { Model } from "~/core/recognition/model";
 import { InferenceProbability, RecognitionResult } from "~/core/recognition";
 import { ModelType, SensingDataSource } from "~/core/mode";
+import { Samples } from "~/core/recognition/recognizer/samples";
 import ByteBuffer = java.nio.ByteBuffer;
 
 export abstract class AbstractRecognizer {

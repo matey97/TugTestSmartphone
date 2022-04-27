@@ -1,6 +1,7 @@
 import { AbstractRecognizer} from "~/core/recognition/recognizer/abstract-recognizer";
 import { ModelType, SensingDataSource } from "~/core/mode";
-import { extractFeaturesFrom, Samples } from "~/core/feature-extraction";
+import { Samples } from "~/core/recognition/recognizer/samples";
+import { extractFeaturesFrom } from "~/core/recognition/recognizer/mlp/features";
 import ByteBuffer = java.nio.ByteBuffer;
 
 export class MLPRecognizer extends AbstractRecognizer {

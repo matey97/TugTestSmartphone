@@ -3,7 +3,7 @@ import { ModelType, SensingDataSource } from "~/core/mode";
 import { AbstractRecognizer } from "~/core/recognition/recognizer/abstract-recognizer";
 import { pascalCase } from "~/core/utils/strings";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { Samples } from "~/core/feature-extraction";
+import { Samples } from "~/core/recognition/recognizer/samples";
 
 const DEFAULT_EVENT = "recognitionFinished";
 

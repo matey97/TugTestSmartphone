@@ -2,7 +2,8 @@ import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/task
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { getModelType, getSensingDataSource, ModelType, SensingDataSource } from "~/core/mode";
 import { RecordsToProcess } from "~/core/feature-extraction/records-to-process";
-import { normalize, toSamples } from "~/core/feature-extraction";
+import { normalize } from "~/core/recognition/preprocessing";
+import { toSamples } from "~/core/recognition/recognizer/samples";
 
 const LOCAL_CNN = "useLocalSourceDataCNNRecognizer";
 const LOCAL_MLP = "useLocalSourceDataMLPRecognizer";

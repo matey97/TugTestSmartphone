@@ -1,6 +1,6 @@
 import { AbstractRecognizer } from "~/core/recognition/recognizer/abstract-recognizer";
 import { ModelType, SensingDataSource } from "~/core/mode";
-import { Samples } from "~/core/feature-extraction";
+import { Samples } from "~/core/recognition/recognizer/samples";
 import ByteBuffer = java.nio.ByteBuffer;
 
 const INPUT_CHANNELS = 6;
