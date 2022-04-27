@@ -3,7 +3,9 @@ import { getNodeDiscoverer } from "nativescript-wearos-sensors/node";
 
 const APP_MODE_KEY = "app_mode";
 const SENSING_DATA_SOURCE_KEY = "sensing_data_source";
-const MODEL_TYPE_KEY = "model_type";
+function modelTypeKey(dataSource: SensingDataSource): string {
+  return `${dataSource.toLowerCase()}_model_type`;
+}
 
 export enum ApplicationMode {
   INFERENCE,
@@ -38,13 +40,13 @@ export function getSensingDataSource(): SensingDataSource {
   return <SensingDataSource>getString(SENSING_DATA_SOURCE_KEY);
 }
 
-export function setModelType(modelType: ModelType) {
-  setString(MODEL_TYPE_KEY, modelType);
+export function setModelType(modelType: ModelType, dataSource: SensingDataSource) {
+  setString(modelTypeKey(dataSource), modelType);
   flush();
 }
 
-export function getModelType(): ModelType {
-  return <ModelType>getString(MODEL_TYPE_KEY, ModelType.MLP);
+export function getModelType(dataSource: SensingDataSource): ModelType {
+  return <ModelType>getString(modelTypeKey(dataSource), ModelType.MLP);
 }
 
 export async function dataSourceFromDeviceId(deviceId: string): Promise<SensingDataSource> {

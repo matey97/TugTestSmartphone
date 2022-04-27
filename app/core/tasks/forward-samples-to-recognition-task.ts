@@ -26,7 +26,7 @@ export class ForwardSamplesToRecognitionTask extends Task {
     const samples = normalize(toSamples(records));
 
     const dataSource = getSensingDataSource();
-    const modelType = getModelType();
+    const modelType = getModelType(dataSource);
 
     let event;
     if (dataSource === SensingDataSource.LOCAL_DEVICE) {
