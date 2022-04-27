@@ -1,7 +1,7 @@
-import { ModelDownloader } from "~/core/recognition/downloader";
 import { Model } from "~/core/recognition/model";
 import { InferenceProbability, RecognitionResult } from "~/core/recognition";
 import { ModelType, SensingDataSource } from "~/core/mode";
+import { getModelManager, ModelManager } from "~/core/recognition/model/model-manager";
 import { Samples } from "~/core/recognition/recognizer/samples";
 import ByteBuffer = java.nio.ByteBuffer;
 
@@ -11,11 +11,12 @@ export abstract class AbstractRecognizer {
 
   protected constructor(
     private dataSource: SensingDataSource,
-    private modelType: ModelType
+    private modelType: ModelType,
+    private modelManager: ModelManager = getModelManager()
   ) {
     this.initModel()
-      .then(() => console.log(`${this.modelType} model for ${this.dataSource} initialized!`))
-      .catch((e) => console.log(`${this.modelType} model for ${this.dataSource} was not initialized! Reason: ${JSON.stringify(e)}`));
+      .then(() => console.log(`${this.dataSource}_${this.modelType} model loaded!`))
+      .catch((e) => console.log(e));
   }
 
   protected createBuffer(size: number, dataTypeSize: any): ByteBuffer {
@@ -25,9 +26,7 @@ export abstract class AbstractRecognizer {
   }
 
   private async initModel() {
-    const modelDownloader = new ModelDownloader(this.dataSource, this.modelType);
-    const modelFilePath = await modelDownloader.getModelFilePath()
-    this.model = new Model(modelFilePath)
+    this.model = await this.modelManager.getModel(this.dataSource, this.modelType);
   }
 
   async recognize(samples: Samples): Promise<RecognitionResult> {
