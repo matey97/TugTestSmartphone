@@ -35,10 +35,6 @@ export class ModelManager {
     );
   }
 
-  public getModels(): Model[] {
-    return Array.from(this.models.values());
-  }
-
   public async getModel(dataSource: SensingDataSource, modelType: ModelType): Promise<Model> {
     const key = modelKey(dataSource, modelType);
     if (!this.models.has(key)) {
@@ -47,6 +43,16 @@ export class ModelManager {
     }
 
     return this.models.get(key);
+  }
+
+  public getModels(): Model[] {
+    return Array.from(this.models.values());
+  }
+
+  public getModelsFor(dataSource: SensingDataSource): Model[] {
+    return Array.from(this.models.keys())
+      .filter((key) => key.startsWith(dataSource))
+      .map((key) => this.models.get(key))
   }
 
   private async downloadModel(modelKey: string): Promise<Model> {
@@ -67,11 +73,11 @@ export class ModelManager {
 }
 
 function modelKey(dataSource: SensingDataSource, modelType: ModelType): string {
-  return `${dataSource}_${modelType}`;
+  return `${dataSource}-${modelType}`;
 }
 
 function dataSourceAndTypeFromKey(key: string) {
-  const keys = key.split("_");
+  const keys = key.split("-");
   return {
     dataSource: <SensingDataSource>keys[0],
     modelType: <ModelType>keys[1]

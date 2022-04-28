@@ -15,7 +15,7 @@ export abstract class AbstractRecognizer {
     private modelManager: ModelManager = getModelManager()
   ) {
     this.initModel()
-      .then(() => console.log(`${this.dataSource}_${this.modelType} model loaded!`))
+      .then(() => console.log(`${this.dataSource}-${this.modelType} model loaded!`))
       .catch((e) => console.log(e));
   }
 
