@@ -39,12 +39,12 @@ export const appTasks: Array<Task> = [
   new RecognitionTask(
     ModelType.MLP,
     SensingDataSource.LOCAL_DEVICE,
-    getCNNRecognizer(SensingDataSource.LOCAL_DEVICE)
+    getMLPRecognizer(SensingDataSource.LOCAL_DEVICE)
   ),
   new RecognitionTask(
     ModelType.CNN,
     SensingDataSource.PAIRED_DEVICE,
-    getMLPRecognizer(SensingDataSource.PAIRED_DEVICE)
+    getCNNRecognizer(SensingDataSource.PAIRED_DEVICE)
   ),
   new RecognitionTask(
     ModelType.MLP,
