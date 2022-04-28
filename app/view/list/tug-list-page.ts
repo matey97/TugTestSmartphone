@@ -1,4 +1,4 @@
-import { EventData, Frame, ItemEventData, Page } from "@nativescript/core";
+import { ActionItem, EventData, Frame, ItemEventData, Page, ShowModalOptions } from "@nativescript/core";
 import { TugListViewModel } from "~/view/list/tug-list-view-model";
 import { wearosSensors } from "nativescript-wearos-sensors";
 import { PowerSavings } from "~/core/power-savings";
@@ -22,6 +22,21 @@ export function onTugResultTap(args: ItemEventData) {
     moduleName: "/view/result/tug-result-page",
     context: { tugResult: selectedResult }
   })
+}
+
+export function onSettingsOptionTap(args: ItemEventData) {
+  const actionItem = <ActionItem>args.object;
+  const options: ShowModalOptions = {
+    context: undefined,
+    closeCallback: () => {},
+    fullscreen: true,
+    animated: true
+  }
+
+  actionItem.showModal(
+    "/view/modals/modal-root",
+    options
+  );
 }
 
 async function preparePlugin() {

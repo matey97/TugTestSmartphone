@@ -1,0 +1,53 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" loaded="{{ onViewLoaded }}">
+    <ActionBar title="Settings" backgroundColor="GreenYellow">
+        <ActionItem
+                icon="font://&#xe5cd;"
+                tap="onCloseModal"
+                android.position="actionBar"
+                class="mdi-ro action-item"
+        ></ActionItem>
+    </ActionBar>
+
+    <StackLayout orientation="vertical" style="padding: 20">
+        <Label text="Available models" class="label-title"/>
+
+        <Repeater items="{{ availableModels }}">
+            <Repeater.itemsLayout>
+                <StackLayout orientation="vertical"/>
+            </Repeater.itemsLayout>
+            <Repeater.itemTemplate>
+                <StackLayout>
+                    <Label text="{{ $value.dataSource }}" class="label-header"/>
+                    <Repeater items="{{ $value.info }}">
+                        <Repeater.itemsLayout>
+                            <StackLayout orientation="vertical"/>
+                        </Repeater.itemsLayout>
+                        <Repeater.itemTemplate>
+                            <GridLayout id="{{ $value.model.name }}" rows="3*,2*,2*" columns="*,*" class="simple-card model margin-bottom" tap="{{ $value.vm.modelSelected }}">
+                                <Label row="0" col="0" colSpan="2" text="{{ $value.model.name }}" class="label-header bold"/>
+                                <Label row="1" col="0">
+                                    <FormattedString>
+                                        <Span text="Architecture: "/>
+                                        <Span text="{{ $value.type }}"/>
+                                    </FormattedString>
+                                </Label>
+                                <Label row="1" col="1">
+                                    <FormattedString>
+                                        <Span text="Version: "/>
+                                        <Span text="{{ $value.model.version }}"/>
+                                    </FormattedString>
+                                </Label>
+                                <Label row="2" col="0">
+                                    <FormattedString>
+                                        <Span text="Author: "/>
+                                        <Span text="{{ $value.model.author }}"/>
+                                    </FormattedString>
+                                </Label>
+                            </GridLayout>
+                        </Repeater.itemTemplate>
+                    </Repeater>
+                </StackLayout>
+            </Repeater.itemTemplate>
+        </Repeater>
+    </StackLayout>
+</Page>

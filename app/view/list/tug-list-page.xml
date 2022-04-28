@@ -4,11 +4,16 @@
                 icon="font://&#xe161;"
                 tap="{{ onSaveExecutions }}"
                 android.position="actionBar"
-                class="mdi-ro"
+                class="mdi-ro action-item"
         ></ActionItem>
         <ActionItem
                 text="Delete TUG executions"
                 tap="{{ onDeleteExecutions }}"
+                android.position="popup"
+        ></ActionItem>
+        <ActionItem
+                text="Settings"
+                tap="onSettingsOptionTap"
                 android.position="popup"
         ></ActionItem>
     </ActionBar>

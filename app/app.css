@@ -34,6 +34,15 @@ Button.-primary {
   height: 100;
 }
 
+.simple-card.model {
+  height: 90;
+  padding: 5;
+}
+
+.simple-card.model:active {
+  background-color: greenyellow;
+}
+
 .simple-card.margin-bottom {
   margin-bottom: 5;
 }
@@ -47,6 +56,10 @@ Button.-primary {
 
 .mdi-ro.small {
   font-size: 55;
+}
+
+.mdi-ro.action-item {
+  font-size: 20;
 }
 
 .label-title {
