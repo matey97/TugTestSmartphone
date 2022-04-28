@@ -46,7 +46,7 @@ export function setModelType(modelType: ModelType, dataSource: SensingDataSource
 }
 
 export function getModelType(dataSource: SensingDataSource): ModelType {
-  return <ModelType>getString(modelTypeKey(dataSource), ModelType.MLP);
+  return <ModelType>getString(modelTypeKey(dataSource), ModelType.CNN);
 }
 
 export async function dataSourceFromDeviceId(deviceId: string): Promise<SensingDataSource> {
