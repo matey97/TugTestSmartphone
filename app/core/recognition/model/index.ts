@@ -1,3 +1,4 @@
+import { ModelType } from "~/core/mode";
 import Interpreter = org.tensorflow.lite.Interpreter;
 import MetadataExtractor = org.tensorflow.lite.support.metadata.MetadataExtractor;
 type Labels = string[];
@@ -7,6 +8,11 @@ const DEFAULT_LABELS_FILE = "labels.txt";
 export class Model {
 
   private modelFile: java.io.File;
+
+  private _modelType: ModelType;
+  get modelType(): ModelType {
+    return this._modelType
+  }
 
   private _interpreter: Interpreter;
   get interpreter(): Interpreter {
@@ -32,9 +38,11 @@ export class Model {
   }
 
   constructor(
-    modelFilePath: string
+    modelFilePath: string,
+    modelType: ModelType
   ) {
     this.modelFile = new java.io.File(modelFilePath);
+    this._modelType = modelType;
   }
 
   private loadInterpreter(): Interpreter {
@@ -98,7 +106,7 @@ export class Model {
   }
 }
 
-interface ModelInfo {
+export interface ModelInfo {
   name: string;
   version: string;
   author: string;

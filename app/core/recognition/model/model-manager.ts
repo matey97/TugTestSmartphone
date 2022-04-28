@@ -61,7 +61,8 @@ export class ModelManager {
       throw new Error(`${modelKey} model download failed. ${e}`);
     }
 
-    return new Model(modelFilePath);
+    const { modelType } = dataSourceAndTypeFromKey(modelKey);
+    return new Model(modelFilePath, modelType);
   }
 }
 
