@@ -1,4 +1,4 @@
-import { EventData, GridLayout, Observable, Page } from "@nativescript/core";
+import { EventData, GridLayout, Observable, Page, Repeater, View } from "@nativescript/core";
 import { getModelManager } from "~/core/recognition/model/model-manager";
 import { getModelType, ModelType, SensingDataSource, setModelType } from "~/core/mode";
 import { ModelInfo } from "~/core/recognition/model";
@@ -6,8 +6,9 @@ import { ModelInfo } from "~/core/recognition/model";
 export class SettingsModalViewModel extends Observable {
 
   page: Page;
+  repeater: Repeater;
 
-  availableModels: DataSourceModels[] = []
+  availableModels: DataSourceModels[] = [];
 
   constructor(
     private modelManager = getModelManager()
@@ -18,7 +19,25 @@ export class SettingsModalViewModel extends Observable {
 
   onViewLoaded(args: EventData){
     this.page = <Page>args.object;
+    this.repeater = this.page.getViewById("repeater");
     this.markSelectedModels();
+  }
+
+  async onRefreshModelsTap(args: EventData) {
+    const view = args.object as View;
+    const animation = view.animate({
+      rotate: 360,
+      duration: 1000,
+      iterations: Number.POSITIVE_INFINITY
+    });
+
+    setTimeout(async () => {
+      await this.modelManager.loadModels();
+      this.loadModelsForDataSources();
+      animation.cancel();
+      this.repeater.refresh();
+      this.markSelectedModels();
+    }, 1000);
   }
 
   modelSelected(args: EventData) {
@@ -36,19 +55,23 @@ export class SettingsModalViewModel extends Observable {
       .type;
 
     this.updateSelection(dataSourceModels, selectedModelType);
-    this.updateSelectedModel(selectedModelType, dataSourceModels.dataSource)
+    this.updateSelectedModel(
+      selectedModelType,
+      legibleStringToDataSource(dataSourceModels.dataSource)
+    );
   }
 
   private loadModelsForDataSources() {
-    this.availableModels.push(this.buildDataSourceModelsFor(SensingDataSource.LOCAL_DEVICE));
-    this.availableModels.push(this.buildDataSourceModelsFor(SensingDataSource.PAIRED_DEVICE));
+    this.availableModels = [];
+    this.addDataSourceModelsIfAvailable(SensingDataSource.LOCAL_DEVICE);
+    this.addDataSourceModelsIfAvailable(SensingDataSource.PAIRED_DEVICE);
 
     this.notifyPropertyChange("availableModels", this.availableModels);
   }
 
   private buildDataSourceModelsFor(dataSource: SensingDataSource): DataSourceModels {
     return {
-      dataSource: dataSource,
+      dataSource: dataSourceToLegibleString(dataSource),
       info: this.modelManager.getModelsFor(dataSource).map((model) => {
         return {
           vm: this,
@@ -59,10 +82,16 @@ export class SettingsModalViewModel extends Observable {
     };
   }
 
+  private addDataSourceModelsIfAvailable(dataSource: SensingDataSource) {
+    const datasourceModels = this.buildDataSourceModelsFor(dataSource);
+    if (datasourceModels.info.length !== 0)
+      this.availableModels.push(datasourceModels);
+  }
+
   private markSelectedModels() {
     this.availableModels.forEach((dataSourceModels) =>{
       const dataSource = dataSourceModels.dataSource;
-      const selectedModelType = getModelType(dataSource);
+      const selectedModelType = getModelType(legibleStringToDataSource(dataSource));
 
       this.updateSelection(dataSourceModels, selectedModelType);
     });
@@ -81,13 +110,25 @@ export class SettingsModalViewModel extends Observable {
     });
   }
 
-  private updateSelectedModel(modelType: ModelType, dataSource: SensingDataSource, ) {
+  private updateSelectedModel(modelType: ModelType, dataSource: SensingDataSource) {
     setModelType(modelType, dataSource);
   }
 }
 
+function dataSourceToLegibleString(dataSource: SensingDataSource): string {
+  return dataSource === SensingDataSource.LOCAL_DEVICE
+    ? "Local device"
+    : "Paired device";
+}
+
+function legibleStringToDataSource(string: string): SensingDataSource {
+  return string === "Local device"
+    ? SensingDataSource.LOCAL_DEVICE
+    : SensingDataSource.PAIRED_DEVICE;
+}
+
 interface DataSourceModels {
-  dataSource: SensingDataSource,
+  dataSource: string,
   info: ModelInfoVM[]
 }
 
