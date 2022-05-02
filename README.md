@@ -41,6 +41,8 @@ The usage of this application has some hardware and software requirements:
 - A machine learning model trained to detect the activities executed during the test: sitting, stand up, walk, turn and sit down.
   The application requires a TensorFlow Lite model with its labels embedded in an external file, which is downloaded from [Firebase Custom ML](https://firebase.google.com/docs/ml/use-custom-models).
   You can find the model used in the paper [here](https://github.com/matey97/TugTestAnalytics/tree/master/MODEL) and upload it to your Firebase project Custom ML.
+  - Different models are required depending on the sensing data source (smartphone or smartwatch).
+  - MLP (input 1x47, output 1x5) and CNN (input 1x6x50, output 1x5) architectures are supported.
 - NativeScript CLI (see [Install and configure NativeScript](#install-and-configure-nativescript))
 - If desired, the paired smartwatch must have installed the [TUG Test Smartwatch](https://github.com/matey97/TugTestSmartwatch).
 
