@@ -2,6 +2,7 @@ import { ActionItem, EventData, Frame, ItemEventData, Page, ShowModalOptions } f
 import { TugListViewModel } from "~/view/list/tug-list-view-model";
 import { wearosSensors } from "nativescript-wearos-sensors";
 import { PowerSavings } from "~/core/power-savings";
+import { getModelManager } from "~/core/recognition/model/model-manager";
 
 export function navigatingTo(args: EventData) {
   const page = <Page>args.object;
@@ -12,6 +13,7 @@ export function navigatingTo(args: EventData) {
   page.bindingContext = model;
 
   preparePlugin();
+  prepareModels();
 }
 
 export function onTugResultTap(args: ItemEventData) {
@@ -57,6 +59,11 @@ async function preparePlugin() {
   }
 
   await powerSavings.requestDeactivationRationale();
+}
+
+async function prepareModels() {
+  const modelManager = getModelManager();
+  return await modelManager.loadModels();
 }
 
 let _vm;

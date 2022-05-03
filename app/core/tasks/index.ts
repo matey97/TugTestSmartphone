@@ -15,10 +15,6 @@ import { StartSensorFromDeviceTask } from "~/core/tasks/start-sensor-from-device
 import { StopSensorFromDeviceTask } from "~/core/tasks/stop-sensor-from-device-task";
 import { StartLocalSensorServiceTask } from "~/core/tasks/start-local-sensor-service-task";
 import { StopLocalSensorServiceTask } from "~/core/tasks/stop-local-sensor-service-task";
-import { ModelType, SensingDataSource } from "~/core/mode";
-import { ForwardSamplesToRecognitionTask } from "~/core/tasks/forward-samples-to-recognition-task";
-import { getCNNRecognizer } from "~/core/recognition/recognizer/cnn";
-import { getMLPRecognizer } from "~/core/recognition/recognizer/mlp";
 
 export const appTasks: Array<Task> = [
   new SimpleTask("evtLogger", async({ evt}) => {
@@ -30,27 +26,7 @@ export const appTasks: Array<Task> = [
   new StartLocalSensorServiceTask(),
   new StopLocalSensorServiceTask(),
   new RecordsReceiverTask(),
-  new ForwardSamplesToRecognitionTask(),
-  new RecognitionTask(
-    ModelType.CNN,
-    SensingDataSource.LOCAL_DEVICE,
-    getCNNRecognizer(SensingDataSource.LOCAL_DEVICE)
-  ),
-  new RecognitionTask(
-    ModelType.MLP,
-    SensingDataSource.LOCAL_DEVICE,
-    getMLPRecognizer(SensingDataSource.LOCAL_DEVICE)
-  ),
-  new RecognitionTask(
-    ModelType.CNN,
-    SensingDataSource.PAIRED_DEVICE,
-    getCNNRecognizer(SensingDataSource.PAIRED_DEVICE)
-  ),
-  new RecognitionTask(
-    ModelType.MLP,
-    SensingDataSource.PAIRED_DEVICE,
-    getMLPRecognizer(SensingDataSource.PAIRED_DEVICE)
-  ),
+  new RecognitionTask(),
   new RecognitionResultEvaluationTask(),
   new EndTugTestTask(),
   new ExecutionFinishedEmitter(),
