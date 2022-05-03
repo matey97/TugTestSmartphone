@@ -1,5 +1,6 @@
-import { EventData, GridLayout, Observable, Page, Repeater, View } from "@nativescript/core";
+import { EventData, GridLayout, Observable, Page, Repeater, Switch, View } from "@nativescript/core";
 import { getModelManager } from "~/core/recognition/model/model-manager";
+import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
 import { getModelType, ModelType, SensingDataSource, setModelType } from "~/core/mode";
 import { ModelInfo } from "~/core/recognition/model";
 
@@ -11,7 +12,8 @@ export class SettingsModalViewModel extends Observable {
   availableModels: DataSourceModels[] = [];
 
   constructor(
-    private modelManager = getModelManager()
+    private modelManager = getModelManager(),
+    private gpuDelegate = getGPUDelegate()
   ) {
     super();
     this.loadModelsForDataSources();
@@ -47,6 +49,11 @@ export class SettingsModalViewModel extends Observable {
 
     const vm = context.vm;
     vm.changeSelectedModel(parentContext, context.model.name);
+  }
+
+  onGpuDelegateChange(args: EventData) {
+    const sw = args.object as Switch;
+    this.gpuDelegate.enabled = sw.checked;
   }
 
   changeSelectedModel(dataSourceModels: DataSourceModels, modelName: string) {
