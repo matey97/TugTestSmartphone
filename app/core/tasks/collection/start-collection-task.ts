@@ -1,6 +1,6 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import {ApplicationMode, dataSourceFromDeviceId, setApplicationMode, setSensingDataSource} from "~/core/mode";
+import { ApplicationMode, dataSourceFromDeviceId, setApplicationMode, setSensingDataSource } from "~/core/mode";
 
 export class StartCollectionTask extends Task {
 
@@ -25,7 +25,4 @@ export class StartCollectionTask extends Task {
       result: invocationEvent.data
     }
   }
-
-
-
 }

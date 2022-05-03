@@ -34,26 +34,25 @@ class TugTestTaskGraph implements TaskGraph {
     on("accelerometerRecordsForInference", run("recordsReceiverTask"));
     on("gyroscopeRecordsForInference", run("recordsReceiverTask"));
 
-    // Feature extraction, recognition and evaluation of TUG status
+    // Recognition and evaluation of TUG status
     on("enoughRecordsAcquired", run("recognitionTask"));
-
     on("recognitionFinished", run("recognitionResultEvaluationTask"));
+    on("recognitionFinished", run("recognitionResultLogger"));
 
     // Automatically end TUG test
-    //on("testEvaluationTaskFinished", run("evtLogger"));
     on("detectedTugTestEnding", run("endTugTestTask"));
-    on("tugTestEnded", run("executionFinishedEmitter"));
-    on("tugTestEnded", run("pairedDeviceResultSenderChecker"));
-    on("tugTestEnded", run("evtLogger"));
-    on("tugTestEnded", run("storeTugResult"));
-
-    on("sendResultToPairedDevice", run("sendSingleMessageTask"));
 
     // Manual end TUG test
     on("stopExecutionCommand", run("endTugTestTask"));
 
-    on("executionFinished", run("stopSensorFromDeviceTask"));
-    on("executionFinished", run("recordsReceiverClearStateTask"));
+    // Ending procedure
+    on("tugTestEnded", run("stopSensorFromDeviceTask"));
+    on("tugTestEnded", run("recordsReceiverClearTask"));
+    on("tugTestEnded", run("pairedDeviceResultSenderChecker"));
+    on("tugTestEnded", run("tugResultLogger"));
+    on("tugTestEnded", run("storeTugResult"));
+
+    on("sendResultToPairedDevice", run("sendSingleMessageTask"));
 
     //----------------------
     // Data collection mode

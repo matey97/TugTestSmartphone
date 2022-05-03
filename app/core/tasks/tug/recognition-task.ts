@@ -28,8 +28,6 @@ export class RecognitionTask extends Task {
     const recognizer = getRecognizer(dataSource);
     const recognitionResult = await recognizer.recognize(samples);
 
-    console.log(`[RECOGNITION RESULT (${dataSource})] --> ${JSON.stringify(recognitionResult)}`);
-
     return {
       eventName: DEFAULT_EVENT,
       result: recognitionResult
