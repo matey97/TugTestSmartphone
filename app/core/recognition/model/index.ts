@@ -45,6 +45,11 @@ export class Model {
     this._modelType = modelType;
   }
 
+  closeInterpreter(): void {
+    this.interpreter.close();
+    this._interpreter = undefined;
+  }
+
   private loadInterpreter(): Interpreter {
     return new Interpreter(this.modelFile);
   }

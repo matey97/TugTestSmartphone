@@ -1,6 +1,8 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
+import { getRecognizer } from "~/core/recognition/recognizer";
+import { getSensingDataSource } from "~/core/mode";
 
 export class EndTugTestTask extends Task {
 
@@ -20,6 +22,9 @@ export class EndTugTestTask extends Task {
       return;
 
     const tugResults = this.tugManager.endExecution();
+
+    const recognizer = getRecognizer(getSensingDataSource());
+    recognizer.unloadModel();
 
     return {
       eventName: this.outputEventNames[0],
