@@ -62,12 +62,12 @@
 
         <StackLayout orientation="vertical" style="padding: 20">
             <Label text="Delegates" class="label-title"/>
-            <FlexboxLayout visibility="{{ gpuDelegate.isSupported ? 'visible' : 'collapsed' }}"
+            <FlexboxLayout visibility="{{ gpuDelegate.supported ? 'visible' : 'collapsed' }}"
                            justifyContent="space-around" alignItems="center">
                 <Label text="GPU delegate" class="label-header"/>
                 <Switch checked="{{ gpuDelegate.enabled }}" checkedChange="{{ onGpuDelegateChange }}"/>
             </FlexboxLayout>
-            <Label visibility="{{ gpuDelegate.isSupported ? 'collapsed' : 'visible' }}"
+            <Label visibility="{{ gpuDelegate.supported ? 'collapsed' : 'visible' }}"
                    text="GPU delegate not supported" class="label-header"/>
         </StackLayout>
     </StackLayout>
