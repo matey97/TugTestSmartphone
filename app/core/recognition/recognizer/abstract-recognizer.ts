@@ -47,6 +47,10 @@ export abstract class AbstractRecognizer {
     }
   }
 
+  unloadModel(): void {
+    this.model.closeInterpreter();
+  }
+
   private isReady(): boolean {
     return !!this.model;
   }

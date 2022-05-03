@@ -1,4 +1,5 @@
 import { ModelType } from "~/core/mode";
+import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
 import Interpreter = org.tensorflow.lite.Interpreter;
 import MetadataExtractor = org.tensorflow.lite.support.metadata.MetadataExtractor;
 type Labels = string[];
@@ -39,14 +40,32 @@ export class Model {
 
   constructor(
     modelFilePath: string,
-    modelType: ModelType
+    modelType: ModelType,
+    private gpuDelegate = getGPUDelegate()
   ) {
     this.modelFile = new java.io.File(modelFilePath);
     this._modelType = modelType;
   }
 
+  closeInterpreter(): void {
+    this.interpreter.close();
+    this._interpreter = undefined;
+  }
+
   private loadInterpreter(): Interpreter {
-    return new Interpreter(this.modelFile);
+    const interpreterOptions = this.getInterpreterOptions();
+    return new Interpreter(this.modelFile, interpreterOptions);
+  }
+
+  private getInterpreterOptions() {
+    const options = new Interpreter.Options();
+    if (this.gpuDelegate.enabled) {
+      options.addDelegate(this.gpuDelegate.getDelegate());
+    } else {
+      options.setNumThreads(2);
+    }
+
+    return options;
   }
 
   private loadLabels(): Labels {
