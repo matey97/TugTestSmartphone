@@ -1,12 +1,12 @@
-import { SensingDataSource } from "~/core/mode";
-import { Recognizer } from "~/core/recognition/recognizer/recognizer";
-export { Recognizer };
+import { getModelType, ModelType, SensingDataSource } from "~/core/mode";
+import { AbstractRecognizer} from "~/core/recognition/recognizer/abstract-recognizer";
+import { getMLPRecognizer } from "~/core/recognition/recognizer/mlp";
+import { getCNNRecognizer } from "~/core/recognition/recognizer/cnn";
 
-const recognizers = new Map<SensingDataSource, Recognizer>();
+export function getRecognizer(dataSource: SensingDataSource): AbstractRecognizer {
+  const modelType = getModelType(dataSource);
 
-export function getRecognizer(dataSource: SensingDataSource): Recognizer {
-  if (!recognizers.get(dataSource)) {
-    recognizers.set(dataSource, new Recognizer(dataSource));
-  }
-  return recognizers.get(dataSource);
+  return modelType === ModelType.MLP
+    ? getMLPRecognizer(dataSource)
+    : getCNNRecognizer(dataSource);
 }

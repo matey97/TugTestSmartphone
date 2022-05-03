@@ -1,4 +1,3 @@
-import { SensingDataSource } from "~/core/mode";
 import CustomModelDownloadConditions = com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions;
 import CustomModel = com.google.firebase.ml.modeldownloader.CustomModel;
 import FirebaseModelDownloader = com.google.firebase.ml.modeldownloader.FirebaseModelDownloader;
@@ -6,16 +5,13 @@ import DownloadType = com.google.firebase.ml.modeldownloader.DownloadType;
 import OnSuccessListener = com.google.android.gms.tasks.OnSuccessListener;
 import OnFailureListener = com.google.android.gms.tasks.OnFailureListener;
 
-const modelNameForDataSource = new Map([
-  [SensingDataSource.LOCAL_DEVICE, "smartphone-model"],
-  [SensingDataSource.PAIRED_DEVICE, "tug-test-full"]
-]);
-
 export class ModelDownloader {
 
   private modelFilePath: string;
 
-  constructor(private dataSource: SensingDataSource) {
+  constructor(
+    private modelName: string
+  ) {
   }
 
   async getModelFilePath(): Promise<string> {
@@ -34,9 +30,8 @@ export class ModelDownloader {
   }
 
   private startDownloadTask(conditions: CustomModelDownloadConditions): Promise<CustomModel> {
-    const modelName = modelNameForDataSource.get(this.dataSource);
     const downloadTask = FirebaseModelDownloader.getInstance()
-      .getModel(modelName, DownloadType.LATEST_MODEL, conditions)
+      .getModel(this.modelName, DownloadType.LATEST_MODEL, conditions)
 
     return new Promise<CustomModel>((resolve, reject) => {
       downloadTask.addOnSuccessListener(
@@ -45,7 +40,7 @@ export class ModelDownloader {
         }));
       downloadTask.addOnFailureListener(
         new OnFailureListener({
-          onFailure: (e) => reject(`Could not download model. Reason: ${e}`)
+          onFailure: (e) => reject(`Download failure reason: ${e}`)
         }));
     })
   }

@@ -2,7 +2,7 @@ import { TriAxialSensorRecord } from "nativescript-wearos-sensors/internal/senso
 import { SensorRecords } from "nativescript-wearos-sensors/internal/sensors/sensor-record";
 import { SensorType } from "nativescript-wearos-sensors/sensors";
 import { wearosSensors } from "nativescript-wearos-sensors";
-import { RecordsToProcess } from "~/core/feature-extraction/records-to-process";
+import { RecordsToProcess } from "~/core/receiver/records-to-process";
 
 const WINDOW_SIZE = 50;
 const WINDOW_STEP = WINDOW_SIZE / 2;

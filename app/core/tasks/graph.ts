@@ -35,11 +35,7 @@ class TugTestTaskGraph implements TaskGraph {
     on("gyroscopeRecordsForInference", run("recordsReceiverTask"));
 
     // Feature extraction, recognition and evaluation of TUG status
-    on("enoughRecordsAcquired", run("featureExtractionTask"));
-    on("featuresExtracted", run("forwardFeaturesToRecognitionTask"));
-
-    on("useLocalSourceDataRecognizer", run("recognitionForDataFromLocalDeviceTask"));
-    on("usePairedSourceDataRecognizer", run("recognitionForDataFromPairedDeviceTask"));
+    on("enoughRecordsAcquired", run("recognitionTask"));
 
     on("recognitionFinished", run("recognitionResultEvaluationTask"));
 

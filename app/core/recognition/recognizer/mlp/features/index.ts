@@ -1,6 +1,5 @@
-import { RecordsToProcess } from "~/core/feature-extraction/records-to-process";
+import { AxisData, Samples } from "~/core/recognition/recognizer/samples";
 
-type AxisData = number[];
 type FeatureExtractionFunction = (data: AxisData, param?: number) => number;
 export type Features = number[];
 
@@ -10,22 +9,7 @@ export interface TimedFeatures {
   timestampEnd: number
 }
 
-interface Samples {
-  accX: AxisData,
-  accY: AxisData,
-  accZ: AxisData,
-  gyroX: AxisData,
-  gyroY: AxisData,
-  gyroZ: AxisData,
-  timestamps: Date[],
-}
-
-const ACC_MAX_RANGE = 78.4532;
-const GYRO_MAX_RANGE = 34.906586;
-
-export function extractFeaturesFrom(recordsToProcess: RecordsToProcess): TimedFeatures {
-  const samples = normalize(toSamples(recordsToProcess));
-
+export function extractFeaturesFrom(samples: Samples): TimedFeatures {
   const [meanAccX, meanAccY, meanAccZ, meanGyroX, meanGyroY, meanGyroZ] = extractFeature(mean, samples);
   const [maxAccX, maxAccY, maxAccZ, maxGyroX, maxGyroY, maxGyroZ] = extractFeature(max, samples);
   const [minAccX, minAccY, minAccZ, minGyroX, minGyroY, minGyroZ] = extractFeature(min, samples);
@@ -44,37 +28,9 @@ export function extractFeaturesFrom(recordsToProcess: RecordsToProcess): TimedFe
 
   return {
     features,
-    timestampStart: samples.timestamps[0].getTime(),
-    timestampEnd: samples.timestamps[samples.timestamps.length - 1].getTime()
+    timestampStart: samples.timestampStart,
+    timestampEnd: samples.timestampEnd
   }
-}
-
-function toSamples(recordsToProcess: RecordsToProcess): Samples {
-  return {
-    accX: recordsToProcess.accelerometerRecords.map(value => value.x),
-    accY: recordsToProcess.accelerometerRecords.map(value => value.y),
-    accZ: recordsToProcess.accelerometerRecords.map(value => value.z),
-    gyroX: recordsToProcess.gyroscopeRecords.map(value => value.x),
-    gyroY: recordsToProcess.gyroscopeRecords.map(value => value.y),
-    gyroZ: recordsToProcess.gyroscopeRecords.map(value => value.z),
-    timestamps: recordsToProcess.accelerometerRecords.map(value => value.timestamp)
-  }
-}
-
-function normalize(samples: Samples): Samples {
-  return {
-    accX: samples.accX.map(value => normalizeInRange(value, ACC_MAX_RANGE, -ACC_MAX_RANGE)),
-    accY: samples.accY.map(value => normalizeInRange(value, ACC_MAX_RANGE, -ACC_MAX_RANGE)),
-    accZ: samples.accZ.map(value => normalizeInRange(value, ACC_MAX_RANGE, -ACC_MAX_RANGE)),
-    gyroX: samples.gyroX.map(value => normalizeInRange(value, GYRO_MAX_RANGE, -GYRO_MAX_RANGE)),
-    gyroY: samples.gyroY.map(value => normalizeInRange(value, GYRO_MAX_RANGE, -GYRO_MAX_RANGE)),
-    gyroZ: samples.gyroZ.map(value => normalizeInRange(value, GYRO_MAX_RANGE, -GYRO_MAX_RANGE)),
-    timestamps: samples.timestamps
-  }
-}
-
-function normalizeInRange(value: number, max: number, min: number, range: number[] = [-1, 1]): number {
-  return (range[1] - range[0]) * (value - min) / (max - min) + range[0];
 }
 
 function extractFeature(feature: FeatureExtractionFunction, records: Samples, params?: number[]): Features {

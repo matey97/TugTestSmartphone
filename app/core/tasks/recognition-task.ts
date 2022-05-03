@@ -1,17 +1,18 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
+import { getSensingDataSource } from "~/core/mode";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { TimedFeatures } from "~/core/feature-extraction";
-import { Recognizer } from "~/core/recognition/recognizer";
+import { toSamples } from "~/core/recognition/recognizer/samples";
+import { getRecognizer } from "~/core/recognition/recognizer";
+import { RecordsToProcess } from "~/core/receiver/records-to-process";
+import { normalize } from "~/core/recognition/preprocessing";
 
 const DEFAULT_EVENT = "recognitionFinished";
 
 export class RecognitionTask extends Task {
 
   constructor(
-    private source: string,
-    private recognizer: Recognizer
   ) {
-    super(`recognitionForDataFrom${source}DeviceTask`, {
+    super(`recognitionTask`, {
       outputEventNames: [DEFAULT_EVENT]
     });
   }
@@ -20,15 +21,18 @@ export class RecognitionTask extends Task {
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<void | TaskOutcome> {
-    const timedFeatures = invocationEvent.data as TimedFeatures;
-    const recognitionResult = await this.recognizer.recognize(timedFeatures);
+    const records: RecordsToProcess = invocationEvent.data as RecordsToProcess;
+    const samples = normalize(toSamples(records));
 
-    console.log(`[RECOGNITION RESULT (${this.source})] --> ${JSON.stringify(recognitionResult)}`);
+    const dataSource = getSensingDataSource();
+    const recognizer = getRecognizer(dataSource);
+    const recognitionResult = await recognizer.recognize(samples);
+
+    console.log(`[RECOGNITION RESULT (${dataSource})] --> ${JSON.stringify(recognitionResult)}`);
 
     return {
       eventName: DEFAULT_EVENT,
       result: recognitionResult
     }
   }
-
 }
