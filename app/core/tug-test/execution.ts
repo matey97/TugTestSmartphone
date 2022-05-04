@@ -20,14 +20,12 @@ export class TugExecution {
     return this._recognitionResults;
   }
 
-  private _previous: Activity;
-  get previous(): Activity {
-    return this._previous;
-  }
-
   private _current: Activity;
   get current(): Activity {
     return this._current;
+  }
+  set current(value) {
+    this._current = value;
   }
 
   private _status: Status;
@@ -48,11 +46,6 @@ export class TugExecution {
 
   addNew(recognitionResult: RecognitionResult) {
     this._recognitionResults.push(recognitionResult);
-  }
-
-  setCurrentActivity(activity: Activity) {
-    this._previous = this.current;
-    this._current = activity;
   }
 
   computeResults(): TugResult {

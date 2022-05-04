@@ -40,10 +40,11 @@ export class RecognitionResultEvaluationTask extends Task {
       areRecognitionsEqualAndSignificant(lastThree) &&
       activity !== currentExecution.current
     ) {
-      currentExecution.setCurrentActivity(activity);
+      const previous = currentExecution.current;
+      currentExecution.current = activity;
 
       // If the previous activity was SIT, set the execution as started
-      if (currentExecution.previous === Activity.SIT) {
+      if (previous === Activity.SIT) {
         currentExecution.status = Status.STARTED
       }
     }
