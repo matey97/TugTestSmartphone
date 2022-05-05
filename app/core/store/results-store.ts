@@ -1,6 +1,6 @@
 import { database } from "~/core/store/db";
 import { TugResult } from "~/core/tug-test/result";
-import { QueryMeta } from "nativescript-couchbase-plugin";
+import { QueryMeta } from "@triniwiz/nativescript-couchbase";
 
 export class ResultsStore {
 

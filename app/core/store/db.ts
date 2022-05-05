@@ -1,12 +1,12 @@
-import { Couchbase, Query, QueryMeta } from "nativescript-couchbase-plugin";
+import { CouchBase, Query, QueryMeta } from "@triniwiz/nativescript-couchbase";
 
 const DB_NAME = "tug-test"
 
 class Database {
-  private db: Couchbase;
+  private db: CouchBase;
 
   constructor() {
-    this.db = new Couchbase(DB_NAME)
+    this.db = new CouchBase(DB_NAME)
   }
 
   createDocument(doc: any, id?: string): number {
