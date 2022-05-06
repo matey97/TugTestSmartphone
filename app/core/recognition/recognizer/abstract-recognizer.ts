@@ -3,6 +3,7 @@ import { InferenceProbability, RecognitionResult } from "~/core/recognition";
 import { ModelType, SensingDataSource } from "~/core/mode";
 import { getModelManager, ModelManager } from "~/core/recognition/model/model-manager";
 import { Samples } from "~/core/recognition/recognizer/samples";
+import { timedExecution } from "~/core/utils/time";
 import ByteBuffer = java.nio.ByteBuffer;
 
 export abstract class AbstractRecognizer {
@@ -30,21 +31,28 @@ export abstract class AbstractRecognizer {
   }
 
   async recognize(samples: Samples): Promise<RecognitionResult> {
-    if (!this.isReady())
-      await this.initModel();
+    const { result, executionTime } = await timedExecution(async () => {
+      if (!this.isReady())
+        await this.initModel();
 
-    const inputBuffer = this.createInputBuffer(samples);
-    const outputBuffer = this.createOutputBuffer();
+      const inputBuffer = this.createInputBuffer(samples);
+      const outputBuffer = this.createOutputBuffer();
 
-    this.model.interpreter.run(inputBuffer, outputBuffer);
+      this.model.interpreter.run(inputBuffer, outputBuffer);
 
-    const mostProbable = this.getMostProbable(outputBuffer);
+      const mostProbable = this.getMostProbable(outputBuffer);
+
+      return {
+        inference: mostProbable,
+        timestampStart: samples.timestampStart,
+        timestampEnd: samples.timestampEnd
+      }
+    });
 
     return {
-      inference: mostProbable,
-      timestampStart: samples.timestampStart,
-      timestampEnd: samples.timestampEnd
-    }
+      ...result,
+      recognitionTime: executionTime
+    };
   }
 
   unloadModel(): void {
