@@ -1,4 +1,4 @@
-import { Status, TugExecution } from "~/core/tug-test/execution";
+import { TugExecution } from "~/core/tug-test/execution";
 import { TugResult } from "~/core/tug-test/result";
 
 export class TugManager {
@@ -17,14 +17,11 @@ export class TugManager {
     if (this.ongoing)
       throw new Error("Could not create a TUG execution. Already ongoing!");
 
-    console.log("[TUG MANAGER]: tug execution created!");
     this._currentExecution = new TugExecution(sourceDevice);
   }
 
   endExecution(): TugResult {
     const execution = this.currentExecution;
-    execution.status = Status.FINISHED;
-
     this._currentExecution = undefined;
 
     return execution.computeResults();

@@ -5,6 +5,8 @@ import { Activity, fromString } from "~/core/tug-test/activities";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
 import { Status } from "~/core/tug-test/execution";
 
+const SIGNIFICANCE_THRESHOLD = 0.7;
+
 const DEFAULT_EVENT = "testEvaluationTaskFinished";
 const TEST_ENDING_EVENT = "detectedTugTestEnding";
 
@@ -29,22 +31,32 @@ export class RecognitionResultEvaluationTask extends Task {
     const recognitionResult = invocationEvent.data as RecognitionResult;
     currentExecution.addNew(recognitionResult);
 
-    const lastThree = currentExecution.recognitionResults
-      .slice(-3)
-      .map((recognitionResult) => fromString(recognitionResult.inference.class));
+    const lastThree = currentExecution.recognitionResults.slice(-3);
+    const activity = fromString(lastThree[0].inference.class);
 
-    if (this.areEqual(lastThree) && this.areDifferent(currentExecution.current, lastThree[0])) {
-      currentExecution.setCurrentActivity(lastThree[0]);
-    }
-
-    if (currentExecution.checkPreviousCurrentSequence(Activity.TURNING,Activity.WALKING)) {
-      currentExecution.status = Status.SECOND_PHASE;
-    }
-
+    // If the last three estimations are the same activity and
+    // that activity is different than the current one update the current activity
     if (
-      currentExecution.checkPreviousCurrentSequence(Activity.SITTING,Activity.SIT) &&
-      currentExecution.status === Status.SECOND_PHASE
+      areRecognitionsEqualAndSignificant(lastThree) &&
+      activity !== currentExecution.current
     ) {
+      const previous = currentExecution.current;
+      currentExecution.current = activity;
+
+      // If the previous activity was SIT, set the execution as started
+      if (previous === Activity.SIT) {
+        currentExecution.status = Status.STARTED
+      }
+    }
+
+    // If the execution has started, the last three estimations are the same activity
+    // and that activity is SIT, then finish the execution
+    if (
+      currentExecution.status === Status.STARTED &&
+      areRecognitionsEqualAndSignificant(lastThree) &&
+      activity === Activity.SIT
+    ) {
+      currentExecution.status = Status.FINISHED;
       return {
         eventName: TEST_ENDING_EVENT
       }
@@ -54,13 +66,22 @@ export class RecognitionResultEvaluationTask extends Task {
       eventName: DEFAULT_EVENT
     }
   }
+}
 
-  private areEqual(array: string[]): boolean {
-    return array.every((val, i, arr) => val === arr[0]);
-  }
+function areRecognitionsEqualAndSignificant(recognitions: RecognitionResult[]): boolean {
+  return areRecognitionsEqual(recognitions) && areRecognitionsSignificant(recognitions);
+}
 
-  private areDifferent(a: string, b: string): boolean {
-    return a !== b;
-  }
+function areRecognitionsEqual(recognitions: RecognitionResult[]): boolean {
+  return recognitions
+    .map((recognition) => fromString(recognition.inference.class))
+    .every((recognition, i, recognitions) => recognition === recognitions[0]);
+}
 
+function areRecognitionsSignificant(recognitions: RecognitionResult[]): boolean {
+  const meanProbabilities = recognitions
+    .map((recognition) => recognition.inference.probability)
+    .reduce((prev, curr) => prev + curr) / recognitions.length;
+
+  return meanProbabilities > SIGNIFICANCE_THRESHOLD;
 }

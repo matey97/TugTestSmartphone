@@ -20,14 +20,12 @@ export class TugExecution {
     return this._recognitionResults;
   }
 
-  private _previous: Activity;
-  get previous(): Activity {
-    return this._previous;
-  }
-
   private _current: Activity;
   get current(): Activity {
     return this._current;
+  }
+  set current(value) {
+    this._current = value;
   }
 
   private _status: Status;
@@ -43,20 +41,11 @@ export class TugExecution {
     private starTime = Date.now()
   ) {
     this._current = Activity.SIT;
-    this._status = Status.FIRST_PHASE;
+    this._status = Status.YET_TO_START;
   }
 
   addNew(recognitionResult: RecognitionResult) {
     this._recognitionResults.push(recognitionResult);
-  }
-
-  setCurrentActivity(activity: Activity) {
-    this._previous = this.current;
-    this._current = activity;
-  }
-
-  checkPreviousCurrentSequence(previous: Activity, current: Activity): boolean {
-    return this.previous === previous && this.current === current;
   }
 
   computeResults(): TugResult {
@@ -150,7 +139,7 @@ export class TugExecution {
 }
 
 export enum Status {
-  FIRST_PHASE,
-  SECOND_PHASE,
+  YET_TO_START,
+  STARTED,
   FINISHED,
 }
