@@ -56,8 +56,8 @@ export class RecordsReceiver {
     if (this.accelerometerRecords.length === 0 || this.gyroscopeRecords.length === 0)
       return;
 
-    const oldestAcc = this.accelerometerRecords[0].timestamp.getTime()
-    const oldestGyro = this.gyroscopeRecords[0].timestamp.getTime()
+    const oldestAcc = this.accelerometerRecords[0].timestamp
+    const oldestGyro = this.gyroscopeRecords[0].timestamp
 
     const matchingThreshold = Math.max(oldestAcc, oldestGyro);
 
@@ -72,7 +72,7 @@ export class RecordsReceiver {
   private remove(from: TriAxialSensorRecord[], threshold: number) {
     let i;
     for (i = 0; i < from.length; i++) {
-      if (from[i].timestamp.getTime() >= threshold) {
+      if (from[i].timestamp >= threshold) {
         break;
       }
     }
