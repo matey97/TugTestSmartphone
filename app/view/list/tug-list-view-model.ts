@@ -10,6 +10,7 @@ import {
   setApplicationMode,
 } from "~/core/mode";
 import { wearosSensors } from "nativescript-wearos-sensors";
+import { getNTPTime } from "~/core/utils/ntp-time";
 
 const COUNTDOWN = 5; // Seconds
 
@@ -127,6 +128,7 @@ export class TugListViewModel extends Observable {
 
   onStartInLocalDevice() {
     this.runningLocal = true;
+    getNTPTime().sync();
     this.runCountdown();
   }
 
@@ -135,6 +137,7 @@ export class TugListViewModel extends Observable {
     wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
 
     this.runningLocal = false;
+    getNTPTime().disableSync();
   }
 
   private async getLocalNode() {
