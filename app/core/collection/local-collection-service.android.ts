@@ -2,6 +2,7 @@ import { LocalSensorListener } from "~/core/collection/local-sensor-listener";
 import { ApplicationMode, getApplicationMode } from "~/core/mode";
 import { Vibrate } from "nativescript-vibrate";
 import { INTENT_TYPE, IntentType } from "~/core/collection/index";
+import { AndroidSensorManager, getAndroidSensorManager } from "~/core/collection/sensor-manager.android";
 
 const CHANNEL_ID = "TugTest_Service";
 const CHANNEL_NAME = "TugTest Collection Service";
@@ -13,7 +14,7 @@ export class LocalCollectionService extends android.app.Service {
 
   private static wakeLock: android.os.PowerManager.WakeLock;
 
-  private sensorManager: android.hardware.SensorManager;
+  private sensorManager: AndroidSensorManager;
   private notificationManager: android.app.NotificationManager;
 
   private sensorListener: LocalSensorListener;
@@ -25,9 +26,7 @@ export class LocalCollectionService extends android.app.Service {
   onCreate() {
     super.onCreate();
 
-    this.sensorManager = this.getSystemService(
-      android.content.Context.SENSOR_SERVICE
-    ) as android.hardware.SensorManager;
+    this.sensorManager = getAndroidSensorManager();
 
     this.notificationManager = this.getSystemService(android.app.NotificationManager.class);
 
@@ -109,14 +108,11 @@ export class LocalCollectionService extends android.app.Service {
   }
 
   private registerListeners() {
-    const accelerometer = this.sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER);
-    const gyroscope = this.sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_GYROSCOPE);
-    this.sensorManager.registerListener(this.sensorListener.getListener(), accelerometer, 10000);
-    this.sensorManager.registerListener(this.sensorListener.getListener(), gyroscope, 10000);
+    this.sensorManager.registerListenerForSensors(this.sensorListener.getListener(), 10000);
   }
 
   private unregisterListeners() {
-    this.sensorManager.unregisterListener(this.sensorListener.getListener());
+    this.sensorManager.unregisterListenerForSensors(this.sensorListener.getListener());
   }
 
   private vibrateToNotifyExecutionEnd() {
