@@ -12,12 +12,12 @@ export class NTPTime {
   constructor(private clock: GoodClock = new GoodClock(REQUESTS_PER_NTP_UPDATE, UPDATE_INTERVAL)) {
   }
 
-  async sync(): Promise<void> {
-    this.clock.start();
+  backgroundSync(): void {
+    this.clock.startSync();
+  }
 
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 1000);
-    });
+  blockingSync(): boolean {
+    return this.clock.singleSync();
   }
 
   disableSync(): void {

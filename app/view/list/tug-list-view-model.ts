@@ -2,7 +2,6 @@ import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } 
 import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
-import { Activity } from "~/core/tug-test/activities";
 import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
 import {
   ApplicationMode,
@@ -128,7 +127,7 @@ export class TugListViewModel extends Observable {
 
   onStartInLocalDevice() {
     this.runningLocal = true;
-    getNTPTime().sync();
+    getNTPTime().backgroundSync();
     this.runCountdown();
   }
 

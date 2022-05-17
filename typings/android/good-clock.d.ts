@@ -29,7 +29,8 @@ declare module com {
 				public stop(): void;
 				public currentTimeMillis(): number;
 				public getNtp_clockoffset(): number;
-				public start(): void;
+				public startSync(): void;
+        public singleSync(): boolean;
 				public Now(): number;
 				public getDrift(): number;
 				public constructor();
