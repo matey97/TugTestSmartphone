@@ -5,17 +5,17 @@
                 tap="{{ onSaveExecutions }}"
                 android.position="actionBar"
                 class="mdi-ro action-item"
-        ></ActionItem>
+        />
         <ActionItem
                 text="Delete TUG executions"
                 tap="{{ onDeleteExecutions }}"
                 android.position="popup"
-        ></ActionItem>
+        />
         <ActionItem
                 text="Settings"
                 tap="onSettingsOptionTap"
                 android.position="popup"
-        ></ActionItem>
+        />
     </ActionBar>
 
     <StackLayout width="85%">
@@ -23,36 +23,39 @@
         <StackLayout>
             <Label text="Start a TUG execution from an available device:"
                    class="label-header"
-            ></Label>
-            <Label text="Local device:"></Label>
+            />
+            <Label text="Local device:"/>
             <GridLayout columns="2*,6*,3*" rows="*,2*" class="simple-card device">
-                <Label col="0" row="0" rowSpan="2" text="&#xe32c;" class="mdi-ro"></Label>
-                <Label col="0" row="0" colSpan="3" class="label-header bold" text="{{ localNode.name }}"></Label>
+                <Label col="0" row="0" rowSpan="2" text="&#xe32c;" class="mdi-ro"/>
+                <Label col="0" row="0" colSpan="3" class="label-header bold" text="{{ localNode.name }}"/>
                 <GridLayout col="1" row="1" columns="*,*" rows="*,2*">
-                    <Label col="0" row="0" horizontalAlignment="center" colSpan="3" text="Operation mode:"></Label>
-                    <Label id="tugSelector" col="0" row="1" text="TUG" class="mode-selector left" tap="{{ modeSelected }}"></Label>
-                    <Label id="collectionSelector" col="1" row="1" text="Collection" class="mode-selector right" tap="{{ modeSelected }}"></Label>
+                    <Label col="0" row="0" horizontalAlignment="center" colSpan="3" text="Operation mode:"/>
+                    <Label id="tugSelector" col="0" row="1" text="TUG" class="mode-selector left"
+                           tap="{{ modeSelected }}"/>
+                    <Label id="collectionSelector" col="1" row="1" text="Collection" class="mode-selector right"
+                           tap="{{ modeSelected }}"/>
                 </GridLayout>
                 <StackLayout col="2" row="0" rowSpan="2" orientation="horizontal" horizontalAlignment="center" verticalAlignment="center" visibility="{{ runningLocal ? 'collapsed' : 'visible' }}">
                     <Button col="2" row="0" rowSpan="2" text="Start" class="-primary" tap="{{ onStartInLocalDevice }}"
-                            visibility="{{ ntpSyncing ? 'collapsed' : 'visible' }}"></Button>
+                            visibility="{{ ntpSyncing ? 'collapsed' : 'visible' }}"/>
                     <ActivityIndicator busy="{{ ntpSyncing }}" visibility="{{ ntpSyncing ? 'visible' : 'collapsed' }}"/>
                 </StackLayout>
                 <StackLayout col="2" row="0" rowSpan="2" orientation="horizontal" horizontalAlignment="center" verticalAlignment="center" visibility="{{ runningLocal ? 'visible' : 'collapsed' }}">
                     <Label text="{{ countdown }}" class="countdown"
-                           visibility="{{ runningCountdown ? 'visible' : 'collapsed' }}"></Label>
+                           visibility="{{ runningCountdown ? 'visible' : 'collapsed' }}"/>
                     <Button text="Stop" class="-primary" tap="{{ onStopInLocalDevice }}"
-                            visibility="{{ runningCountdown ? 'collapsed' : 'visible' }}"></Button>
+                            visibility="{{ runningCountdown ? 'collapsed' : 'visible' }}"/>
                 </StackLayout>
 
             </GridLayout>
-            <Label text="Connected devices:" visibility="{{ connectedNodes.length !== 0 ? 'visible' : 'collapsed' }}"></Label>
+            <Label text="Connected devices:" visibility="{{ connectedNodes.length !== 0 ? 'visible' : 'collapsed' }}"/>
             <ListView items="{{ connectedNodes }}" separatorColor="Transparent">
                 <ListView.itemTemplate>
                     <GridLayout columns="*,4*" rows="*,*" class="simple-card device">
-                        <Label col="0" row="0" rowSpan="2" text="&#xe334;" class="mdi-ro small"></Label>
-                        <Label col="1" row="0" class="label-header bold" text="{{ name }}"></Label>
-                        <Label col="1" row="1" textWrap="true" text="Open the smartwatch application and start a TUG execution following the instructions."></Label>
+                        <Label col="0" row="0" rowSpan="2" text="&#xe334;" class="mdi-ro small"/>
+                        <Label col="1" row="0" class="label-header bold" text="{{ name }}"/>
+                        <Label col="1" row="1" textWrap="true"
+                               text="Open the smartwatch application and start a TUG execution following the instructions."/>
                     </GridLayout>
                 </ListView.itemTemplate>
             </ListView>
@@ -65,8 +68,8 @@
 
 
         <StackLayout visibility="{{ resultsVM.length !== 0 ? 'visible' : 'collapsed' }}">
-            <Label text="Results from TUG tests performed" class="label-title" ></Label>
-            <Label text="Tap on a TUG test result to see more information" class="label-header"></Label>
+            <Label text="Results from TUG tests performed" class="label-title"/>
+            <Label text="Tap on a TUG test result to see more information" class="label-header"/>
             <ListView items="{{ resultsVM }}" itemTap="onTugResultTap" separatorColor="Transparent">
                 <ListView.itemTemplate>
                     <StackLayout>
@@ -76,14 +79,14 @@
                             </Label>
                             <Label col="1" row="0">
                                 <FormattedString>
-                                    <Span text="Date: " class="label-header bold"></Span>
-                                    <Span text="{{ date }}" class="label-header"></Span>
+                                    <Span text="Date: " class="label-header bold"/>
+                                    <Span text="{{ date }}" class="label-header"/>
                                 </FormattedString>
                             </Label>
                             <Label col="1" row="1">
                                 <FormattedString>
-                                    <Span text="Duration: " class="label-header bold"></Span>
-                                    <Span text="{{ duration }}" class="label-header"></Span>
+                                    <Span text="Duration: " class="label-header bold"/>
+                                    <Span text="{{ duration }}" class="label-header"/>
                                 </FormattedString>
                             </Label>
                         </GridLayout>
