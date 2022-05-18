@@ -51,8 +51,8 @@ The usage of this application has some hardware and software requirements:
 ### Clone repository
 Download this repository as a ZIP and extract it or clone it executing:
 
-```
-> git clone https://github.com/matey97/TugTestSmartphone.git
+```bash
+git clone https://github.com/matey97/TugTestSmartphone.git
 ```
 
 ### Install and configure NativeScript
@@ -68,13 +68,24 @@ Firebase project and include the Firebase configuration file into the project:
 - After the app is added to your project, you will be able to download the Firebase configuration file, i.e., `google-services.json`.
   Download the file and place it in `App_Resources/Android`.
 
+### Complete setup
+To download all the dependencies of the applications and to finalize the setup, run the following command:
+
+```bash
+npm run setup
+```
+
+If you did not place the `google-services.json` in the right directory as specified before, this command
+will fail. If that is the case, be sure to move the file into the correct directory and run again the command.
+**If this final part of the setup fails, the application will not work**.
+
 
 ## Deploy application
 - Connect your Android smartphone (with Developer Options > USB Debugging enabled) through USB to your computer
 - Open a command line interface in the project folder and run:
 
-```
-> ns run android
+```bash
+ns run android
 ```
 
 Once the command has finished, the application should be installed in your smartphone.
