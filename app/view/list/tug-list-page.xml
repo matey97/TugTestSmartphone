@@ -33,8 +33,11 @@
                     <Label id="tugSelector" col="0" row="1" text="TUG" class="mode-selector left" tap="{{ modeSelected }}"></Label>
                     <Label id="collectionSelector" col="1" row="1" text="Collection" class="mode-selector right" tap="{{ modeSelected }}"></Label>
                 </GridLayout>
-                <Button col="2" row="0" rowSpan="2" text="Start" class="-primary" tap="{{ onStartInLocalDevice }}"
-                        visibility="{{ runningLocal ? 'collapsed' : 'visible' }}"></Button>
+                <StackLayout col="2" row="0" rowSpan="2" orientation="horizontal" horizontalAlignment="center" verticalAlignment="center" visibility="{{ runningLocal ? 'collapsed' : 'visible' }}">
+                    <Button col="2" row="0" rowSpan="2" text="Start" class="-primary" tap="{{ onStartInLocalDevice }}"
+                            visibility="{{ ntpSyncing ? 'collapsed' : 'visible' }}"></Button>
+                    <ActivityIndicator busy="{{ ntpSyncing }}" visibility="{{ ntpSyncing ? 'visible' : 'collapsed' }}"/>
+                </StackLayout>
                 <StackLayout col="2" row="0" rowSpan="2" orientation="horizontal" horizontalAlignment="center" verticalAlignment="center" visibility="{{ runningLocal ? 'visible' : 'collapsed' }}">
                     <Label text="{{ countdown }}" class="countdown"
                            visibility="{{ runningCountdown ? 'visible' : 'collapsed' }}"></Label>
