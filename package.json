@@ -29,6 +29,9 @@
     "url": "https://github.com/matey97/TugTestSmartphone/issues"
   },
   "homepage": "https://github.com/matey97/TugTestSmartphone",
+  "scripts": {
+    "setup": "npm i && ns platform add android && node scripts/copy-google-services.js"
+  },
   "dependencies": {
     "@nativescript/core": "~8.2.0",
     "@nativescript/theme": "~2.3.0",
