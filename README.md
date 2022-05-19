@@ -89,6 +89,19 @@ ns run android
 ```
 
 Once the command has finished, the application should be installed in your smartphone.
+
+>**NOTE:** The command will fail if the `google-services.json` file was not placed in the correct directory.
+In that case:
+>
+> - Place the file in the correct directory.
+>
+> - Execute the `ns clean` command:
+>
+> - Execute again the `ns run android` command.
+
+
+### Screenshots
+
 The application shows a list with the TUG executions done:
 
 ![TUG list](screenshots/sp_list.png)
