@@ -1,5 +1,6 @@
 import { Samples } from "~/core/recognition/recognizer/samples";
-import { getSensingDataSource, SensingDataSource } from "~/core/mode";
+import { getSensingDataSource } from "~/core/settings";
+import { DataSource } from "~/core/data-source";
 import { getAndroidSensorManager } from "~/core/collection/sensor-manager.android";
 
 export function normalize(samples: Samples): Samples {
@@ -20,7 +21,7 @@ export function normalize(samples: Samples): Samples {
 function normalizationRanges() {
   const dataSource = getSensingDataSource();
 
-  return dataSource === SensingDataSource.PAIRED_DEVICE
+  return dataSource === DataSource.PAIRED_DEVICE
     ? pairedDeviceRanges()
     : localDeviceRanges();
 }

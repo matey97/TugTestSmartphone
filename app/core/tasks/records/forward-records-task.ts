@@ -1,6 +1,7 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { ApplicationMode, getApplicationMode } from "~/core/mode";
+import { getApplicationMode } from "~/core/settings";
+import { ApplicationMode } from "~/core/application-mode";
 
 const ACC_INF_EVT = "accelerometerRecordsForInference";
 const GYR_INF_EVT = "gyroscopeRecordsForInference";
@@ -28,7 +29,7 @@ export class ForwardRecordsTask extends Task {
     const sourceEvt = invocationEvent.name;
 
     let forwardEvent;
-    if (mode === ApplicationMode.INFERENCE) {
+    if (mode === ApplicationMode.TUG) {
       if (sourceEvt.includes("accelerometer"))
         forwardEvent = ACC_INF_EVT;
       else

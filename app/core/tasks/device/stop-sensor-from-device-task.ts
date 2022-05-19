@@ -1,6 +1,7 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { getSensingDataSource, SensingDataSource } from "~/core/mode";
+import { getSensingDataSource } from "~/core/settings";
+import { DataSource } from "~/core/data-source";
 
 const STOP_LOCAL_DEVICE_SENSING = "stopSensorFromLocalDevice";
 const STOP_PAIRED_DEVICE_SENSING = "stopSensorFromPairedDevice";
@@ -20,7 +21,7 @@ export class StopSensorFromDeviceTask extends Task {
     const sensingDataSource = getSensingDataSource();
 
     return {
-      eventName: sensingDataSource === SensingDataSource.LOCAL_DEVICE
+      eventName: sensingDataSource === DataSource.LOCAL_DEVICE
         ? STOP_LOCAL_DEVICE_SENSING
         : STOP_PAIRED_DEVICE_SENSING,
       result: invocationEvent.data

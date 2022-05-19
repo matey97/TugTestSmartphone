@@ -1,4 +1,3 @@
-import { ModelType } from "~/core/mode";
 import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
 import Interpreter = org.tensorflow.lite.Interpreter;
 import MetadataExtractor = org.tensorflow.lite.support.metadata.MetadataExtractor;
@@ -129,4 +128,8 @@ export interface ModelInfo {
   name: string;
   version: string;
   author: string;
+}
+
+export enum ModelType {
+  MLP = "MLP", CNN = "CNN"
 }

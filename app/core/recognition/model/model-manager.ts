@@ -1,12 +1,12 @@
-import { ModelType, SensingDataSource } from "~/core/mode";
-import { Model } from "~/core/recognition/model/index";
+import { DataSource } from "~/core/data-source";
+import { Model, ModelType } from "~/core/recognition/model/index";
 import { ModelDownloader } from "~/core/recognition/downloader";
 
 const modelNameForDataSourceAndType = new Map([
-  [modelKey(SensingDataSource.LOCAL_DEVICE, ModelType.MLP), "mlp-smartphone"],
-  [modelKey(SensingDataSource.LOCAL_DEVICE, ModelType.CNN), "cnn-smartphone"],
-  [modelKey(SensingDataSource.PAIRED_DEVICE, ModelType.MLP), "mlp-smartwatch"],
-  [modelKey(SensingDataSource.PAIRED_DEVICE, ModelType.CNN), "cnn-smartwatch"],
+  [modelKey(DataSource.LOCAL_DEVICE, ModelType.MLP), "mlp-smartphone"],
+  [modelKey(DataSource.LOCAL_DEVICE, ModelType.CNN), "cnn-smartphone"],
+  [modelKey(DataSource.PAIRED_DEVICE, ModelType.MLP), "mlp-smartwatch"],
+  [modelKey(DataSource.PAIRED_DEVICE, ModelType.CNN), "cnn-smartwatch"],
 ]);
 
 export class ModelManager {
@@ -35,7 +35,7 @@ export class ModelManager {
     );
   }
 
-  public async getModel(dataSource: SensingDataSource, modelType: ModelType): Promise<Model> {
+  public async getModel(dataSource: DataSource, modelType: ModelType): Promise<Model> {
     const key = modelKey(dataSource, modelType);
     if (!this.models.has(key)) {
       const model = await this.downloadModel(key);
@@ -49,7 +49,7 @@ export class ModelManager {
     return Array.from(this.models.values());
   }
 
-  public getModelsFor(dataSource: SensingDataSource): Model[] {
+  public getModelsFor(dataSource: DataSource): Model[] {
     return Array.from(this.models.keys())
       .filter((key) => key.startsWith(dataSource))
       .map((key) => this.models.get(key))
@@ -72,14 +72,14 @@ export class ModelManager {
   }
 }
 
-function modelKey(dataSource: SensingDataSource, modelType: ModelType): string {
+function modelKey(dataSource: DataSource, modelType: ModelType): string {
   return `${dataSource}-${modelType}`;
 }
 
 function dataSourceAndTypeFromKey(key: string) {
   const keys = key.split("-");
   return {
-    dataSource: <SensingDataSource>keys[0],
+    dataSource: <DataSource>keys[0],
     modelType: <ModelType>keys[1]
   }
 }

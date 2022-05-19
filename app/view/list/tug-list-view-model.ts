@@ -3,11 +3,12 @@ import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
-import { ApplicationMode, getApplicationMode, setApplicationMode } from "~/core/mode";
+import { getApplicationMode, setApplicationMode } from "~/core/settings";
 import { wearosSensors } from "nativescript-wearos-sensors";
 import { getNTPTime } from "~/core/utils/ntp-time";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
+import { ApplicationMode } from "~/core/application-mode";
 
 const COUNTDOWN = 5; // Seconds
 
@@ -67,7 +68,7 @@ export class TugListViewModel extends Observable {
     private tugResultsStore = resultsStore
   ) {
     super();
-    setApplicationMode(ApplicationMode.INFERENCE);
+    setApplicationMode(ApplicationMode.TUG);
     this.nodeDiscoverer = getNodeDiscoverer();
     this.getLocalNode();
     this.getConnectedNodes();
@@ -125,17 +126,17 @@ export class TugListViewModel extends Observable {
     const item = evt.object as Label;
 
     if (item.id === "tugSelector") {
-      setApplicationMode(ApplicationMode.INFERENCE);
+      setApplicationMode(ApplicationMode.TUG);
       this.modeSelectionChange(this.tugSelectorLabel, this.collectionSelectorLabel);
     } else {
-      setApplicationMode(ApplicationMode.DATA_COLLECTION);
+      setApplicationMode(ApplicationMode.COLLECTION);
       this.modeSelectionChange(this.collectionSelectorLabel, this.tugSelectorLabel);
     }
   }
 
   onStartInLocalDevice() {
     const succeed = this.runNtpSync();
-    if (!succeed && getApplicationMode() == ApplicationMode.DATA_COLLECTION) {
+    if (!succeed && getApplicationMode() == ApplicationMode.COLLECTION) {
       const vibrator = new Vibrate();
       vibrator.vibrate([500, 500]);
 
@@ -210,7 +211,7 @@ export class TugListViewModel extends Observable {
   }
 
   private buildLocalEvent(action: "start" | "stop") {
-    return getApplicationMode() === ApplicationMode.INFERENCE
+    return getApplicationMode() === ApplicationMode.TUG
       ? `${action}ExecutionCommand`
       : `${action}CollectionCommand`;
   }

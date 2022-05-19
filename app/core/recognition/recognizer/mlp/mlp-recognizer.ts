@@ -1,12 +1,13 @@
 import { AbstractRecognizer} from "~/core/recognition/recognizer/abstract-recognizer";
-import { ModelType, SensingDataSource } from "~/core/mode";
+import { DataSource } from "~/core/data-source";
+import { ModelType } from "~/core/recognition/model";
 import { Samples } from "~/core/recognition/recognizer/samples";
 import { extractFeaturesFrom } from "~/core/recognition/recognizer/mlp/features";
 import ByteBuffer = java.nio.ByteBuffer;
 
 export class MLPRecognizer extends AbstractRecognizer {
 
-  constructor(dataSource: SensingDataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource, ModelType.MLP);
   }
 

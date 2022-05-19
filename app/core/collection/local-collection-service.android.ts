@@ -1,5 +1,6 @@
 import { LocalSensorListener } from "~/core/collection/local-sensor-listener";
-import { ApplicationMode, getApplicationMode } from "~/core/mode";
+import { getApplicationMode } from "~/core/settings";
+import { ApplicationMode } from "~/core/application-mode";
 import { Vibrate } from "nativescript-vibrate";
 import { INTENT_TYPE, IntentType } from "~/core/collection/index";
 import { AndroidSensorManager, getAndroidSensorManager } from "~/core/collection/sensor-manager.android";
@@ -117,7 +118,7 @@ export class LocalCollectionService extends android.app.Service {
 
   private vibrateToNotifyExecutionEnd() {
     const mode = getApplicationMode();
-    if (mode === ApplicationMode.DATA_COLLECTION) {
+    if (mode === ApplicationMode.COLLECTION) {
       return;
     }
 

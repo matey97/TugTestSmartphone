@@ -1,5 +1,5 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
-import { getSensingDataSource } from "~/core/mode";
+import { getSensingDataSource } from "~/core/settings";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { toSamples } from "~/core/recognition/recognizer/samples";
 import { getRecognizer } from "~/core/recognition/recognizer";
