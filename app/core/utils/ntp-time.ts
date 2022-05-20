@@ -16,8 +16,12 @@ export class NTPTime {
     this.clock.startSync();
   }
 
-  blockingSync(): boolean {
-    return this.clock.singleSync();
+  blockingSync(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      setTimeout(() => {
+        resolve(this.clock.singleSync());
+      })
+    });
   }
 
   disableSync(): void {

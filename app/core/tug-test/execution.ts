@@ -1,6 +1,7 @@
 import { RecognitionResult } from "~/core/recognition";
 import { Activity } from "~/core/tug-test/activities";
 import { ActivityResult, TugResult } from "~/core/tug-test/result";
+import { getNTPTime } from "~/core/utils/ntp-time";
 
 const EXECUTION_SEQUENCE = [
   Activity.SIT,
@@ -38,7 +39,7 @@ export class TugExecution {
 
   constructor(
     private sourceDeviceId: string,
-    private starTime = Date.now()
+    private starTime = getNTPTime().currentTime
   ) {
     this._current = Activity.SIT;
     this._status = Status.YET_TO_START;

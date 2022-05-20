@@ -132,8 +132,8 @@ export class TugListViewModel extends Observable {
     }
   }
 
-  onStartInLocalDevice() {
-    const succeed = this.runNtpSync();
+  async onStartInLocalDevice() {
+    const succeed = await this.runNtpSync();
     if (!succeed && getApplicationMode() == ApplicationMode.COLLECTION) {
       const vibrator = new Vibrate();
       vibrator.vibrate([500, 500]);
@@ -208,9 +208,9 @@ export class TugListViewModel extends Observable {
     toUnselect.deletePseudoClass("active");
   }
 
-  private runNtpSync(): boolean {
+  private async runNtpSync(): Promise<boolean> {
     this.ntpSyncing = true;
-    const succeed = getNTPTime().blockingSync();
+    const succeed = await getNTPTime().blockingSync();
     this.ntpSyncing = false;
     return succeed;
   }
