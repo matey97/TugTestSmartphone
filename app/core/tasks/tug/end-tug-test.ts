@@ -2,7 +2,7 @@ import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/task
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
 import { getRecognizer } from "~/core/recognition/recognizer";
-import { getSensingDataSource } from "~/core/mode";
+import { getSensingDataSource } from "~/core/settings";
 
 export class EndTugTestTask extends Task {
 

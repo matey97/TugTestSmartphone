@@ -1,8 +1,14 @@
-import { EventData, GridLayout, Observable, Page, Repeater, Switch, View } from "@nativescript/core";
+import { EventData, GridLayout, Observable, Page, Repeater, Switch, TextField, View } from "@nativescript/core";
 import { getModelManager } from "~/core/recognition/model/model-manager";
 import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
-import { getModelType, ModelType, SensingDataSource, setModelType } from "~/core/mode";
-import { ModelInfo } from "~/core/recognition/model";
+import {
+  getLocalDeviceStartCountdown,
+  getModelType,
+  setLocalDeviceStartCountdown,
+  setModelType
+} from "~/core/settings";
+import { ModelInfo, ModelType } from "~/core/recognition/model";
+import { DataSource } from "~/core/data-source";
 
 export class SettingsModalViewModel extends Observable {
 
@@ -10,6 +16,26 @@ export class SettingsModalViewModel extends Observable {
   repeater: Repeater;
 
   availableModels: DataSourceModels[] = [];
+
+  private countdownTextField: TextField;
+  private _countdownValue: number = getLocalDeviceStartCountdown();
+  get countdownValue(): number {
+    return this._countdownValue;
+  }
+  set countdownValue(value: number) {
+    this._countdownValue = value;
+    this.notifyPropertyChange("countdownValue", value);
+  }
+
+  private _editingCountdown = false;
+  get editingCountdown() {
+    return this._editingCountdown;
+  }
+  set editingCountdown(value) {
+    this._editingCountdown = value;
+    this.notifyPropertyChange("editingValue", value);
+
+  }
 
   constructor(
     private modelManager = getModelManager(),
@@ -22,6 +48,7 @@ export class SettingsModalViewModel extends Observable {
   onViewLoaded(args: EventData){
     this.page = <Page>args.object;
     this.repeater = this.page.getViewById("repeater");
+    this.countdownTextField = this.page.getViewById("countdownTextField");
     this.markSelectedModels();
   }
 
@@ -68,15 +95,30 @@ export class SettingsModalViewModel extends Observable {
     );
   }
 
+  editCountdown() {
+    this.countdownTextField.text = this.countdownValue.toString();
+    this.editingCountdown = true;
+  }
+
+  countdownEdited() {
+    const newValue = this.countdownTextField.text;
+    const parsedValue = parseInt(newValue)
+    this.countdownValue = !isNaN(parsedValue)
+      ? parsedValue
+      : 0;
+    this.editingCountdown = false;
+    setLocalDeviceStartCountdown(this.countdownValue);
+  }
+
   private loadModelsForDataSources() {
     this.availableModels = [];
-    this.addDataSourceModelsIfAvailable(SensingDataSource.LOCAL_DEVICE);
-    this.addDataSourceModelsIfAvailable(SensingDataSource.PAIRED_DEVICE);
+    this.addDataSourceModelsIfAvailable(DataSource.LOCAL_DEVICE);
+    this.addDataSourceModelsIfAvailable(DataSource.PAIRED_DEVICE);
 
     this.notifyPropertyChange("availableModels", this.availableModels);
   }
 
-  private buildDataSourceModelsFor(dataSource: SensingDataSource): DataSourceModels {
+  private buildDataSourceModelsFor(dataSource: DataSource): DataSourceModels {
     return {
       dataSource: dataSourceToLegibleString(dataSource),
       info: this.modelManager.getModelsFor(dataSource).map((model) => {
@@ -89,7 +131,7 @@ export class SettingsModalViewModel extends Observable {
     };
   }
 
-  private addDataSourceModelsIfAvailable(dataSource: SensingDataSource) {
+  private addDataSourceModelsIfAvailable(dataSource: DataSource) {
     const datasourceModels = this.buildDataSourceModelsFor(dataSource);
     if (datasourceModels.info.length !== 0)
       this.availableModels.push(datasourceModels);
@@ -117,21 +159,21 @@ export class SettingsModalViewModel extends Observable {
     });
   }
 
-  private updateSelectedModel(modelType: ModelType, dataSource: SensingDataSource) {
+  private updateSelectedModel(modelType: ModelType, dataSource: DataSource) {
     setModelType(modelType, dataSource);
   }
 }
 
-function dataSourceToLegibleString(dataSource: SensingDataSource): string {
-  return dataSource === SensingDataSource.LOCAL_DEVICE
+function dataSourceToLegibleString(dataSource: DataSource): string {
+  return dataSource === DataSource.LOCAL_DEVICE
     ? "Local device"
     : "Paired device";
 }
 
-function legibleStringToDataSource(string: string): SensingDataSource {
+function legibleStringToDataSource(string: string): DataSource {
   return string === "Local device"
-    ? SensingDataSource.LOCAL_DEVICE
-    : SensingDataSource.PAIRED_DEVICE;
+    ? DataSource.LOCAL_DEVICE
+    : DataSource.PAIRED_DEVICE;
 }
 
 interface DataSourceModels {

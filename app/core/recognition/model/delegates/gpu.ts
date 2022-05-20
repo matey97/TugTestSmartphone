@@ -1,26 +1,23 @@
+import { isGPUDelegateEnabled, setGPUDelegateEnabled } from "~/core/settings";
 import { Delegate, TFLiteDelegate } from "~/core/recognition/model/delegates/index";
-import { setBoolean, getBoolean, flush } from "@nativescript/core/application-settings";
 import CompatibilityList = org.tensorflow.lite.gpu.CompatibilityList;
 import TFGpuDelegate = org.tensorflow.lite.gpu.GpuDelegate;
-
-const GPU_DELEGATE_KEY = "gpu_delegate_key";
 
 export class GPUDelegate implements Delegate {
 
   private _enabled: boolean;
   set enabled(value: boolean) {
     this._enabled = value;
-    setBoolean(GPU_DELEGATE_KEY, value);
-    flush();
+    setGPUDelegateEnabled(value);
   }
   get enabled(): boolean {
     if (!this._enabled) {
-      this._enabled = getBoolean(GPU_DELEGATE_KEY, false);
+      this._enabled = isGPUDelegateEnabled();
     }
     return this._enabled && this.supported;
   }
 
-  private get supported(): boolean {
+  get supported(): boolean {
     return this.compatibilityList.isDelegateSupportedOnThisDevice();
   }
 

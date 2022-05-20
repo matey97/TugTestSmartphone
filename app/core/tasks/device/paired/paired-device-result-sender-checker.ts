@@ -1,7 +1,8 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { TugResult } from "~/core/tug-test/result";
-import { getSensingDataSource, SensingDataSource } from "~/core/mode";
+import { getSensingDataSource } from "~/core/settings";
+import { DataSource } from "~/core/data-source";
 
 export class PairedDeviceResultSenderChecker extends Task {
 
@@ -16,7 +17,7 @@ export class PairedDeviceResultSenderChecker extends Task {
     invocationEvent: DispatchableEvent
   ): Promise<void | TaskOutcome> {
     const dataSource = getSensingDataSource();
-    if (dataSource === SensingDataSource.LOCAL_DEVICE)
+    if (dataSource === DataSource.LOCAL_DEVICE)
       return {
         eventName: this.outputEventNames[0]
       };

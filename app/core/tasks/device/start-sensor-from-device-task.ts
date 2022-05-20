@@ -1,6 +1,7 @@
 import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { getSensingDataSource, SensingDataSource } from "~/core/mode";
+import { getSensingDataSource } from "~/core/settings";
+import { DataSource } from "~/core/data-source";
 
 const START_LOCAL_DEVICE_SENSING = "startSensorFromLocalDevice";
 const START_PAIRED_DEVICE_SENSING = "startSensorFromPairedDevice";
@@ -20,7 +21,7 @@ export class StartSensorFromDeviceTask extends Task {
     const sensingDataSource = getSensingDataSource();
 
     return {
-      eventName: sensingDataSource === SensingDataSource.LOCAL_DEVICE
+      eventName: sensingDataSource === DataSource.LOCAL_DEVICE
         ? START_LOCAL_DEVICE_SENSING
         : START_PAIRED_DEVICE_SENSING,
       result: invocationEvent.data

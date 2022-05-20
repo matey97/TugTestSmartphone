@@ -3,13 +3,12 @@ import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
-import { ApplicationMode, getApplicationMode, setApplicationMode } from "~/core/mode";
+import { getApplicationMode, getLocalDeviceStartCountdown, setApplicationMode } from "~/core/settings";
 import { wearosSensors } from "nativescript-wearos-sensors";
 import { getNTPTime } from "~/core/utils/ntp-time";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
-
-const COUNTDOWN = 5; // Seconds
+import { ApplicationMode } from "~/core/application-mode";
 
 export class TugListViewModel extends Observable {
 
@@ -67,7 +66,7 @@ export class TugListViewModel extends Observable {
     private tugResultsStore = resultsStore
   ) {
     super();
-    setApplicationMode(ApplicationMode.INFERENCE);
+    setApplicationMode(ApplicationMode.TUG);
     this.nodeDiscoverer = getNodeDiscoverer();
     this.getLocalNode();
     this.getConnectedNodes();
@@ -125,17 +124,17 @@ export class TugListViewModel extends Observable {
     const item = evt.object as Label;
 
     if (item.id === "tugSelector") {
-      setApplicationMode(ApplicationMode.INFERENCE);
+      setApplicationMode(ApplicationMode.TUG);
       this.modeSelectionChange(this.tugSelectorLabel, this.collectionSelectorLabel);
     } else {
-      setApplicationMode(ApplicationMode.DATA_COLLECTION);
+      setApplicationMode(ApplicationMode.COLLECTION);
       this.modeSelectionChange(this.collectionSelectorLabel, this.tugSelectorLabel);
     }
   }
 
   async onStartInLocalDevice() {
     const succeed = await this.runNtpSync();
-    if (!succeed && getApplicationMode() == ApplicationMode.DATA_COLLECTION) {
+    if (!succeed && getApplicationMode() == ApplicationMode.COLLECTION) {
       const vibrator = new Vibrate();
       vibrator.vibrate([500, 500]);
 
@@ -148,7 +147,7 @@ export class TugListViewModel extends Observable {
   }
 
   onStopInLocalDevice() {
-    const event = this.buildLocalEvent("stop");
+    const event = buildLocalEvent("stop");
     wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
 
     this.runningLocal = false;
@@ -209,12 +208,6 @@ export class TugListViewModel extends Observable {
     toUnselect.deletePseudoClass("active");
   }
 
-  private buildLocalEvent(action: "start" | "stop") {
-    return getApplicationMode() === ApplicationMode.INFERENCE
-      ? `${action}ExecutionCommand`
-      : `${action}CollectionCommand`;
-  }
-
   private async runNtpSync(): Promise<boolean> {
     this.ntpSyncing = true;
     const succeed = await getNTPTime().blockingSync();
@@ -223,8 +216,14 @@ export class TugListViewModel extends Observable {
   }
 
   private runCountdown() {
-    this.countdown = COUNTDOWN;
+    this.countdown = getLocalDeviceStartCountdown();
     this.runningCountdown = true;
+
+    if (this.countdown === 0) {
+      this.runningCountdown = false;
+      wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+      return;
+    }
 
     const id = setInterval(() => {
       this.countdown--;
@@ -232,7 +231,7 @@ export class TugListViewModel extends Observable {
         this.runningCountdown = false;
         clearInterval(id);
 
-        wearosSensors.emitEvent(this.buildLocalEvent("start"), { deviceId: this.localNode.id });
+        wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
       }
     }, 1000);
   }
@@ -241,4 +240,10 @@ export class TugListViewModel extends Observable {
 interface TugResultVM {
   date: string,
   duration: string
+}
+
+function buildLocalEvent(action: "start" | "stop") {
+  return getApplicationMode() === ApplicationMode.TUG
+    ? `${action}ExecutionCommand`
+    : `${action}CollectionCommand`;
 }

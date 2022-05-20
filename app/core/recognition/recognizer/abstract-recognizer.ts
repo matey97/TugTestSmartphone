@@ -1,6 +1,6 @@
-import { Model } from "~/core/recognition/model";
+import { Model, ModelType } from "~/core/recognition/model";
+import { DataSource } from "~/core/data-source";
 import { InferenceProbability, RecognitionResult } from "~/core/recognition";
-import { ModelType, SensingDataSource } from "~/core/mode";
 import { getModelManager, ModelManager } from "~/core/recognition/model/model-manager";
 import { Samples } from "~/core/recognition/recognizer/samples";
 import { timedExecution } from "~/core/utils/time";
@@ -11,7 +11,7 @@ export abstract class AbstractRecognizer {
   private model: Model;
 
   protected constructor(
-    private dataSource: SensingDataSource,
+    private dataSource: DataSource,
     private modelType: ModelType,
     private modelManager: ModelManager = getModelManager()
   ) {
