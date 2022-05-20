@@ -21,7 +21,7 @@ export function toSamples(recordsToProcess: RecordsToProcess): Samples {
     gyroX: recordsToProcess.gyroscopeRecords.map(value => value.x),
     gyroY: recordsToProcess.gyroscopeRecords.map(value => value.y),
     gyroZ: recordsToProcess.gyroscopeRecords.map(value => value.z),
-    timestampStart: recordsToProcess.accelerometerRecords[0].timestamp.getTime(),
-    timestampEnd: recordsToProcess.accelerometerRecords[recordsToProcess.accelerometerRecords.length - 1].timestamp.getTime()
+    timestampStart: recordsToProcess.accelerometerRecords[0].timestamp,
+    timestampEnd: recordsToProcess.accelerometerRecords[recordsToProcess.accelerometerRecords.length - 1].timestamp
   }
 }

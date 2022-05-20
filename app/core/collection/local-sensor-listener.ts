@@ -1,6 +1,7 @@
 import { SensorType } from "nativescript-wearos-sensors/sensors";
 import { TriAxialSensorRecord } from "nativescript-wearos-sensors/internal/sensors/triaxial/record";
 import { wearosSensors } from "nativescript-wearos-sensors";
+import { getNTPTime } from "~/core/utils/ntp-time";
 
 const ACC_EVENT = "accelerometerRecordsAcquired";
 const GYR_EVENT = "gyroscopeRecordsAcquired";
@@ -13,7 +14,7 @@ export class LocalSensorListener {
 
   private listener: android.hardware.SensorEventListener;
 
-  constructor() {
+  constructor(private ntpTime = getNTPTime()) {
     this.accelerometerRecords = [];
     this.gyroscopeRecords = [];
   }
@@ -54,7 +55,7 @@ export class LocalSensorListener {
         y: event.values[1],
         z: event.values[2],
         deviceId: "",
-        timestamp: new Date(),
+        timestamp: this.ntpTime.currentTime,
     };
   }
 

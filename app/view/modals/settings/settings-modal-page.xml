@@ -5,7 +5,7 @@
                 tap="onCloseModal"
                 android.position="actionBar"
                 class="mdi-ro action-item"
-        ></ActionItem>
+        />
     </ActionBar>
 
     <StackLayout orientation="vertical">

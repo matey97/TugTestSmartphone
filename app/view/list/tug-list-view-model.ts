@@ -2,14 +2,12 @@ import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } 
 import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
-import { Activity } from "~/core/tug-test/activities";
 import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
-import {
-  ApplicationMode,
-  getApplicationMode,
-  setApplicationMode,
-} from "~/core/mode";
+import { ApplicationMode, getApplicationMode, setApplicationMode } from "~/core/mode";
 import { wearosSensors } from "nativescript-wearos-sensors";
+import { getNTPTime } from "~/core/utils/ntp-time";
+import { Vibrate } from "nativescript-vibrate";
+import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
 
 const COUNTDOWN = 5; // Seconds
 
@@ -30,6 +28,16 @@ export class TugListViewModel extends Observable {
   set runningLocal(value: boolean) {
     this._runningLocal = value;
     this.notifyPropertyChange("runningLocal", this.runningLocal);
+  }
+
+  private _ntpSyncing: boolean = false;
+  get ntpSyncing(): boolean {
+    return this._ntpSyncing;
+  }
+
+  set ntpSyncing(value: boolean) {
+    this._ntpSyncing = value;
+    this.notifyPropertyChange("ntpSyncing", this.ntpSyncing);
   }
 
   private _runningCountdown: boolean = false;
@@ -125,7 +133,16 @@ export class TugListViewModel extends Observable {
     }
   }
 
-  onStartInLocalDevice() {
+  async onStartInLocalDevice() {
+    const succeed = await this.runNtpSync();
+    if (!succeed && getApplicationMode() == ApplicationMode.DATA_COLLECTION) {
+      const vibrator = new Vibrate();
+      vibrator.vibrate([500, 500]);
+
+      new Toasty({ text: "Unable to sync with NTP", duration: ToastDuration.LONG }).show();
+      return;
+    }
+
     this.runningLocal = true;
     this.runCountdown();
   }
@@ -196,6 +213,13 @@ export class TugListViewModel extends Observable {
     return getApplicationMode() === ApplicationMode.INFERENCE
       ? `${action}ExecutionCommand`
       : `${action}CollectionCommand`;
+  }
+
+  private async runNtpSync(): Promise<boolean> {
+    this.ntpSyncing = true;
+    const succeed = await getNTPTime().blockingSync();
+    this.ntpSyncing = false;
+    return succeed;
   }
 
   private runCountdown() {
