@@ -3,14 +3,12 @@ import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
-import { getApplicationMode, setApplicationMode } from "~/core/settings";
+import { getApplicationMode, getLocalDeviceStartCountdown, setApplicationMode } from "~/core/settings";
 import { wearosSensors } from "nativescript-wearos-sensors";
 import { getNTPTime } from "~/core/utils/ntp-time";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
 import { ApplicationMode } from "~/core/application-mode";
-
-const COUNTDOWN = 5; // Seconds
 
 export class TugListViewModel extends Observable {
 
@@ -149,7 +147,7 @@ export class TugListViewModel extends Observable {
   }
 
   onStopInLocalDevice() {
-    const event = this.buildLocalEvent("stop");
+    const event = buildLocalEvent("stop");
     wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
 
     this.runningLocal = false;
@@ -210,12 +208,6 @@ export class TugListViewModel extends Observable {
     toUnselect.deletePseudoClass("active");
   }
 
-  private buildLocalEvent(action: "start" | "stop") {
-    return getApplicationMode() === ApplicationMode.TUG
-      ? `${action}ExecutionCommand`
-      : `${action}CollectionCommand`;
-  }
-
   private runNtpSync(): boolean {
     this.ntpSyncing = true;
     const succeed = getNTPTime().blockingSync();
@@ -224,8 +216,14 @@ export class TugListViewModel extends Observable {
   }
 
   private runCountdown() {
-    this.countdown = COUNTDOWN;
+    this.countdown = getLocalDeviceStartCountdown();
     this.runningCountdown = true;
+
+    if (this.countdown === 0) {
+      this.runningCountdown = false;
+      wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+      return;
+    }
 
     const id = setInterval(() => {
       this.countdown--;
@@ -233,7 +231,7 @@ export class TugListViewModel extends Observable {
         this.runningCountdown = false;
         clearInterval(id);
 
-        wearosSensors.emitEvent(this.buildLocalEvent("start"), { deviceId: this.localNode.id });
+        wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
       }
     }, 1000);
   }
@@ -242,4 +240,10 @@ export class TugListViewModel extends Observable {
 interface TugResultVM {
   date: string,
   duration: string
+}
+
+function buildLocalEvent(action: "start" | "stop") {
+  return getApplicationMode() === ApplicationMode.TUG
+    ? `${action}ExecutionCommand`
+    : `${action}CollectionCommand`;
 }
