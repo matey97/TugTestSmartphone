@@ -1,7 +1,12 @@
-import { EventData, GridLayout, Observable, Page, Repeater, Switch, View } from "@nativescript/core";
+import { EventData, GridLayout, Observable, Page, Repeater, Switch, TextField, View } from "@nativescript/core";
 import { getModelManager } from "~/core/recognition/model/model-manager";
 import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
-import { getModelType, setModelType } from "~/core/settings";
+import {
+  getLocalDeviceStartCountdown,
+  getModelType,
+  setLocalDeviceStartCountdown,
+  setModelType
+} from "~/core/settings";
 import { ModelInfo, ModelType } from "~/core/recognition/model";
 import { DataSource } from "~/core/data-source";
 
@@ -11,6 +16,26 @@ export class SettingsModalViewModel extends Observable {
   repeater: Repeater;
 
   availableModels: DataSourceModels[] = [];
+
+  private countdownTextField: TextField;
+  private _countdownValue: number = getLocalDeviceStartCountdown();
+  get countdownValue(): number {
+    return this._countdownValue;
+  }
+  set countdownValue(value: number) {
+    this._countdownValue = value;
+    this.notifyPropertyChange("countdownValue", value);
+  }
+
+  private _editingCountdown = false;
+  get editingCountdown() {
+    return this._editingCountdown;
+  }
+  set editingCountdown(value) {
+    this._editingCountdown = value;
+    this.notifyPropertyChange("editingValue", value);
+
+  }
 
   constructor(
     private modelManager = getModelManager(),
@@ -23,6 +48,7 @@ export class SettingsModalViewModel extends Observable {
   onViewLoaded(args: EventData){
     this.page = <Page>args.object;
     this.repeater = this.page.getViewById("repeater");
+    this.countdownTextField = this.page.getViewById("countdownTextField");
     this.markSelectedModels();
   }
 
@@ -67,6 +93,21 @@ export class SettingsModalViewModel extends Observable {
       selectedModelType,
       legibleStringToDataSource(dataSourceModels.dataSource)
     );
+  }
+
+  editCountdown() {
+    this.countdownTextField.text = this.countdownValue.toString();
+    this.editingCountdown = true;
+  }
+
+  countdownEdited() {
+    const newValue = this.countdownTextField.text;
+    const parsedValue = parseInt(newValue)
+    this.countdownValue = !isNaN(parsedValue)
+      ? parsedValue
+      : 0;
+    this.editingCountdown = false;
+    setLocalDeviceStartCountdown(this.countdownValue);
   }
 
   private loadModelsForDataSources() {

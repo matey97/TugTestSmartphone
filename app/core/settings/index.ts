@@ -17,6 +17,7 @@ function modelTypeKey(dataSource: DataSource): string {
   return `${dataSource.toLowerCase()}_model_type`;
 }
 const GPU_DELEGATE_KEY = "gpu_delegate_key";
+const LOCAL_START_COUNTDOWN = "local_start_countdown_key";
 
 export function setApplicationMode(mode: ApplicationMode): void {
   setNumber(APP_MODE_KEY, mode);
@@ -52,4 +53,13 @@ export function setGPUDelegateEnabled(enabled: boolean): void {
 
 export function isGPUDelegateEnabled(): boolean {
   return getBoolean(GPU_DELEGATE_KEY, false);
+}
+
+export function setLocalDeviceStartCountdown(countdown: number): void {
+  setNumber(LOCAL_START_COUNTDOWN, countdown);
+  flush();
+}
+
+export function getLocalDeviceStartCountdown(): number {
+  return getNumber(LOCAL_START_COUNTDOWN, 5);
 }
