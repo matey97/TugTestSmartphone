@@ -9,6 +9,7 @@ import { getNTPTime } from "~/core/utils/ntp-time";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
 import { ApplicationMode } from "~/core/application-mode";
+import { getLocalDataSourceNode } from "~/core/data-source";
 
 export class TugListViewModel extends Observable {
 
@@ -154,7 +155,8 @@ export class TugListViewModel extends Observable {
   }
 
   private async getLocalNode() {
-    this.localNode = await this.nodeDiscoverer.getLocalNode();
+    this.localNode = await getLocalDataSourceNode();
+
     this.notifyPropertyChange("localNode", this.localNode);
   }
 
@@ -170,7 +172,7 @@ export class TugListViewModel extends Observable {
         this.connectedNodes.push(node);
         this.notifyPropertyChange("connectedNodes", this.connectedNodes);
       }
-    })
+    });
   }
 
   private updateTugResults(changes?: string[]) {
