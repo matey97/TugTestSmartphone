@@ -9,7 +9,7 @@ import {
 } from "@nativescript/core/application-settings"
 import { ApplicationMode } from "~/core/application-mode";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model";
+import { ModelType } from "~/core/recognition/model/model-type";
 
 const APP_MODE_KEY = "app_mode";
 const SENSING_DATA_SOURCE_KEY = "sensing_data_source";

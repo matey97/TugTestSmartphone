@@ -7,8 +7,9 @@ import {
   setLocalDeviceStartCountdown,
   setModelType
 } from "~/core/settings";
-import { ModelInfo, ModelType } from "~/core/recognition/model";
+import { ModelInfo } from "~/core/recognition/model";
 import { DataSource } from "~/core/data-source";
+import { ModelType } from "~/core/recognition/model/model-type";
 
 export class SettingsModalViewModel extends Observable {
 

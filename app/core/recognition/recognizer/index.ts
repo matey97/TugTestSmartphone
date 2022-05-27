@@ -3,7 +3,7 @@ import { AbstractRecognizer} from "~/core/recognition/recognizer/abstract-recogn
 import { getMLPRecognizer } from "~/core/recognition/recognizer/mlp";
 import { getCNNRecognizer } from "~/core/recognition/recognizer/cnn";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model";
+import { ModelType } from "~/core/recognition/model/model-type";
 
 export function getRecognizer(dataSource: DataSource): AbstractRecognizer {
   const modelType = getModelType(dataSource);
