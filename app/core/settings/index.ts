@@ -37,13 +37,13 @@ export function getSensingDataSource(): DataSource {
   return <DataSource>getString(SENSING_DATA_SOURCE_KEY);
 }
 
-export function setModelType(modelType: ModelType, dataSource: DataSource): void {
-  setString(modelTypeKey(dataSource), modelType);
+export function setModelEnabledForDataSource(id: string, dataSource: DataSource): void {
+  setString(modelTypeKey(dataSource), id);
   flush();
 }
 
-export function getModelType(dataSource: DataSource): ModelType {
-  return <ModelType>getString(modelTypeKey(dataSource), ModelType.CNN);
+export function getModelEnabledForDataSource(dataSource: DataSource): string {
+  return <ModelType>getString(modelTypeKey(dataSource));
 }
 
 export function setGPUDelegateEnabled(enabled: boolean): void {

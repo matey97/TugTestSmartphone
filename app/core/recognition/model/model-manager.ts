@@ -1,86 +1,64 @@
 import { DataSource } from "~/core/data-source";
-import { Model, ModelType } from "~/core/recognition/model/index";
-import { ModelDownloader } from "~/core/recognition/downloader";
+import { Model } from "~/core/recognition/model/index";
+import { modelTypeFrom } from "~/core/recognition/model/model-type";
+import { Folder, knownFolders, path } from "@nativescript/core";
+import { getModelEnabledForDataSource, setModelEnabledForDataSource } from "~/core/settings";
 
-const modelNameForDataSourceAndType = new Map([
-  [modelKey(DataSource.LOCAL_DEVICE, ModelType.MLP), "mlp-smartphone"],
-  [modelKey(DataSource.LOCAL_DEVICE, ModelType.CNN), "cnn-smartphone"],
-  [modelKey(DataSource.PAIRED_DEVICE, ModelType.MLP), "mlp-smartwatch"],
-  [modelKey(DataSource.PAIRED_DEVICE, ModelType.CNN), "cnn-smartwatch"],
-]);
+const MODELS_FOLDER = "models";
+const DEVICE_FOLDERS = new Map([
+  [DataSource.LOCAL_DEVICE, "local-device"],
+  [DataSource.PAIRED_DEVICE, "paired-device"]
+])
 
 export class ModelManager {
 
-  private models: Map<string, Model>;
+  private models: Map<DataSource, Model[]>;
 
-  constructor() {
-    this.models = new Map<string, Model>();
+  constructor(private baseModelsPath = path.join(knownFolders.currentApp().path, MODELS_FOLDER)) {
+    this.models = new Map<DataSource, Model[]>();
   }
 
   public async loadModels() {
-    await Promise.all(
-      Array.from(modelNameForDataSourceAndType.keys())
-        .map(async (key) => {
-          if (this.models.has(key)) {
-            return;
-          }
+    const localDeviceModels = await this.loadEmbeddedModelsFrom(DataSource.LOCAL_DEVICE);
+    this.models.set(DataSource.LOCAL_DEVICE, localDeviceModels);
 
-          try {
-            const model = await this.downloadModel(key);
-            this.models.set(key, model);
-          } catch (e) {
-            console.log(e);
-          }
-        })
-    );
+    const pairedDeviceModels = await this.loadEmbeddedModelsFrom(DataSource.PAIRED_DEVICE);
+    this.models.set(DataSource.PAIRED_DEVICE, pairedDeviceModels)
+
+    this.setModelsEnabledDefault();
   }
 
-  public async getModel(dataSource: DataSource, modelType: ModelType): Promise<Model> {
-    const key = modelKey(dataSource, modelType);
-    if (!this.models.has(key)) {
-      const model = await this.downloadModel(key);
-      this.models.set(key, model);
+  public getModelEnabledForDataSource(dataSource: DataSource): Model {
+    if (!this.models.has(dataSource)) {
+      throw new Error(`Models not available for ${dataSource} data source.`);
     }
-
-    return this.models.get(key);
+    const modelId = getModelEnabledForDataSource(dataSource);
+    return this.models.get(dataSource).find((model) => model.modelInfo.id === modelId)
   }
 
   public getModels(): Model[] {
-    return Array.from(this.models.values());
+    return Array.from(this.models.values()).flat();
   }
 
   public getModelsFor(dataSource: DataSource): Model[] {
-    return Array.from(this.models.keys())
-      .filter((key) => key.startsWith(dataSource))
-      .map((key) => this.models.get(key))
+    return this.models.get(dataSource);
   }
 
-  private async downloadModel(modelKey: string): Promise<Model> {
-    const modelName = modelNameForDataSourceAndType.get(modelKey);
+  private async loadEmbeddedModelsFrom(dataSource: DataSource): Promise<Model[]> {
+    const deviceModelsPath = path.join(this.baseModelsPath, DEVICE_FOLDERS.get(dataSource));
+    const deviceModelsFolder = Folder.fromPath(deviceModelsPath);
+    const architectures = await deviceModelsFolder.getEntities();
+    return architectures.flatMap((architecture) => {
+      const architectureFolder = Folder.fromPath(architecture.path);
+      const modelsOfArchitecture = architectureFolder.getEntitiesSync();
+      return modelsOfArchitecture.map((model) => new Model(model.path, modelTypeFrom(architecture.name)));
+    });
+  }
 
-    let modelFilePath;
-    try {
-      const modelDownloader = new ModelDownloader(modelName);
-      modelFilePath = await modelDownloader.getModelFilePath();
-      console.log(`${modelKey} model downloaded.`);
-    } catch (e) {
-      throw new Error(`${modelKey} model download failed. ${e}`);
+  private setModelsEnabledDefault(): void {
+    for (const key of this.models.keys()) {
+      setModelEnabledForDataSource(this.models.get(key)[0].modelInfo.id, key);
     }
-
-    const { modelType } = dataSourceAndTypeFromKey(modelKey);
-    return new Model(modelFilePath, modelType);
-  }
-}
-
-function modelKey(dataSource: DataSource, modelType: ModelType): string {
-  return `${dataSource}-${modelType}`;
-}
-
-function dataSourceAndTypeFromKey(key: string) {
-  const keys = key.split("-");
-  return {
-    dataSource: <DataSource>keys[0],
-    modelType: <ModelType>keys[1]
   }
 }
 

@@ -3,9 +3,8 @@ import { getModelManager } from "~/core/recognition/model/model-manager";
 import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
 import {
   getLocalDeviceStartCountdown,
-  getModelType,
   setLocalDeviceStartCountdown,
-  setModelType
+  setModelEnabledForDataSource,
 } from "~/core/settings";
 import { ModelInfo } from "~/core/recognition/model";
 import { DataSource } from "~/core/data-source";
@@ -53,30 +52,13 @@ export class SettingsModalViewModel extends Observable {
     this.markSelectedModels();
   }
 
-  async onRefreshModelsTap(args: EventData) {
-    const view = args.object as View;
-    const animation = view.animate({
-      rotate: 360,
-      duration: 1000,
-      iterations: Number.POSITIVE_INFINITY
-    });
-
-    setTimeout(async () => {
-      await this.modelManager.loadModels();
-      this.loadModelsForDataSources();
-      animation.cancel();
-      this.repeater.refresh();
-      this.markSelectedModels();
-    }, 1000);
-  }
-
   modelSelected(args: EventData) {
     const container = args.object as GridLayout;
     const context = container.bindingContext;
     const parentContext = container.parent.bindingContext;
 
     const vm = context.vm;
-    vm.changeSelectedModel(parentContext, context.model.name);
+    vm.changeSelectedModel(parentContext, context.model.id);
   }
 
   onGpuDelegateChange(args: EventData) {
@@ -84,14 +66,10 @@ export class SettingsModalViewModel extends Observable {
     this.gpuDelegate.enabled = sw.checked;
   }
 
-  changeSelectedModel(dataSourceModels: DataSourceModels, modelName: string) {
-    const selectedModelType = dataSourceModels.info
-      .find((modelInfo) => modelInfo.model.name === modelName)
-      .type;
-
-    this.updateSelection(dataSourceModels, selectedModelType);
+  changeSelectedModel(dataSourceModels: DataSourceModels, modelId: string) {
+    this.updateSelection(dataSourceModels, modelId);
     this.updateSelectedModel(
-      selectedModelType,
+      modelId,
       legibleStringToDataSource(dataSourceModels.dataSource)
     );
   }
@@ -141,18 +119,17 @@ export class SettingsModalViewModel extends Observable {
   private markSelectedModels() {
     this.availableModels.forEach((dataSourceModels) =>{
       const dataSource = dataSourceModels.dataSource;
-      const selectedModelType = getModelType(legibleStringToDataSource(dataSource));
+      const selectedModel = this.modelManager.getModelEnabledForDataSource(legibleStringToDataSource(dataSource));
 
-      this.updateSelection(dataSourceModels, selectedModelType);
+      this.updateSelection(dataSourceModels, selectedModel.modelInfo.id);
     });
   }
 
-  private updateSelection(dataSourceModels: DataSourceModels, selectedModelType: ModelType) {
+  private updateSelection(dataSourceModels: DataSourceModels, modelId: string) {
     dataSourceModels.info.forEach((modelInfoVM) => {
-      const modelName = modelInfoVM.model.name;
-      const type = modelInfoVM.type;
-      const view = this.page.getViewById(modelName);
-      if (type === selectedModelType) {
+      const { id, name } = modelInfoVM.model;
+      const view = this.page.getViewById(name);
+      if (id === modelId) {
         view.addPseudoClass("active");
       } else {
         view.deletePseudoClass("active");
@@ -160,8 +137,8 @@ export class SettingsModalViewModel extends Observable {
     });
   }
 
-  private updateSelectedModel(modelType: ModelType, dataSource: DataSource) {
-    setModelType(modelType, dataSource);
+  private updateSelectedModel(modelId: string, dataSource: DataSource) {
+    setModelEnabledForDataSource(modelId, dataSource);
   }
 }
 
