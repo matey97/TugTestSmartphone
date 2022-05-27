@@ -8,6 +8,8 @@ module.exports = (env) => {
 	// Learn how to customize:
 	// https://docs.nativescript.org/webpack
 
+  webpack.Utils.addCopyRule("models/**/*.tflite");
+
   webpack.Utils.addCopyRule({
     from: path.resolve(__dirname, 'App_Resources', 'Android', 'google-services.json'),
     to: path.resolve(__dirname, 'platforms', 'android', 'app'),
