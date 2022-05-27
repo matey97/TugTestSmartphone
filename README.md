@@ -68,17 +68,6 @@ Firebase project and include the Firebase configuration file into the project:
 - After the app is added to your project, you will be able to download the Firebase configuration file, i.e., `google-services.json`.
   Download the file and place it in `App_Resources/Android`.
 
-### Complete setup
-To download all the dependencies of the applications and to finalize the setup, run the following command:
-
-```bash
-npm run setup
-```
-
-If you did not place the `google-services.json` in the right directory as specified before, this command
-will fail. If that is the case, be sure to move the file into the correct directory and run again the command.
-**If this final part of the setup fails, the application will not work**.
-
 
 ## Deploy application
 - Connect your Android smartphone (with Developer Options > USB Debugging enabled) through USB to your computer
@@ -90,14 +79,10 @@ ns run android
 
 Once the command has finished, the application should be installed in your smartphone.
 
->**NOTE:** The command will fail if the `google-services.json` file was not placed in the correct directory.
-In that case:
+>**NOTE:** The build will fail with the following error if the `google-services.json` file was not placed in the correct directory:
+> `Error in unable to locate '[...]/TugTestSmartphone/App_Resources/Android/google-services.json' glob`.
 >
-> - Place the file in the correct directory.
->
-> - Execute the `ns clean` command:
->
-> - Execute again the `ns run android` command.
+> In that case, make sure to place the file in the correct place and run again the command.
 
 
 ### Screenshots
