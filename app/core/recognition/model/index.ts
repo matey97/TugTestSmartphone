@@ -110,6 +110,7 @@ export class Model {
 
     if (!metadataExtractor.hasMetadata()) {
       return {
+        id: "",
         name: "",
         version: "",
         author: "",
@@ -118,6 +119,7 @@ export class Model {
 
     const modelMetadata = metadataExtractor.getModelMetadata();
     return {
+      id: `${modelMetadata.name()}#${modelMetadata.version()}`,
       name: modelMetadata.name(),
       version: modelMetadata.version(),
       author: modelMetadata.author()
@@ -126,6 +128,7 @@ export class Model {
 }
 
 export interface ModelInfo {
+  id: string
   name: string;
   version: string;
   author: string;
