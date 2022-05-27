@@ -14,7 +14,7 @@
                 <Label text="Available models" class="settings-section-title"/>
 
                 <Label visibility="{{ availableModels.length === 0 ? 'visible' : 'collapsed' }}" class="label-header"
-                       text="No models available. Check your internet connection and tap refresh icon to download models" />
+                       text="No models available!!" />
                 <Repeater visibility="{{ availableModels.length !== 0 ? 'visible' : 'collapsed'}}"
                           id="repeater" items="{{ availableModels }}" >
                     <Repeater.itemsLayout>
