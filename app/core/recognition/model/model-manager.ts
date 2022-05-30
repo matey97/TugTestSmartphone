@@ -8,7 +8,7 @@ const MODELS_FOLDER = "models";
 const DEVICE_FOLDERS = new Map([
   [DataSource.LOCAL_DEVICE, "local-device"],
   [DataSource.PAIRED_DEVICE, "paired-device"]
-])
+]);
 
 export class ModelManager {
 
@@ -49,10 +49,15 @@ export class ModelManager {
     const deviceModelsFolder = Folder.fromPath(deviceModelsPath);
     const architectures = await deviceModelsFolder.getEntities();
     return architectures.flatMap((architecture) => {
-      const architectureFolder = Folder.fromPath(architecture.path);
-      const modelsOfArchitecture = architectureFolder.getEntitiesSync();
-      return modelsOfArchitecture.map((model) => new Model(model.path, modelTypeFrom(architecture.name)));
-    });
+      try {
+        const modelType = modelTypeFrom(architecture.name);
+        const architectureFolder = Folder.fromPath(architecture.path);
+        const modelsOfArchitecture = architectureFolder.getEntitiesSync();
+        return modelsOfArchitecture.map((model) => new Model(model.path, modelType));
+      } catch (ex) {
+        console.log(`Failed to load models from ${architecture.path}. Reason: ${ex.message}`);
+      }
+    }).filter((model) => model !== undefined);
   }
 
   private setModelsEnabledDefault(): void {

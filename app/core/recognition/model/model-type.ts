@@ -9,6 +9,6 @@ export function modelTypeFrom(value: string): ModelType {
     case ModelType.CNN:
       return ModelType.CNN;
     default:
-      throw new Error(`Unsupported architecute: ${value}`);
+      throw new Error(`Unsupported architecture: ${value}`);
   }
 }
