@@ -1,4 +1,4 @@
-import { Model, ModelType } from "~/core/recognition/model";
+import { Model } from "~/core/recognition/model";
 import { DataSource } from "~/core/data-source";
 import { InferenceProbability, RecognitionResult } from "~/core/recognition";
 import { getModelManager, ModelManager } from "~/core/recognition/model/model-manager";
@@ -12,12 +12,10 @@ export abstract class AbstractRecognizer {
 
   protected constructor(
     private dataSource: DataSource,
-    private modelType: ModelType,
     private modelManager: ModelManager = getModelManager()
   ) {
-    this.initModel()
-      .then(() => console.log(`${this.dataSource}-${this.modelType} model loaded!`))
-      .catch((e) => console.log(e));
+    this.initModel();
+    console.log(`${this.model.modelInfo.id} model loaded!`);
   }
 
   protected createBuffer(size: number, dataTypeSize: any): ByteBuffer {
@@ -26,14 +24,14 @@ export abstract class AbstractRecognizer {
     return ByteBuffer.allocateDirect(bufferSize).order(java.nio.ByteOrder.nativeOrder());
   }
 
-  private async initModel() {
-    this.model = await this.modelManager.getModel(this.dataSource, this.modelType);
+  private initModel() {
+    this.model = this.modelManager.getModelEnabledForDataSource(this.dataSource);
   }
 
   async recognize(samples: Samples): Promise<RecognitionResult> {
-    const { result, executionTime } = await timedExecution(async () => {
+    const { result, executionTime } = await timedExecution(() => {
       if (!this.isReady())
-        await this.initModel();
+        this.initModel();
 
       const inputBuffer = this.createInputBuffer(samples);
       const outputBuffer = this.createOutputBuffer();

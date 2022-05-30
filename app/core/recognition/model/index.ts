@@ -1,4 +1,5 @@
 import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
+import { ModelType } from "~/core/recognition/model/model-type";
 import Interpreter = org.tensorflow.lite.Interpreter;
 import MetadataExtractor = org.tensorflow.lite.support.metadata.MetadataExtractor;
 type Labels = string[];
@@ -109,6 +110,7 @@ export class Model {
 
     if (!metadataExtractor.hasMetadata()) {
       return {
+        id: "",
         name: "",
         version: "",
         author: "",
@@ -117,6 +119,7 @@ export class Model {
 
     const modelMetadata = metadataExtractor.getModelMetadata();
     return {
+      id: `${modelMetadata.name()}#${modelMetadata.version()}`,
       name: modelMetadata.name(),
       version: modelMetadata.version(),
       author: modelMetadata.author()
@@ -125,11 +128,8 @@ export class Model {
 }
 
 export interface ModelInfo {
+  id: string
   name: string;
   version: string;
   author: string;
-}
-
-export enum ModelType {
-  MLP = "MLP", CNN = "CNN"
 }

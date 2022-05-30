@@ -9,7 +9,7 @@ import {
 } from "@nativescript/core/application-settings"
 import { ApplicationMode } from "~/core/application-mode";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model";
+import { ModelType } from "~/core/recognition/model/model-type";
 
 const APP_MODE_KEY = "app_mode";
 const SENSING_DATA_SOURCE_KEY = "sensing_data_source";
@@ -37,13 +37,13 @@ export function getSensingDataSource(): DataSource {
   return <DataSource>getString(SENSING_DATA_SOURCE_KEY);
 }
 
-export function setModelType(modelType: ModelType, dataSource: DataSource): void {
-  setString(modelTypeKey(dataSource), modelType);
+export function setModelEnabledForDataSource(id: string, dataSource: DataSource): void {
+  setString(modelTypeKey(dataSource), id);
   flush();
 }
 
-export function getModelType(dataSource: DataSource): ModelType {
-  return <ModelType>getString(modelTypeKey(dataSource), ModelType.CNN);
+export function getModelEnabledForDataSource(dataSource: DataSource): string {
+  return <ModelType>getString(modelTypeKey(dataSource));
 }
 
 export function setGPUDelegateEnabled(enabled: boolean): void {
