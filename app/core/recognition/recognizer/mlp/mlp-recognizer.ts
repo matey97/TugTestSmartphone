@@ -1,6 +1,5 @@
 import { AbstractRecognizer} from "~/core/recognition/recognizer/abstract-recognizer";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model";
 import { Samples } from "~/core/recognition/recognizer/samples";
 import { extractFeaturesFrom } from "~/core/recognition/recognizer/mlp/features";
 import ByteBuffer = java.nio.ByteBuffer;
@@ -8,7 +7,7 @@ import ByteBuffer = java.nio.ByteBuffer;
 export class MLPRecognizer extends AbstractRecognizer {
 
   constructor(dataSource: DataSource) {
-    super(dataSource, ModelType.MLP);
+    super(dataSource);
   }
 
   protected createInputBuffer(samples: Samples): java.nio.ByteBuffer {

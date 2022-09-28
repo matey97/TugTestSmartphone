@@ -1,7 +1,6 @@
 import { AbstractRecognizer } from "~/core/recognition/recognizer/abstract-recognizer";
 import { Samples } from "~/core/recognition/recognizer/samples";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model";
 import ByteBuffer = java.nio.ByteBuffer;
 
 const INPUT_CHANNELS = 6;
@@ -9,7 +8,7 @@ const INPUT_CHANNELS = 6;
 export class CNNRecognizer extends AbstractRecognizer {
 
   constructor(dataSource: DataSource) {
-    super(dataSource, ModelType.CNN);
+    super(dataSource);
   }
 
   protected createInputBuffer(samples: Samples): java.nio.ByteBuffer {
