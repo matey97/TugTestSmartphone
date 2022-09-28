@@ -1,6 +1,5 @@
-import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
+import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
 import { getSensingDataSource } from "~/core/settings";
-import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { toSamples } from "~/core/recognition/recognizer/samples";
 import { getRecognizer } from "~/core/recognition/recognizer";
 import { RecordsToProcess } from "~/core/receiver/records-to-process";

@@ -1,4 +1,4 @@
-import { SimpleTask } from "nativescript-task-dispatcher/tasks";
+import { SimpleTask } from "@awarns/core/tasks";
 import { RecognitionResult } from "~/core/recognition";
 import { TugResult } from "~/core/tug-test/result";
 
