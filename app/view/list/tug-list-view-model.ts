@@ -2,23 +2,22 @@ import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } 
 import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
-import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
 import { getApplicationMode, getLocalDeviceStartCountdown, setApplicationMode } from "~/core/settings";
-import { wearosSensors } from "nativescript-wearos-sensors";
 import { getNTPTime } from "~/core/utils/ntp-time";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
 import { ApplicationMode } from "~/core/application-mode";
 import { getLocalDataSourceNode } from "~/core/data-source";
+import { getConnectedWatches, setWatchFeaturesState, useWatch, Watch } from "@awarns/wear-os";
+import { Node } from "nativescript-wearos-sensors/node";
 
 export class TugListViewModel extends Observable {
 
   tugSelectorLabel: Label;
   collectionSelectorLabel: Label;
 
-  private nodeDiscoverer: NodeDiscoverer;
   private localNode: Node;
-  private connectedNodes: Node[] = [];
+  private connectedWatches: Watch[] = [];
 
   private _runningLocal: boolean = false;
   get runningLocal(): boolean {
@@ -68,7 +67,6 @@ export class TugListViewModel extends Observable {
   ) {
     super();
     setApplicationMode(ApplicationMode.TUG);
-    this.nodeDiscoverer = getNodeDiscoverer();
     this.getLocalNode();
     this.getConnectedNodes();
     this.updateTugResults();
@@ -149,7 +147,7 @@ export class TugListViewModel extends Observable {
 
   onStopInLocalDevice() {
     const event = buildLocalEvent("stop");
-    wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
+    //wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
 
     this.runningLocal = false;
   }
@@ -161,17 +159,18 @@ export class TugListViewModel extends Observable {
   }
 
   private getConnectedNodes() {
-    this.connectedNodes = [];
-    this.nodeDiscoverer.getConnectedNodes().subscribe({
-      next: (nodeDiscovered: NodeDiscovered) => {
-        if (nodeDiscovered.error) {
-          return;
-        }
-
-        const node = nodeDiscovered.node;
-        this.connectedNodes.push(node);
-        this.notifyPropertyChange("connectedNodes", this.connectedNodes);
+    this.connectedWatches = [];
+    getConnectedWatches().then(watches => {
+      if (watches.length === 0) {
+        console.log('No WearOS watches connected!');
+        setWatchFeaturesState(false);
+        return;
       }
+
+      setWatchFeaturesState(true);
+      useWatch(watches[0]);
+      this.connectedWatches = watches;
+      this.notifyPropertyChange("connectedWatches", this.connectedWatches);
     });
   }
 
@@ -223,7 +222,7 @@ export class TugListViewModel extends Observable {
 
     if (this.countdown === 0) {
       this.runningCountdown = false;
-      wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+      //wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
       return;
     }
 
@@ -233,7 +232,7 @@ export class TugListViewModel extends Observable {
         this.runningCountdown = false;
         clearInterval(id);
 
-        wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+        //wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
       }
     }, 1000);
   }
