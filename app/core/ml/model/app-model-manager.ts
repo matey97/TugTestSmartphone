@@ -1,7 +1,7 @@
 import { DataSource } from "~/core/data-source";
 import { getModelEnabledForDataSource } from "~/core/settings";
 import { getModelManager } from "@awarns/ml-kit";
-import { AppModel } from "~/core/recognition/model/app-model";
+import { AppModel } from "~/core/ml/model/app-model";
 
 export class AppModelManager {
 

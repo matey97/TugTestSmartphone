@@ -1,7 +1,7 @@
 import { ActionItem, EventData, Frame, ItemEventData, Page, ShowModalOptions } from "@nativescript/core";
 import { TugListViewModel } from "~/view/list/tug-list-view-model";
 import { PowerSavings } from "~/core/power-savings";
-import { getAppModelManager } from "~/core/recognition/model/app-model-manager";
+import { getAppModelManager } from "~/core/ml/model/app-model-manager";
 import { awarns } from "@awarns/core";
 
 export function navigatingTo(args: EventData) {

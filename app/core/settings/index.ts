@@ -7,7 +7,7 @@ import {
 } from "@nativescript/core/application-settings"
 import { ApplicationMode } from "~/core/application-mode";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model/model-type";
+import { ModelArchitecture } from "@awarns/ml-kit";
 
 const APP_MODE_KEY = "app_mode";
 const SENSING_DATA_SOURCE_KEY = "sensing_data_source";
@@ -40,7 +40,7 @@ export function setModelEnabledForDataSource(id: string, dataSource: DataSource)
 }
 
 export function getModelEnabledForDataSource(dataSource: DataSource): string {
-  return <ModelType>getString(modelTypeKey(dataSource));
+  return <ModelArchitecture>getString(modelTypeKey(dataSource));
 }
 
 export function setLocalDeviceStartCountdown(countdown: number): void {

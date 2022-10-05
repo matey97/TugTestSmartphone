@@ -1,4 +1,4 @@
-import { Samples } from "~/core/recognition/recognizer/samples";
+import { Samples } from "~/core/ml/samples";
 import { getSensingDataSource } from "~/core/settings";
 import { DataSource } from "~/core/data-source";
 import { getAndroidSensorManager } from "~/core/collection/sensor-manager.android";

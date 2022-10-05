@@ -1,20 +1,14 @@
-import { AxisData, Samples } from "~/core/recognition/recognizer/samples";
+import { AxisData, Samples } from "~/core/ml/samples";
 
 type FeatureExtractionFunction = (data: AxisData, param?: number) => number;
 export type Features = number[];
 
-export interface TimedFeatures {
-  features: Features,
-  timestampStart: number,
-  timestampEnd: number
-}
-
-export function extractFeaturesFrom(samples: Samples): TimedFeatures {
+export function extractFeaturesFrom(samples: Samples): Features {
   const [meanAccX, meanAccY, meanAccZ, meanGyroX, meanGyroY, meanGyroZ] = extractFeature(mean, samples);
   const [maxAccX, maxAccY, maxAccZ, maxGyroX, maxGyroY, maxGyroZ] = extractFeature(max, samples);
   const [minAccX, minAccY, minAccZ, minGyroX, minGyroY, minGyroZ] = extractFeature(min, samples);
 
-  const features = [
+  return [
     meanAccX, meanAccY, meanAccZ, meanGyroX, meanGyroY, meanGyroZ,
     ...extractFeature(median, samples),
     maxAccX, maxAccY, maxAccZ, maxGyroX, maxGyroY, maxGyroZ,
@@ -25,12 +19,6 @@ export function extractFeaturesFrom(samples: Samples): TimedFeatures {
     ...pitchAndRoll(samples),
     ...angle(samples)
   ]
-
-  return {
-    features,
-    timestampStart: samples.timestampStart,
-    timestampEnd: samples.timestampEnd
-  }
 }
 
 function extractFeature(feature: FeatureExtractionFunction, records: Samples, params?: number[]): Features {

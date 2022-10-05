@@ -5,7 +5,7 @@ import {
   setModelEnabledForDataSource,
 } from "~/core/settings";
 import { DataSource } from "~/core/data-source";
-import { getAppModelManager, AppModel } from "~/core/recognition/model/";
+import { getAppModelManager, AppModel } from "~/core/ml/model/";
 
 export class SettingsModalViewModel extends Observable {
 
