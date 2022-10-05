@@ -1,7 +1,5 @@
 import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
-import { getRecognizer } from "~/core/recognition/recognizer";
-import { getSensingDataSource } from "~/core/settings";
 
 export class EndTugTestTask extends Task {
 
@@ -21,9 +19,6 @@ export class EndTugTestTask extends Task {
       return;
 
     const tugResults = this.tugManager.endExecution();
-
-    const recognizer = getRecognizer(getSensingDataSource());
-    recognizer.unloadModel();
 
     return {
       eventName: this.outputEventNames[0],

@@ -1,5 +1,5 @@
 import { Activity } from "~/core/tug-test/activities";
-import { RecognitionResult } from "~/core/recognition";
+import { Classification } from "@awarns/ml-kit";
 
 export interface TugResult {
   deviceId: string,
@@ -7,7 +7,7 @@ export interface TugResult {
   successful: boolean,
   duration: number
   activitiesDuration: ActivityResult[],
-  recognitionResults: RecognitionResult[]
+  classifications: Classification[]
 }
 
 export interface ActivityResult {

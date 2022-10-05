@@ -1,20 +1,20 @@
 import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
-import { RecognitionResult } from "~/core/recognition";
 import { Activity, fromString } from "~/core/tug-test/activities";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
-import { Status } from "~/core/tug-test/execution";
+import { highestScorePrediction, Status } from "~/core/tug-test/execution";
+import { Classification, ClassificationPrediction } from "@awarns/ml-kit";
 
 const SIGNIFICANCE_THRESHOLD = 0.7;
 
 const DEFAULT_EVENT = "testEvaluationTaskFinished";
 const TEST_ENDING_EVENT = "detectedTugTestEnding";
 
-export class RecognitionResultEvaluationTask extends Task {
+export class PredictionResultEvaluationTask extends Task {
 
   constructor(
     private tugManager: TugManager = getTugManager()
   ) {
-    super("recognitionResultEvaluationTask", {
+    super("predictionResultEvaluationTask", {
       outputEventNames: [DEFAULT_EVENT, TEST_ENDING_EVENT]
     });
   }
@@ -27,16 +27,17 @@ export class RecognitionResultEvaluationTask extends Task {
     if (!currentExecution)
       throw new Error("There is no current TUG execution");
 
-    const recognitionResult = invocationEvent.data as RecognitionResult;
-    currentExecution.addNew(recognitionResult);
+    const classification = invocationEvent.data as Classification;
+    currentExecution.addNew(classification);
 
-    const lastThree = currentExecution.recognitionResults.slice(-3);
-    const activity = fromString(lastThree[0].inference.class);
+    const lastThree = currentExecution.classifications.slice(-3);
+    const lastThreePredictions = lastThree.map((classification) => highestScorePrediction(classification.classificationResult))
+    const activity = fromString(highestScorePrediction(lastThree[0].classificationResult).label);
 
     // If the last three estimations are the same activity and
     // that activity is different than the current one update the current activity
     if (
-      areRecognitionsEqualAndSignificant(lastThree) &&
+      areRecognitionsEqualAndSignificant(lastThreePredictions) &&
       activity !== currentExecution.current
     ) {
       const previous = currentExecution.current;
@@ -52,7 +53,7 @@ export class RecognitionResultEvaluationTask extends Task {
     // and that activity is SIT, then finish the execution
     if (
       currentExecution.status === Status.STARTED &&
-      areRecognitionsEqualAndSignificant(lastThree) &&
+      areRecognitionsEqualAndSignificant(lastThreePredictions) &&
       activity === Activity.SIT
     ) {
       currentExecution.status = Status.FINISHED;
@@ -67,20 +68,20 @@ export class RecognitionResultEvaluationTask extends Task {
   }
 }
 
-function areRecognitionsEqualAndSignificant(recognitions: RecognitionResult[]): boolean {
-  return areRecognitionsEqual(recognitions) && areRecognitionsSignificant(recognitions);
+function areRecognitionsEqualAndSignificant(classificationPredictions: ClassificationPrediction[]): boolean {
+  return areRecognitionsEqual(classificationPredictions) && areRecognitionsSignificant(classificationPredictions);
 }
 
-function areRecognitionsEqual(recognitions: RecognitionResult[]): boolean {
-  return recognitions
-    .map((recognition) => fromString(recognition.inference.class))
-    .every((recognition, i, recognitions) => recognition === recognitions[0]);
+function areRecognitionsEqual(classificationPredictions: ClassificationPrediction[]): boolean {
+  return classificationPredictions
+    .map((classificationPrediction) => fromString(classificationPrediction.label))
+    .every((prediction, i, predictions) => prediction === predictions[0]);
 }
 
-function areRecognitionsSignificant(recognitions: RecognitionResult[]): boolean {
-  const meanProbabilities = recognitions
-    .map((recognition) => recognition.inference.probability)
-    .reduce((prev, curr) => prev + curr) / recognitions.length;
+function areRecognitionsSignificant(classificationPredictions: ClassificationPrediction[]): boolean {
+  const meanProbabilities = classificationPredictions
+    .map((classificationPrediction) => classificationPrediction.score)
+    .reduce((prev, curr) => prev + curr) / classificationPredictions.length;
 
   return meanProbabilities > SIGNIFICANCE_THRESHOLD;
 }

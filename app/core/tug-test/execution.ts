@@ -1,7 +1,7 @@
-import { RecognitionResult } from "~/core/recognition";
 import { Activity } from "~/core/tug-test/activities";
 import { ActivityResult, TugResult } from "~/core/tug-test/result";
 import { getNTPTime } from "~/core/utils/ntp-time";
+import { Classification, ClassificationResult } from "@awarns/ml-kit";
 
 const EXECUTION_SEQUENCE = [
   Activity.SIT,
@@ -16,9 +16,9 @@ const EXECUTION_SEQUENCE = [
 
 export class TugExecution {
 
-  private _recognitionResults: RecognitionResult[] = [];
-  get recognitionResults(): RecognitionResult[] {
-    return this._recognitionResults;
+  private _classifications: Classification[] = [];
+  get classifications(): Classification[] {
+    return this._classifications;
   }
 
   private _current: Activity;
@@ -45,8 +45,8 @@ export class TugExecution {
     this._status = Status.YET_TO_START;
   }
 
-  addNew(recognitionResult: RecognitionResult) {
-    this._recognitionResults.push(recognitionResult);
+  addNew(classification: Classification) {
+    this._classifications.push(classification);
   }
 
   computeResults(): TugResult {
@@ -75,15 +75,16 @@ export class TugExecution {
     let iCurrentActivity = 0;
 
     const changes = [];
-    for (let i = 0; i < this.recognitionResults.length - 1; i++) {
-      const result = this.recognitionResults[i];
-      const after = this.recognitionResults.slice(i, i + 3);
+    for (let i = 0; i < this.classifications.length - 1; i++) {
+      const result = this.classifications[i].classificationResult;
+      const prediction = highestScorePrediction(result);
+      const after = this.classifications.slice(i, i + 3);
 
-      if (result.inference.class === EXECUTION_SEQUENCE[iCurrentActivity] && result.inference.class === this.recognitionResults[i+1].inference.class)
+      if (prediction.label === EXECUTION_SEQUENCE[iCurrentActivity] && prediction.label === highestScorePrediction(this.classifications[i+1].classificationResult).label)
         continue;
 
-      const allAfterDifferentThanCurrent = after.every((elem) => elem.inference.class !== EXECUTION_SEQUENCE[iCurrentActivity]);
-      const someAfterEqualThanNext = after.some((elem) => elem.inference.class === EXECUTION_SEQUENCE[iCurrentActivity + 1]);
+      const allAfterDifferentThanCurrent = after.every((elem) => highestScorePrediction(elem.classificationResult).label !== EXECUTION_SEQUENCE[iCurrentActivity]);
+      const someAfterEqualThanNext = after.some((elem) => highestScorePrediction(elem.classificationResult).label === EXECUTION_SEQUENCE[iCurrentActivity + 1]);
 
       if (allAfterDifferentThanCurrent && someAfterEqualThanNext) {
         iCurrentActivity++;
@@ -98,13 +99,9 @@ export class TugExecution {
   }
 
   private computeMillisecondsBetween(start: number, end: number): number {
-    const endResult = this.recognitionResults[end];
-    const startResult = this.recognitionResults[start];
-    return this.meanTime(endResult) - this.meanTime(startResult);
-  }
-
-  private meanTime(result: RecognitionResult): number {
-    return Math.round((result.timestampEnd + result.timestampStart) / 2);
+    const endResult = this.classifications[end].timestamp.getTime();
+    const startResult = this.classifications[start].timestamp.getTime();
+    return endResult - startResult;
   }
 
   private buildTugResult(results: ActivityResult[]): TugResult {
@@ -123,7 +120,7 @@ export class TugExecution {
         results[results.length - 1].end
       ),
       activitiesDuration: results,
-      recognitionResults: this.recognitionResults
+      classifications: this.classifications
     };
   }
 
@@ -134,9 +131,13 @@ export class TugExecution {
       successful: false,
       duration: -1,
       activitiesDuration: results,
-      recognitionResults: this.recognitionResults
+      classifications: this.classifications
     };
   }
+}
+
+export function highestScorePrediction(classificationResult: ClassificationResult) {
+  return classificationResult.prediction.sort((a, b) => b.score - a.score)[0];
 }
 
 export enum Status {
