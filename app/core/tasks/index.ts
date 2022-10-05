@@ -10,10 +10,13 @@ import {
   WatchSensor
 } from "@awarns/wear-os";
 import { storeTasks } from "~/core/tasks/store";
+import { classificationTask } from "@awarns/ml-kit";
+import { getModelEnabledForDataSource } from "~/core/settings";
+import { DataSource } from "~/core/data-source";
 
 export const appTasks: Array<Task> = [
   ...pairedDeviceTasks,
-  ...tugTestTasks,    // Tasks related to the TUG test: start, recognition, ending...
+  ...tugTestTasks,    // Tasks related to the TUG test: start, ml, ending...
   ...recordsTasks,    // Tasks related to sensor records management: receive, forwarding, clear...
   ...storeTasks,
   ...loggers,
@@ -23,4 +26,7 @@ export const appTasks: Array<Task> = [
   stopDetectingWatchSensorChangesTask(WatchSensor.ACCELEROMETER),
   stopDetectingWatchSensorChangesTask(WatchSensor.GYROSCOPE),
   sendPlainMessageToWatchTask(),
+
+  classificationTask('human-activity', () => getModelEnabledForDataSource(DataSource.LOCAL_DEVICE), 'FromLocalDeviceData'),
+  classificationTask('human-activity', () => getModelEnabledForDataSource(DataSource.PAIRED_DEVICE), 'FromPairedDeviceData'),
 ];

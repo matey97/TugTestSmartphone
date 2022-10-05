@@ -25,9 +25,13 @@ class TugTestTaskGraph implements TaskGraph {
     on("watchAccelerometerSamplesForInference", run("recordsReceiverTask"));
     on("watchGyroscopeSamplesForInference", run("recordsReceiverTask"));
 
-    on("enoughRecordsAcquired", run("recognitionTask"));
-    on("recognitionFinished", run("recognitionResultEvaluationTask"));
-    on("recognitionFinished", run("recognitionResultLogger"));
+    on("enoughRecordsAcquired", run("prepareAcquiredDataForClassificationTask"));
+
+    on("localDeviceDataForClassificationReady", run("humanActivityClassificationFromLocalDeviceData"));
+    on("pairedDeviceDataForClassificationReady", run("humanActivityClassificationFromPairedDeviceData"));
+
+    on("humanActivityPredicted", run("predictionResultEvaluationTask"));
+    on("humanActivityPredicted", run("predictionResultLogger"));
 
     on("detectedTugTestEnding", run("endTugTestTask"));
     on("tugTestEnded", run("stopDetectingWatchAccelerometerChanges"));
