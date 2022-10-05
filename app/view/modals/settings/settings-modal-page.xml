@@ -23,7 +23,7 @@
                     <Repeater.itemTemplate>
                         <StackLayout>
                             <Label text="{{ $value.dataSource }}" class="settings-option-label"/>
-                            <Repeater items="{{ $value.info }}">
+                            <Repeater items="{{ $value.models }}">
                                 <Repeater.itemsLayout>
                                     <StackLayout orientation="vertical"/>
                                 </Repeater.itemsLayout>
@@ -33,7 +33,7 @@
                                         <Label row="1" col="0">
                                             <FormattedString>
                                                 <Span text="Architecture: "/>
-                                                <Span text="{{ $value.type }}"/>
+                                                <Span text="{{ $value.model.architecture }}"/>
                                             </FormattedString>
                                         </Label>
                                         <Label row="1" col="1">
@@ -61,14 +61,8 @@
             <StackLayout class="settings-section">
                 <Label text="Other settings" class="settings-section-title"/>
                 <GridLayout rows="auto,auto" columns="*,auto" >
-                    <Label row="0" col="0" text="GPU acceleration" class="settings-option-label"/>
-                    <Switch row="0" col="1" visibility="{{ gpuDelegate.supported ? 'visible' : 'collapsed' }}"
-                            checked="{{ gpuDelegate.enabled }}" checkedChange="{{ onGpuDelegateChange }}"/>
-                    <Label row="0" col="1" visibility="{{ gpuDelegate.supported ? 'collapsed' : 'visible' }}"
-                           text="Not supported" class="settings-option"/>
-
-                    <Label row="1" col="0" text="Local device countdown" class="settings-option-label"/>
-                    <Label row="1" col="1" text="{{ countdownValue }}" visibility="{{ editingCountdown ? 'collapsed' : 'visible' }}"
+                    <Label row="0" col="0" text="Local device countdown" class="settings-option-label"/>
+                    <Label row="0" col="1" text="{{ countdownValue }}" visibility="{{ editingCountdown ? 'collapsed' : 'visible' }}"
                            class="settings-option" horizontalAlignment="center" tap="{{ editCountdown }}"/>
                     <TextField id="countdownTextField" row="1" col="1" visibility="{{ editingCountdown ? 'visible' : 'collapsed' }}"
                                keyboardType="number" textAlignment="center" lineHeight="20" returnKeyType="done" returnPress="{{ countdownEdited }}" fontSize="20"/>

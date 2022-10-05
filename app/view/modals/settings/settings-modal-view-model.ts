@@ -1,14 +1,11 @@
-import { EventData, GridLayout, Observable, Page, Repeater, Switch, TextField, View } from "@nativescript/core";
-import { getModelManager } from "~/core/recognition/model/model-manager";
-import { getGPUDelegate } from "~/core/recognition/model/delegates/gpu";
+import { EventData, GridLayout, Observable, Page, Repeater, TextField } from "@nativescript/core";
 import {
   getLocalDeviceStartCountdown,
   setLocalDeviceStartCountdown,
   setModelEnabledForDataSource,
 } from "~/core/settings";
-import { ModelInfo } from "~/core/recognition/model";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model/model-type";
+import { getAppModelManager, AppModel } from "~/core/recognition/model/";
 
 export class SettingsModalViewModel extends Observable {
 
@@ -38,8 +35,7 @@ export class SettingsModalViewModel extends Observable {
   }
 
   constructor(
-    private modelManager = getModelManager(),
-    private gpuDelegate = getGPUDelegate()
+    private modelManager = getAppModelManager(),
   ) {
     super();
     this.loadModelsForDataSources();
@@ -59,11 +55,6 @@ export class SettingsModalViewModel extends Observable {
 
     const vm = context.vm;
     vm.changeSelectedModel(parentContext, context.model.id);
-  }
-
-  onGpuDelegateChange(args: EventData) {
-    const sw = args.object as Switch;
-    this.gpuDelegate.enabled = sw.checked;
   }
 
   changeSelectedModel(dataSourceModels: DataSourceModels, modelId: string) {
@@ -91,42 +82,47 @@ export class SettingsModalViewModel extends Observable {
 
   private loadModelsForDataSources() {
     this.availableModels = [];
-    this.addDataSourceModelsIfAvailable(DataSource.LOCAL_DEVICE);
-    this.addDataSourceModelsIfAvailable(DataSource.PAIRED_DEVICE);
+    this.modelManager.loadModels().then(() => {
+      this.addDataSourceModelsIfAvailable(DataSource.LOCAL_DEVICE);
+      this.addDataSourceModelsIfAvailable(DataSource.PAIRED_DEVICE);
 
-    this.notifyPropertyChange("availableModels", this.availableModels);
+      this.notifyPropertyChange("availableModels", this.availableModels);
+    }).catch(e => console.log(`Could not load models. Reason ${JSON.stringify(e)}`));
+  }
+
+  private addDataSourceModelsIfAvailable(dataSource: DataSource) {
+    const datasourceModels = this.buildDataSourceModelsFor(dataSource);
+    if (datasourceModels.models.length !== 0)
+      this.availableModels.push(datasourceModels);
   }
 
   private buildDataSourceModelsFor(dataSource: DataSource): DataSourceModels {
     return {
       dataSource: dataSourceToLegibleString(dataSource),
-      info: this.modelManager.getModelsFor(dataSource).map((model) => {
+      models: this.modelManager.getModelsFor(dataSource).map((model) => {
         return {
           vm: this,
-          type: model.modelType,
-          model: model.modelInfo
+          model: model
         }
       }).sort((a, b) => a.model.name > b.model.name ? 1 : -1)
     };
   }
 
-  private addDataSourceModelsIfAvailable(dataSource: DataSource) {
-    const datasourceModels = this.buildDataSourceModelsFor(dataSource);
-    if (datasourceModels.info.length !== 0)
-      this.availableModels.push(datasourceModels);
-  }
-
   private markSelectedModels() {
     this.availableModels.forEach((dataSourceModels) =>{
       const dataSource = dataSourceModels.dataSource;
-      const selectedModel = this.modelManager.getModelEnabledForDataSource(legibleStringToDataSource(dataSource));
+      let selectedModel = this.modelManager.getModelEnabledForDataSource(legibleStringToDataSource(dataSource));
+      if (!selectedModel) {
+        selectedModel = dataSourceModels.models[0].model;
+        this.updateSelectedModel(selectedModel.id, legibleStringToDataSource(dataSource));
+      }
 
-      this.updateSelection(dataSourceModels, selectedModel.modelInfo.id);
+      this.updateSelection(dataSourceModels, selectedModel.id);
     });
   }
 
   private updateSelection(dataSourceModels: DataSourceModels, modelId: string) {
-    dataSourceModels.info.forEach((modelInfoVM) => {
+    dataSourceModels.models.forEach((modelInfoVM) => {
       const { id, name } = modelInfoVM.model;
       const view = this.page.getViewById(name);
       if (id === modelId) {
@@ -156,11 +152,10 @@ function legibleStringToDataSource(string: string): DataSource {
 
 interface DataSourceModels {
   dataSource: string,
-  info: ModelInfoVM[]
+  models: ModelVM[]
 }
 
-interface ModelInfoVM {
+interface ModelVM {
   vm: SettingsModalViewModel,
-  type: ModelType,
-  model: ModelInfo
+  model: AppModel
 }

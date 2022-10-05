@@ -1,7 +1,7 @@
 import { ActionItem, EventData, Frame, ItemEventData, Page, ShowModalOptions } from "@nativescript/core";
 import { TugListViewModel } from "~/view/list/tug-list-view-model";
 import { PowerSavings } from "~/core/power-savings";
-import { getModelManager } from "~/core/recognition/model/model-manager";
+import { getAppModelManager } from "~/core/recognition/model/app-model-manager";
 import { awarns } from "@awarns/core";
 
 export function navigatingTo(args: EventData) {
@@ -62,7 +62,7 @@ async function preparePlugin() {
 }
 
 async function prepareModels() {
-  const modelManager = getModelManager();
+  const modelManager = getAppModelManager();
   return await modelManager.loadModels();
 }
 
