@@ -1,5 +1,5 @@
 import { Task } from "@awarns/core/tasks";
-import { pairedDeviceTasks } from "~/core/tasks/device/paired";
+import { deviceTasks } from "~/core/tasks/device";
 import { tugTestTasks } from "~/core/tasks/tug";
 import { recordsTasks } from "~/core/tasks/records";
 import { loggers } from "~/core/tasks/loggers";
@@ -15,7 +15,7 @@ import { getModelEnabledForDataSource } from "~/core/settings";
 import { DataSource } from "~/core/data-source";
 
 export const appTasks: Array<Task> = [
-  ...pairedDeviceTasks,
+  ...deviceTasks,
   ...tugTestTasks,    // Tasks related to the TUG test: start, ml, ending...
   ...recordsTasks,    // Tasks related to sensor records management: receive, forwarding, clear...
   ...storeTasks,
