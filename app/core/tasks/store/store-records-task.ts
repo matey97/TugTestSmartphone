@@ -1,6 +1,5 @@
 import { Task, TaskParams, DispatchableEvent, TaskOutcome } from "@awarns/core/tasks";
 import { getStore } from "~/core/store/records-store";
-import { ReceivedMessage } from "@awarns/wear-os";
 
 export class StoreRecordsTask extends Task {
 
@@ -9,9 +8,8 @@ export class StoreRecordsTask extends Task {
   }
 
   protected async onRun(taskParams: TaskParams, invocationEvent: DispatchableEvent): Promise<void | TaskOutcome> {
-    const receivedMessage = invocationEvent.data as ReceivedMessage;
-    const sender = receivedMessage.senderNodeId;
-    const fileName = `${sender}_${Date.now()}.json`;
+    const nodeId = invocationEvent.data.nodeId;
+    const fileName = `${nodeId}_${Date.now()}.json`;
 
     await new Promise<void>(resolve => {
       setTimeout(async () => {
