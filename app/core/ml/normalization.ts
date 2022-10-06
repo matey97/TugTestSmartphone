@@ -1,7 +1,7 @@
 import { Samples } from "~/core/ml/samples";
 import { getSensingDataSource } from "~/core/settings";
 import { DataSource } from "~/core/data-source";
-import { getAndroidSensorManager } from "~/core/collection/sensor-manager.android";
+import { Utils } from "@nativescript/core";
 
 export function normalize(samples: Samples): Samples {
   const { accMaxRange, gyroMaxRange } = normalizationRanges();
@@ -36,7 +36,21 @@ function pairedDeviceRanges(): NormalizationRange {
 let _localRanges;
 function localDeviceRanges(): NormalizationRange {
   if (!_localRanges) {
-    _localRanges = getAndroidSensorManager().getSensorsMaximumRange();
+    const sensors = [
+      android.hardware.Sensor.TYPE_ACCELEROMETER,
+      android.hardware.Sensor.TYPE_GYROSCOPE,
+    ];
+    const sensorManager = Utils.android.getApplicationContext().getSystemService(
+      android.content.Context.SENSOR_SERVICE
+    ) as android.hardware.SensorManager;
+    const ranges = sensors.map((androidSensor) =>
+      sensorManager.getDefaultSensor(androidSensor).getMaximumRange()
+    );
+
+    _localRanges = {
+      accMaxRange: ranges[0],
+      gyroMaxRange: ranges[1]
+    };
   }
   return _localRanges;
 }
