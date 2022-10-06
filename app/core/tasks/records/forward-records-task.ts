@@ -2,10 +2,10 @@ import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/t
 import { getApplicationMode } from "~/core/settings";
 import { ApplicationMode } from "~/core/application-mode";
 
-const ACC_INF_EVT = "watchAccelerometerSamplesForInference";
-const GYR_INF_EVT = "watchGyroscopeSamplesForInference";
-const ACC_COL_EVT = "watchAccelerometerSamplesForCollection";
-const GYR_COL_EVT = "watchGyroscopeSamplesForCollection";
+const ACC_INF_EVT = "accelerometerSamplesForInference";
+const GYR_INF_EVT = "gyroscopeSamplesForInference";
+const ACC_COL_EVT = "accelerometerSamplesForCollection";
+const GYR_COL_EVT = "gyroscopeSamplesForCollection";
 
 export class ForwardRecordsTask extends Task {
 
