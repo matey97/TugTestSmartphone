@@ -1,5 +1,6 @@
 import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
+import { Vibrate } from "nativescript-vibrate";
 
 export class EndTugTestTask extends Task {
 
@@ -19,6 +20,9 @@ export class EndTugTestTask extends Task {
       return;
 
     const tugResults = this.tugManager.endExecution();
+
+    const vibrator = new Vibrate();
+    vibrator.vibrate([500, 500, 500, 500]);
 
     return {
       eventName: this.outputEventNames[0],
