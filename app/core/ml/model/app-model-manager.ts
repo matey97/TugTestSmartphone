@@ -1,5 +1,5 @@
 import { DataSource } from "~/core/data-source";
-import { getModelEnabledForDataSource } from "~/core/settings";
+import { getModelEnabledForDataSource, setModelEnabledForDataSource } from "~/core/settings";
 import { getModelManager } from "@awarns/ml-kit";
 import { AppModel } from "~/core/ml/model/app-model";
 
@@ -25,7 +25,9 @@ export class AppModelManager {
     this.models.set(DataSource.LOCAL_DEVICE, localDeviceModels);
 
     const pairedDeviceModels = appModels.filter(model => model.dataSource === DataSource.PAIRED_DEVICE);
-    this.models.set(DataSource.PAIRED_DEVICE, pairedDeviceModels)
+    this.models.set(DataSource.PAIRED_DEVICE, pairedDeviceModels);
+
+    this.setModelsEnabledDefaultIfNeeded();
   }
 
   public getModelEnabledForDataSource(dataSource: DataSource): AppModel {
@@ -42,6 +44,13 @@ export class AppModelManager {
 
   public getModelsFor(dataSource: DataSource): AppModel[] {
     return this.models.get(dataSource);
+  }
+
+  private setModelsEnabledDefaultIfNeeded(): void {
+    for (const key of this.models.keys()) {
+      if(!getModelEnabledForDataSource(key))
+        setModelEnabledForDataSource(this.models.get(key)[0].id, key);
+    }
   }
 }
 
