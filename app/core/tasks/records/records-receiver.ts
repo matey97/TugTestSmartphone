@@ -1,7 +1,10 @@
-import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
+import { DispatchableEvent, Task, TaskOutcome, TaskParams } from "@awarns/core/tasks";
 import { getRecordsReceiver, RecordsReceiver } from "~/core/receiver/records-receiver";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
-import { WatchRecord } from "@awarns/wear-os";
+import { getSensingDataSource } from "~/core/settings";
+import { DataSource } from "~/core/data-source";
+import { TriAxial as PhoneTriAxial } from "@awarns/phone-sensors";
+import { TriAxial as WatchTriAxial } from "@awarns/wear-os";
 
 export class RecordsReceiverTask extends Task {
 
@@ -19,7 +22,9 @@ export class RecordsReceiverTask extends Task {
     if (!this.tugManager.ongoing)
       throw new Error("Could not receive records. No ongoing execution!");
 
-    const record = invocationEvent.data as WatchRecord;
+    const record = getSensingDataSource() === DataSource.LOCAL_DEVICE
+      ? invocationEvent.data as PhoneTriAxial
+      : invocationEvent.data as WatchTriAxial;
     this.receiver.onRecordReceived(record);
   }
 

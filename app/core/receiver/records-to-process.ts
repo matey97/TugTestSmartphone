@@ -1,4 +1,4 @@
-import { TriAxialSample } from "@awarns/wear-os";
+import { TriAxialSample } from "~/core/receiver/index";
 
 export interface RecordsToProcess {
   accelerometerRecords: TriAxialSample[],
