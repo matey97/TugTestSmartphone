@@ -1,7 +1,7 @@
 import { Activity } from "~/core/tug-test/activities";
 import { ActivityResult, TugResult } from "~/core/tug-test/result";
-import { getNTPTime } from "~/core/utils/ntp-time";
 import { Classification, ClassificationResult } from "@awarns/ml-kit";
+import { getNTPTimeProvider } from "@awarns/phone-sensors/internal/service/ntp/time-provider";
 
 const EXECUTION_SEQUENCE = [
   Activity.SIT,
@@ -39,7 +39,7 @@ export class TugExecution {
 
   constructor(
     private sourceDeviceId: string,
-    private starTime = getNTPTime().currentTime
+    private starTime = getNTPTimeProvider().getTimestamp()
   ) {
     this._current = Activity.SIT;
     this._status = Status.YET_TO_START;
