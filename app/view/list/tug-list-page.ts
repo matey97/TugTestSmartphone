@@ -12,8 +12,8 @@ export function navigatingTo(args: EventData) {
   model.collectionSelectorLabel = page.getViewById("collectionSelector");
   page.bindingContext = model;
 
-  preparePlugin();
   prepareModels();
+  preparePlugin();
 }
 
 export function onTugResultTap(args: ItemEventData) {

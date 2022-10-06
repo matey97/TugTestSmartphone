@@ -3,13 +3,16 @@ import { TugResult } from "~/core/tug-test/result";
 import { resultsStore } from "~/core/store/results-store";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { getApplicationMode, getLocalDeviceStartCountdown, setApplicationMode } from "~/core/settings";
-import { getNTPTime } from "~/core/utils/ntp-time";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
 import { ApplicationMode } from "~/core/application-mode";
 import { getLocalDataSourceNode } from "~/core/data-source";
 import { getConnectedWatches, setWatchFeaturesState, useWatch, Watch } from "@awarns/wear-os";
 import { Node } from "nativescript-wearos-sensors/node";
+import { awarns } from "@awarns/core";
+import { getNTPTimeProvider } from "@awarns/phone-sensors/internal/service/ntp/time-provider";
+
+const LOCAL_DEVICE_COMMAND_EVT = "localDeviceCommand";
 
 export class TugListViewModel extends Observable {
 
@@ -146,9 +149,7 @@ export class TugListViewModel extends Observable {
   }
 
   onStopInLocalDevice() {
-    const event = buildLocalEvent("stop");
-    //wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
-
+    this.emitEvent("stop");
     this.runningLocal = false;
   }
 
@@ -211,7 +212,7 @@ export class TugListViewModel extends Observable {
 
   private async runNtpSync(): Promise<boolean> {
     this.ntpSyncing = true;
-    const succeed = await getNTPTime().blockingSync();
+    const succeed = await getNTPTimeProvider().sync();
     this.ntpSyncing = false;
     return succeed;
   }
@@ -222,7 +223,7 @@ export class TugListViewModel extends Observable {
 
     if (this.countdown === 0) {
       this.runningCountdown = false;
-      //wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+      this.emitEvent("start");
       return;
     }
 
@@ -232,9 +233,16 @@ export class TugListViewModel extends Observable {
         this.runningCountdown = false;
         clearInterval(id);
 
-        //wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+        this.emitEvent("start");
       }
     }, 1000);
+  }
+
+  private emitEvent(action: "start" | "stop"): void {
+    awarns.emitEvent(LOCAL_DEVICE_COMMAND_EVT, {
+      action: buildAction(action),
+      nodeId: this.localNode.id
+    });
   }
 }
 
@@ -243,8 +251,8 @@ interface TugResultVM {
   duration: string
 }
 
-function buildLocalEvent(action: "start" | "stop") {
+function buildAction(action: "start" | "stop") {
   return getApplicationMode() === ApplicationMode.TUG
-    ? `${action}ExecutionCommand`
-    : `${action}CollectionCommand`;
+    ? `${action}-execution`
+    : `${action}-collection`;
 }

@@ -36,7 +36,7 @@
                            tap="{{ modeSelected }}"/>
                 </GridLayout>
                 <StackLayout col="2" row="0" rowSpan="2" orientation="horizontal" horizontalAlignment="center" verticalAlignment="center" visibility="{{ runningLocal ? 'collapsed' : 'visible' }}">
-                    <Button col="2" row="0" rowSpan="2" text="Start" isEnabled="false" class="-primary" tap="{{ onStartInLocalDevice }}"
+                    <Button col="2" row="0" rowSpan="2" text="Start" class="-primary" tap="{{ onStartInLocalDevice }}"
                             visibility="{{ ntpSyncing ? 'collapsed' : 'visible' }}"/>
                     <ActivityIndicator busy="{{ ntpSyncing }}" visibility="{{ ntpSyncing ? 'visible' : 'collapsed' }}"/>
                 </StackLayout>
