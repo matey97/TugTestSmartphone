@@ -73,16 +73,22 @@ or to train machine learning models. The data is stored in `json` format, in bat
 ```json
 [
   {
-    "type": "ACCELEROMETER",
-    "records": [
-      {"x": -0.08614161610603333,"y": 0.16749759018421173,"z": 9.92124080657959, "deviceId":"9e9fd8b8", "timestamp":1653903224072 },
+    "type": "accelerometer",
+    "timestamp": "2022-10-06T12:56:22.718Z",
+    "change": "none",
+    "id": "6c841a4b-c3ad-41b4-968c-c671771b176a",
+    "samples": [
+      {"x": -0.08614161610603333,"y": 0.16749759018421173,"z": 9.92124080657959, "detectedAt": "2022-10-06T12:56:22.718Z" },
       ...
     ] // 50 samples
   },
   {
-    "type": "GYROSCOPE",
-    "records": [
-      {"x": -0.0004581354442052543, "y": -0.00030542362947016954, "z": -0.0007635590736754239, "deviceId": "9e9fd8b8", "timestamp": 1653903224167}
+    "type":"gyroscope",
+    "timestamp":"2022-10-06T12:56:22.796Z",
+    "change":"none",
+    "id":"1043b67b-e85b-4877-99a3-f7bc98dec5b5",
+    "samples": [
+      {"x": -0.0004581354442052543, "y": -0.00030542362947016954, "z": -0.0007635590736754239, "timestamp": "2022-10-06T12:56:22.796Z"},
       ...
     ] // 50 samples
   },
@@ -100,35 +106,29 @@ the test, the application computes the duration of each activity performed durin
 
 #### Activity recognition
 The activity estimation is carried out by a machine learning model. The application has 4 embedded machine learning models:
-- [CNN Smartphone Actions Classifier](app/models/local-device/cnn): convolutional machine learning model for activity recognition for data coming from the smartphone sensors.
-- [MLP Smartphone Actions Classifier](app/models/local-device/mlp): multi layered perceptron machine learning model for activity recognition for data coming from the smartphone sensors.
-- [CNN Smartwatch Actions Classifier](app/models/paired-device/cnn): convolutional machine learning model for activity recognition for data coming from the paired smartwatch sensors.
-- [MLP Smartwatch Actions Classifier](app/models/paired-device/mlp): multi layered perceptron machine learning model for activity recognition for data coming from the paired smartwatch sensors.
+- CNN Smartphone Actions Classifier: convolutional machine learning model for activity recognition for data coming from the smartphone sensors.
+- MLP Smartphone Actions Classifier: multi layered perceptron machine learning model for activity recognition for data coming from the smartphone sensors.
+- CNN Smartwatch Actions Classifier: convolutional machine learning model for activity recognition for data coming from the paired smartwatch sensors.
+- MLP Smartwatch Actions Classifier: multi layered perceptron machine learning model for activity recognition for data coming from the paired smartwatch sensors.
 
-The model to use can be changed from the settings of the application (see [Screenshots>Settings](#settings)).
+The model to use can be changed from the settings of the application (see [Screenshots>Settings](#settings)). All models
+can be found in [app/ml-models](app/ml-models).
 
 #### Add your models
 You can add new TensorFlow Lite models trained with your own data. The models must be capable of detecting the actions
 performed during the test, i.e., sit, standing, walking, turning and sitting.
 
-The only restriction resides in the architecture of the models. For now,
-only CNN and MLP architectures are supported. In addition, these architectures have the following requirements:
-- CNN:
-  - Input layer: 6 x 50. 50 samples for each axis of accelerometer (3) and gyroscope (3).
-  - Output layer: 1 x 5. The probability value of each activity of the test.
-  - Metadata: data to identify the model (name, author, version) and the **labels for the output layer** as an [associated file](https://www.tensorflow.org/lite/models/convert/metadata#pack_the_associated_files).
-- MLP:
-  - Input layer: 1 x 47. Features extracted from raw data. The feature extraction code can be found [here](app/core/recognition/recognizer/mlp/features/index.ts).
-  Contact us for more details about the features and their extraction.
-  - Output layer: 1 x 5. The probability value of each activity of the test.
-  - Metadata: data to identify the model (name, author, version) and the **labels for the output layer** as an [associated file](https://www.tensorflow.org/lite/models/convert/metadata#pack_the_associated_files).
+The only restriction is that the models has to include metadata and the **labels for the output layer** as an [associated file](https://www.tensorflow.org/lite/models/convert/metadata#pack_the_associated_files).
+Check the requirements in [@awarns/ml-kit](https://github.com/GeoTecINIT/awarns-framework/blob/main/packages/ml-kit/).
 
 > **Note:** it's important that in the associated file, the activity labels must have the following names:
 > SIT, STANDING, WALKING, TURNING and SITTING.
 >
 > The importance of the labels file is to map the i<sub>th</sub> output of the model with the i<sub>th</sub> label.
 
-Once ready, the models new models can be added in `app/models/`, in the folder of the corresponding architecture.
+Once ready, the models new models can be added in [`app/ml-models/`](app/ml-models), using the following naming convention: `<device>_<model_name>-<cnn|mlp>-[version].tflite`.
+Check the examples in [`app/ml-models/`](app/ml-models).
+
 
 > **Note:** if you have modified the models' folder, and you have previously compiled the application, run `ns clean` before executing `ns run android` again.
 
