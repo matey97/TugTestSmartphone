@@ -9,9 +9,22 @@ class TugTestTaskGraph implements TaskGraph {
     on: EventListenerGenerator,
     run: RunnableTaskDescriptor
   ): Promise<void> {
-
+    on("localDeviceCommand", run("commandExecutorFromLocalEventTask"));
     on("plainMessageReceived", run("commandExecutorFromMessageTask"));
 
+    on("startSensorFromLocalDevice", run("startDetectingPhoneNTPSyncedAccelerometerChanges"));
+    on("startSensorFromLocalDevice", run("startDetectingPhoneNTPSyncedGyroscopeChanges"));
+    on("stopSensorFromLocalDevice", run("stopDetectingPhoneNTPSyncedAccelerometerChanges"));
+    on("stopSensorFromLocalDevice", run("stopDetectingPhoneNTPSyncedGyroscopeChanges"));
+    on("stopSensorFromLocalDevice", run("uiButtonUpdateTask"));
+
+    on("startSensorFromPairedDevice", run("startDetectingWatchAccelerometerChanges"));
+    on("startSensorFromPairedDevice", run("startDetectingWatchGyroscopeChanges"));
+    on("stopSensorFromPairedDevice", run("stopDetectingWatchAccelerometerChanges"));
+    on("stopSensorFromPairedDevice", run("stopDetectingWatchGyroscopeChanges"));
+
+    on("accelerometerSamplesAcquired", run("forwardRecordsTask"));
+    on("gyroscopeSamplesAcquired", run("forwardRecordsTask"));
     on("watchAccelerometerSamplesAcquired", run("forwardRecordsTask"));
     on("watchGyroscopeSamplesAcquired", run("forwardRecordsTask"));
 
@@ -19,11 +32,10 @@ class TugTestTaskGraph implements TaskGraph {
     // TUG execution (INFERENCE)
     //--------------------------
 
-    on("tugStarted", run("startDetectingWatchAccelerometerChanges"));
-    on("tugStarted", run("startDetectingWatchGyroscopeChanges"));
+    on("startTugCommand", run("startSensorFromDeviceTask"));
 
-    on("watchAccelerometerSamplesForInference", run("recordsReceiverTask"));
-    on("watchGyroscopeSamplesForInference", run("recordsReceiverTask"));
+    on("accelerometerSamplesForInference", run("recordsReceiverTask"));
+    on("gyroscopeSamplesForInference", run("recordsReceiverTask"));
 
     on("enoughRecordsAcquired", run("prepareAcquiredDataForClassificationTask"));
 
@@ -34,8 +46,9 @@ class TugTestTaskGraph implements TaskGraph {
     on("humanActivityPredicted", run("predictionResultLogger"));
 
     on("detectedTugTestEnding", run("endTugTestTask"));
-    on("tugTestEnded", run("stopDetectingWatchAccelerometerChanges"));
-    on("tugTestEnded", run("stopDetectingWatchGyroscopeChanges"));
+    on("stopTugCommand", run("endTugTestTask"));
+
+    on("tugTestEnded", run("stopSensorFromDeviceTask"));
     on("tugTestEnded", run("recordsReceiverClearTask"));
     on("tugTestEnded", run("pairedDeviceResultSenderChecker"));
     on("tugTestEnded", run("tugResultLogger"));
@@ -43,21 +56,16 @@ class TugTestTaskGraph implements TaskGraph {
 
     on("sendResultToPairedDevice", run("sendPlainMessageToWatch"));
 
-    on("tugStopped", run("endTugTestTask"));
-
     //----------------------
     // Data collection mode
     //----------------------
-    on("collectionStarted", run("startDetectingWatchAccelerometerChanges"));
-    on("collectionStarted", run("startDetectingWatchGyroscopeChanges"));
+    on("startCollectionCommand", run("startSensorFromDeviceTask"));
 
-    on("watchAccelerometerSamplesForCollection", run("saveRecordTask"));
-    on("watchGyroscopeSamplesForCollection", run("saveRecordTask"));
+    on("accelerometerSamplesForCollection", run("saveRecordTask"));
+    on("gyroscopeSamplesForCollection", run("saveRecordTask"));
 
-    on("collectionStopped", run("stopDetectingWatchAccelerometerChanges"));
-    on("collectionStopped", run("stopDetectingWatchGyroscopeChanges"));
-
-    on("collectionStopped", run("storeRecordsTask"));
+    on("stopCollectionCommand", run("storeRecordsTask"));
+    on("stopCollectionCommand", run("stopSensorFromDeviceTask"));
   }
 }
 
