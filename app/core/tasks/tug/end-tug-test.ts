@@ -19,14 +19,14 @@ export class EndTugTestTask extends Task {
     if (!this.tugManager.ongoing)
       return;
 
-    const tugResults = this.tugManager.endExecution();
+    const tugResult = this.tugManager.endExecution();
 
     const vibrator = new Vibrate();
     vibrator.vibrate([500, 500, 500, 500]);
 
     return {
       eventName: this.outputEventNames[0],
-      result: tugResults
+      result: tugResult
     };
   }
 

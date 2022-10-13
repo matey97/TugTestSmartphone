@@ -1,6 +1,5 @@
 import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } from "@nativescript/core";
-import { TugResult } from "~/core/tug-test/result";
-import { resultsStore } from "~/core/store/results-store";
+import { TUG_RECORD_TYPE, TugResult } from "~/core/tug-test/result";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { getApplicationMode, getLocalDeviceStartCountdown, setApplicationMode } from "~/core/settings";
 import { Vibrate } from "nativescript-vibrate";
@@ -11,6 +10,8 @@ import { getConnectedWatches, setWatchFeaturesState, useWatch, Watch } from "@aw
 import { Node } from "nativescript-wearos-sensors/node";
 import { awarns } from "@awarns/core";
 import { getNTPTimeProvider } from "@awarns/phone-sensors/internal/service/ntp/time-provider";
+import { createRecordsExporter, recordsStore } from "@awarns/persistence";
+import { Record } from "@awarns/core/entities";
 
 const LOCAL_DEVICE_COMMAND_EVT = "localDeviceCommand";
 
@@ -66,14 +67,14 @@ export class TugListViewModel extends Observable {
   private resultsVM: ObservableArray<TugResultVM> = new ObservableArray([]);
 
   constructor(
-    private tugResultsStore = resultsStore
+    private tugResultsStore = recordsStore
   ) {
     super();
     setApplicationMode(ApplicationMode.TUG);
     this.getLocalNode();
     this.getConnectedNodes();
-    this.updateTugResults();
-    tugResultsStore.onChanges((changes) => this.updateTugResults(changes));
+    tugResultsStore.listBy(TUG_RECORD_TYPE, 'desc')
+      .subscribe((records) => this.updateTugResults(records))
   }
 
   getTugResult(index: number): TugResult {
@@ -95,9 +96,8 @@ export class TugListViewModel extends Observable {
         if (!r.result)
           return;
 
-        const fileName = r.text + ".json";
-        await knownFolders.documents().getFile(fileName)
-          .writeText(JSON.stringify(this.tugResults))
+        const exporter = createRecordsExporter(knownFolders.documents(), 'json', r.text);
+        await exporter.export();
       });
   }
 
@@ -110,10 +110,11 @@ export class TugListViewModel extends Observable {
     })
       .then((r) => {
         if (r) {
-          resultsStore.clear();
-          this.tugResults = [];
-          this.resultsVM = new ObservableArray([]);
-          this.notifyPropertyChange("resultsVM", this.resultsVM);
+          this.tugResultsStore.clear().then(() => {
+            this.tugResults = [];
+            this.resultsVM = new ObservableArray([]);
+            this.notifyPropertyChange("resultsVM", this.resultsVM);
+          })
         }
       });
   }
@@ -175,24 +176,9 @@ export class TugListViewModel extends Observable {
     });
   }
 
-  private updateTugResults(changes?: string[]) {
-    if (changes) {
-      const newResults = changes
-        .map((change) => this.tugResultsStore.getById(change))
-        .filter((result) => result !== null);
-      if (newResults.length === 0)
-        return;
-
-      const newResultsVM = this.toResultVM(newResults);
-      this.tugResults.unshift(...newResults);
-      this.resultsVM.unshift(...newResultsVM);
-    } else {
-      this.tugResults = this.tugResultsStore.queryAll();
-      if (this.tugResults.length > 0) {
-        this.resultsVM = new ObservableArray(this.toResultVM(this.tugResults));
-      }
-    }
-
+  private updateTugResults(records: Record[]) {
+    this.tugResults = records as TugResult[];
+    this.resultsVM = new ObservableArray<TugResultVM>(this.toResultVM(this.tugResults));
     this.notifyPropertyChange("resultsVM", this.resultsVM);
   }
 

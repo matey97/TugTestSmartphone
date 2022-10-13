@@ -52,7 +52,7 @@ class TugTestTaskGraph implements TaskGraph {
     on("tugTestEnded", run("recordsReceiverClearTask"));
     on("tugTestEnded", run("pairedDeviceResultSenderChecker"));
     on("tugTestEnded", run("tugResultLogger"));
-    on("tugTestEnded", run("storeTugResult"));
+    on("tugTestEnded", run("writeRecords"));
 
     on("sendResultToPairedDevice", run("sendPlainMessageToWatch"));
 

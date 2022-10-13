@@ -20,6 +20,7 @@ import {
 } from "@awarns/phone-sensors";
 import { getViewModel } from "~/view/list/tug-list-page";
 import { ApplicationMode } from "~/core/application-mode";
+import { writeRecordsTask } from "@awarns/persistence";
 
 export const appTasks: Array<Task> = [
   ...deviceTasks,
@@ -27,6 +28,8 @@ export const appTasks: Array<Task> = [
   ...recordsTasks,    // Tasks related to sensor records management: receive, forwarding, clear...
   ...storeTasks,
   ...loggers,
+
+  writeRecordsTask(),
 
   startDetectingPhoneNTPSyncedSensorChangesTask(PhoneSensor.ACCELEROMETER, { sensorDelay: 10, batchSize: 50}),
   startDetectingPhoneNTPSyncedSensorChangesTask(PhoneSensor.GYROSCOPE, { sensorDelay: 10, batchSize: 50}),
