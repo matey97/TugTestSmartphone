@@ -1,6 +1,6 @@
 import { Task, TaskParams, DispatchableEvent, TaskOutcome } from "@awarns/core/tasks";
-import { WatchRecord } from "@awarns/wear-os";
-import { getStore } from "~/core/store/records-store";
+import { Record } from "@awarns/core/entities";
+import { getInMemoryRecordsStore } from "~/core/store/memory-records-store";
 
 export class SaveRecordTask extends Task {
 
@@ -9,7 +9,7 @@ export class SaveRecordTask extends Task {
   }
 
   protected async onRun(taskParams: TaskParams, invocationEvent: DispatchableEvent): Promise<void | TaskOutcome> {
-    const record = invocationEvent.data as WatchRecord;
-    getStore().addRecord(record);
+    const record = invocationEvent.data as Record;
+    getInMemoryRecordsStore().addRecord(record);
   }
 }

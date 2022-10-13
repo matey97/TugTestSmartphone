@@ -1,10 +1,10 @@
 import { knownFolders } from "@nativescript/core";
-import { WatchRecord } from "@awarns/wear-os";
+import { Record } from "@awarns/core/entities";
 
-export class Store {
-  private records: WatchRecord[] = [];
+export class InMemoryRecordsStore {
+  private records: Record[] = [];
 
-  public addRecord(record: WatchRecord): void {
+  public addRecord(record: Record): void {
     this.records.push(record);
   }
 
@@ -28,8 +28,8 @@ export class Store {
 }
 
 let _instance;
-export function getStore(): Store {
+export function getInMemoryRecordsStore(): InMemoryRecordsStore {
   if (!_instance)
-    _instance = new Store();
+    _instance = new InMemoryRecordsStore();
   return _instance;
 }

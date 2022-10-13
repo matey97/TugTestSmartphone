@@ -1,5 +1,5 @@
 import { Task, TaskParams, DispatchableEvent, TaskOutcome } from "@awarns/core/tasks";
-import { getStore } from "~/core/store/records-store";
+import { getInMemoryRecordsStore } from "~/core/store/memory-records-store";
 
 export class StoreRecordsTask extends Task {
 
@@ -13,7 +13,7 @@ export class StoreRecordsTask extends Task {
 
     await new Promise<void>(resolve => {
       setTimeout(async () => {
-        await getStore().store(fileName, true);
+        await getInMemoryRecordsStore().store(fileName, true);
         resolve();
       }, 1000)
     });
