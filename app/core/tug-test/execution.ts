@@ -111,28 +111,28 @@ export class TugExecution {
   }
 
   private buildSuccessfulResult(results: ActivityResult[]): TugResult {
-    return {
-      deviceId: this.sourceDeviceId,
-      startTime: this.starTime,
-      successful: true,
-      duration: this.computeMillisecondsBetween(
+    return new TugResult(
+      this.sourceDeviceId,
+      this.starTime,
+      true,
+      this.computeMillisecondsBetween(
         results[0].start,
         results[results.length - 1].end
       ),
-      activitiesDuration: results,
-      classifications: this.classifications
-    };
+      results,
+      this.classifications
+    );
   }
 
   private buildUnsuccessfulResult(results: ActivityResult[]): TugResult {
-    return {
-      deviceId: this.sourceDeviceId,
-      startTime: this.starTime,
-      successful: false,
-      duration: -1,
-      activitiesDuration: results,
-      classifications: this.classifications
-    };
+    return new TugResult(
+      this.sourceDeviceId,
+      this.starTime,
+      false,
+      -1,
+      results,
+      this.classifications
+    );
   }
 }
 
