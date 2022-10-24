@@ -61,11 +61,11 @@ class TugTestTaskGraph implements TaskGraph {
     //----------------------
     on("startCollectionCommand", run("startSensorFromDeviceTask"));
 
-    on("accelerometerSamplesForCollection", run("saveRecordTask"));
-    on("gyroscopeSamplesForCollection", run("saveRecordTask"));
+    on("accelerometerSamplesForCollection", run("writeRecords"));
+    on("gyroscopeSamplesForCollection", run("writeRecords"));
 
-    on("stopCollectionCommand", run("storeRecordsTask"));
     on("stopCollectionCommand", run("stopSensorFromDeviceTask"));
+    on("stopCollectionCommand", run("exportRecordsTask"));
   }
 }
 
