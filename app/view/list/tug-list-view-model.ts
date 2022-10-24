@@ -96,7 +96,10 @@ export class TugListViewModel extends Observable {
         if (!r.result)
           return;
 
-        const exporter = createRecordsExporter(knownFolders.documents(), 'json', r.text);
+        const exporter = createRecordsExporter(knownFolders.documents(), 'json', {
+          fileName: r.text,
+          recordTypes: [TUG_RECORD_TYPE],
+        });
         await exporter.export();
       });
   }
