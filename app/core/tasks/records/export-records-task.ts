@@ -14,7 +14,7 @@ export class ExportRecordsTask extends Task {
 
   protected async onRun(taskParams: TaskParams, invocationEvent: DispatchableEvent): Promise<void | TaskOutcome> {
     const nodeId = invocationEvent.data.nodeId;
-    const fileName = `${nodeId}_${Date.now()}.json`;
+    const fileName = `${nodeId}_${Date.now()}`;
     const recordTypes = getSensingDataSource() == DataSource.LOCAL_DEVICE
       ? ["accelerometer", "gyroscope"]
       : ["watch-accelerometer", "watch-gyroscope"];
