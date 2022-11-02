@@ -1,6 +1,4 @@
-import { TriAxialSample } from "~/core/receiver/index";
-import { TriAxial as PhoneTriAxial } from "@awarns/phone-sensors";
-import { TriAxial as WatchTriAxial } from "@awarns/wear-os";
+import { TriAxial, TriAxialSample } from "~/core/receiver/index";
 import { awarns } from "@awarns/core";
 import { RecordsToProcess } from "~/core/receiver/records-to-process";
 import { Sensor } from "~/core/sensors";
@@ -20,23 +18,11 @@ export class RecordsReceiver {
   ) {
   }
 
-  onRecordReceived(record: PhoneTriAxial | WatchTriAxial) {
-    if (record.samples.length === 0)
+  onRecordReceived(triAxial: TriAxial) {
+    if (triAxial.samples.length === 0)
       return;
 
-    const samples: TriAxialSample[] = record.samples.map(sample =>
-      record instanceof PhoneTriAxial ? {
-        x: sample.x,
-        y: sample.y,
-        z: sample.z,
-        timestamp: sample.detectedAt.getTime()
-      } : sample
-    );
-
-    const sensor = record.type.includes('accelerometer')
-      ? Sensor.ACCELEROMETER
-      : Sensor.GYROSCOPE;
-    this.storeNewRecords(sensor, samples);
+    this.storeNewRecords(triAxial.sensor, triAxial.samples);
 
     if (!this.seriesSynced)
       this.doSync();

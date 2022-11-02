@@ -33,7 +33,7 @@
     "@awarns/core": "^1.1.0",
     "@awarns/ml-kit": "^1.0.1",
     "@awarns/persistence": "^1.1.0",
-    "@awarns/phone-sensors": "^1.2.0",
+    "@awarns/phone-sensors": "^1.2.2",
     "@awarns/wear-os": "^1.0.0",
     "@nativescript/core": "~8.2.0",
     "@nativescript/theme": "~2.3.0",

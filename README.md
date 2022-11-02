@@ -74,21 +74,27 @@ or to train machine learning models. The data is stored in `json` format, in bat
 [
   {
     "type": "accelerometer",
-    "timestamp": "2022-10-06T12:56:22.718Z",
+    "timestamp": {
+      "value":1667398706868,
+      "offset":-60
+    },
     "change": "none",
     "id": "6c841a4b-c3ad-41b4-968c-c671771b176a",
     "samples": [
-      {"x": -0.08614161610603333,"y": 0.16749759018421173,"z": 9.92124080657959, "detectedAt": "2022-10-06T12:56:22.718Z" },
+      {"x": -0.08614161610603333,"y": 0.16749759018421173,"z": 9.92124080657959, "timestamp": 1667398706868 },
       ...
     ] // 50 samples
   },
   {
     "type":"gyroscope",
-    "timestamp":"2022-10-06T12:56:22.796Z",
+    "timestamp":{
+      "value":1667398707013,
+      "offset":-60
+    },
     "change":"none",
     "id":"1043b67b-e85b-4877-99a3-f7bc98dec5b5",
     "samples": [
-      {"x": -0.0004581354442052543, "y": -0.00030542362947016954, "z": -0.0007635590736754239, "timestamp": "2022-10-06T12:56:22.796Z"},
+      {"x": -0.0004581354442052543, "y": -0.00030542362947016954, "z": -0.0007635590736754239, "timestamp": 1667398707013},
       ...
     ] // 50 samples
   },
