@@ -39,8 +39,7 @@ class TugTestTaskGraph implements TaskGraph {
 
     on("enoughRecordsAcquired", run("prepareAcquiredDataForClassificationTask"));
 
-    on("localDeviceDataForClassificationReady", run("humanActivityClassificationFromLocalDeviceData"));
-    on("pairedDeviceDataForClassificationReady", run("humanActivityClassificationFromPairedDeviceData"));
+    on("dataForClassificationReady", run("activityClassificationTask"));
 
     on("humanActivityPredicted", run("predictionResultEvaluationTask"));
     on("humanActivityPredicted", run("predictionResultLogger"));

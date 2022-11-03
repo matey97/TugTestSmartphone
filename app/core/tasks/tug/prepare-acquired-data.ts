@@ -6,17 +6,15 @@ import { getSensingDataSource } from "~/core/settings";
 import { InputData, ModelArchitecture } from "@awarns/ml-kit";
 import { getAppModelManager } from "~/core/ml/model/app-model-manager";
 import { extractFeaturesFrom } from "~/core/ml/feature-extraction";
-import { DataSource } from "~/core/data-source";
 
-const LOCAL_DEV_DATA_READY = 'localDeviceDataForClassificationReady';
-const PAIRED_DEV_DATA_READY = 'pairedDeviceDataForClassificationReady';
+const EVENT = 'dataForClassificationReady';
 
 export class PrepareAcquiredDataForClassificationTask extends Task {
   constructor(
     private appModelManager = getAppModelManager()
   ) {
     super('prepareAcquiredDataForClassificationTask', {
-      outputEventNames: [LOCAL_DEV_DATA_READY, PAIRED_DEV_DATA_READY]
+      outputEventNames: [EVENT]
     });
   }
   protected async onRun(taskParams: TaskParams, invocationEvent: DispatchableEvent): Promise<void | TaskOutcome> {
@@ -33,8 +31,12 @@ export class PrepareAcquiredDataForClassificationTask extends Task {
       : extractFeaturesFrom(samples);
 
     return {
-      eventName: dataSource === DataSource.LOCAL_DEVICE ? LOCAL_DEV_DATA_READY : PAIRED_DEV_DATA_READY,
-      result: data
+      eventName: EVENT,
+      result: {
+        modelName: model.id,
+        inputData: data,
+        timestamp: Math.round((samples.timestampEnd + samples.timestampStart) / 2)
+      }
     };
   }
 
