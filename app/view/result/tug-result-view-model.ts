@@ -1,6 +1,7 @@
 import { Observable } from "@nativescript/core";
 import { TugResult } from "~/core/tug-test/result";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
+import { TugAction } from "~/core/tug-test/tug-action";
 
 export class TugResultViewModel extends Observable {
 
@@ -17,17 +18,17 @@ export class TugResultViewModel extends Observable {
       successful: tugResult.duration !== -1,
       date: toLegibleDate(tugResult.startTime),
       duration: toLegibleDuration(tugResult.duration),
-      standUp: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[0])),
-      firstWalk: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[1])),
-      firstTurn: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[2])),
-      secondWalk: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[3])),
-      secondTurn: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[4])),
-      sitDown: toLegibleDuration(this.getDuration(tugResult.activitiesDuration[5]))
+      standUp: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.STANDING_UP])),
+      firstWalk: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.FIRST_WALK])),
+      firstTurn: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.FIRST_TURN])),
+      secondWalk: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.SECOND_WALK])),
+      secondTurn: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.SECOND_TURN])),
+      sitDown: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.SITTING_DOWN]))
     };
   }
 
   private getDuration(property) {
-    return property ? property.duration : -1;
+    return !!property ? property.duration : -1;
   }
 }
 
