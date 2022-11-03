@@ -28,7 +28,7 @@
                                     <StackLayout orientation="vertical"/>
                                 </Repeater.itemsLayout>
                                 <Repeater.itemTemplate>
-                                    <GridLayout id="{{ $value.model.name }}" rows="3*,2*,2*" columns="*,*" class="simple-card model margin-bottom" tap="{{ $value.vm.modelSelected }}">
+                                    <GridLayout id="{{ $value.model.id }}" rows="3*,2*,2*" columns="*,*" class="simple-card model margin-bottom" tap="{{ $value.vm.modelSelected }}">
                                         <Label row="0" col="0" colSpan="2" text="{{ $value.model.name }}" class="label-header bold"/>
                                         <Label row="1" col="0">
                                             <FormattedString>

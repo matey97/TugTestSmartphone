@@ -123,8 +123,8 @@ export class SettingsModalViewModel extends Observable {
 
   private updateSelection(dataSourceModels: DataSourceModels, modelId: string) {
     dataSourceModels.models.forEach((modelInfoVM) => {
-      const { id, name } = modelInfoVM.model;
-      const view = this.page.getViewById(name);
+      const id = modelInfoVM.model.id;
+      const view = this.page.getViewById(id);
       if (id === modelId) {
         view.addPseudoClass("active");
       } else {
