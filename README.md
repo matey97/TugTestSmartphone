@@ -24,7 +24,7 @@ When using the smartphone as the sensing device, the application has two functio
 - Collection mode: sensor data is collected and stored in a file.
 
 This application is part of the system developed and described in the [AIME 2022](https://aime22.aimedicine.info) conference paper
-*Instrumented Timed Up and Go test using inertial sensors from consumer wearable devices*.
+*Instrumented Timed Up and Go test using inertial sensors from consumer wearable devices* [[1]](#1).
 
 ## Requirements
 
@@ -158,6 +158,10 @@ GPU acceleration (useful when using complex models), and to change the countdown
 data collection when the user taps the start button.
 
 ![App settings](screenshots/sp_settings.png)
+
+## References
+<a id="1">[1]</a>
+Matey-Sanz, M., González-Pérez, A., Casteleyn, S., Granell, C. (2022). Instrumented Timed Up and Go Test Using Inertial Sensors from Consumer Wearable Devices. In: Michalowski, M., Abidi, S.S.R., Abidi, S. (eds) Artificial Intelligence in Medicine. AIME 2022. Lecture Notes in Computer Science(), vol 13263. Springer, Cham. https://doi.org/10.1007/978-3-031-09342-5_14
 
 ## License
 
