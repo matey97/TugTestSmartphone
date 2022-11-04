@@ -1,24 +1,27 @@
 import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } from "@nativescript/core";
-import { TugResult } from "~/core/tug-test/result";
-import { resultsStore } from "~/core/store/results-store";
+import { TUG_RECORD_TYPE, TugResult } from "~/core/tug-test/result";
 import { toLegibleDate, toLegibleDuration } from "~/view/utils";
-import { getNodeDiscoverer, Node, NodeDiscovered, NodeDiscoverer } from "nativescript-wearos-sensors/node";
 import { getApplicationMode, getLocalDeviceStartCountdown, setApplicationMode } from "~/core/settings";
-import { wearosSensors } from "nativescript-wearos-sensors";
-import { getNTPTime } from "~/core/utils/ntp-time";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
 import { ApplicationMode } from "~/core/application-mode";
 import { getLocalDataSourceNode } from "~/core/data-source";
+import { getConnectedWatches, setWatchFeaturesState, useWatch, Watch } from "@awarns/wear-os";
+import { Node } from "nativescript-wearos-sensors/node";
+import { awarns } from "@awarns/core";
+import { getNTPTimeProvider } from "@awarns/phone-sensors/internal/service/ntp/time-provider";
+import { createRecordsExporter, recordsStore } from "@awarns/persistence";
+import { Record } from "@awarns/core/entities";
+
+const LOCAL_DEVICE_COMMAND_EVT = "localDeviceCommand";
 
 export class TugListViewModel extends Observable {
 
   tugSelectorLabel: Label;
   collectionSelectorLabel: Label;
 
-  private nodeDiscoverer: NodeDiscoverer;
   private localNode: Node;
-  private connectedNodes: Node[] = [];
+  private connectedWatches: Watch[] = [];
 
   private _runningLocal: boolean = false;
   get runningLocal(): boolean {
@@ -64,15 +67,14 @@ export class TugListViewModel extends Observable {
   private resultsVM: ObservableArray<TugResultVM> = new ObservableArray([]);
 
   constructor(
-    private tugResultsStore = resultsStore
+    private tugResultsStore = recordsStore
   ) {
     super();
     setApplicationMode(ApplicationMode.TUG);
-    this.nodeDiscoverer = getNodeDiscoverer();
     this.getLocalNode();
     this.getConnectedNodes();
-    this.updateTugResults();
-    tugResultsStore.onChanges((changes) => this.updateTugResults(changes));
+    tugResultsStore.listBy(TUG_RECORD_TYPE, 'desc')
+      .subscribe((records) => this.updateTugResults(records))
   }
 
   getTugResult(index: number): TugResult {
@@ -94,9 +96,11 @@ export class TugListViewModel extends Observable {
         if (!r.result)
           return;
 
-        const fileName = r.text + ".json";
-        await knownFolders.documents().getFile(fileName)
-          .writeText(JSON.stringify(this.tugResults))
+        const exporter = createRecordsExporter(knownFolders.documents(), 'json', {
+          fileName: r.text,
+          recordTypes: [TUG_RECORD_TYPE],
+        });
+        await exporter.export();
       });
   }
 
@@ -109,10 +113,11 @@ export class TugListViewModel extends Observable {
     })
       .then((r) => {
         if (r) {
-          resultsStore.clear();
-          this.tugResults = [];
-          this.resultsVM = new ObservableArray([]);
-          this.notifyPropertyChange("resultsVM", this.resultsVM);
+          this.tugResultsStore.clear().then(() => {
+            this.tugResults = [];
+            this.resultsVM = new ObservableArray([]);
+            this.notifyPropertyChange("resultsVM", this.resultsVM);
+          })
         }
       });
   }
@@ -148,9 +153,7 @@ export class TugListViewModel extends Observable {
   }
 
   onStopInLocalDevice() {
-    const event = buildLocalEvent("stop");
-    wearosSensors.emitEvent(event, { deviceId: this.localNode.id });
-
+    this.emitEvent("stop");
     this.runningLocal = false;
   }
 
@@ -161,38 +164,24 @@ export class TugListViewModel extends Observable {
   }
 
   private getConnectedNodes() {
-    this.connectedNodes = [];
-    this.nodeDiscoverer.getConnectedNodes().subscribe({
-      next: (nodeDiscovered: NodeDiscovered) => {
-        if (nodeDiscovered.error) {
-          return;
-        }
-
-        const node = nodeDiscovered.node;
-        this.connectedNodes.push(node);
-        this.notifyPropertyChange("connectedNodes", this.connectedNodes);
+    this.connectedWatches = [];
+    getConnectedWatches().then(watches => {
+      if (watches.length === 0) {
+        console.log('No WearOS watches connected!');
+        setWatchFeaturesState(false);
+        return;
       }
+
+      setWatchFeaturesState(true);
+      useWatch(watches[0]);
+      this.connectedWatches = watches;
+      this.notifyPropertyChange("connectedWatches", this.connectedWatches);
     });
   }
 
-  private updateTugResults(changes?: string[]) {
-    if (changes) {
-      const newResults = changes
-        .map((change) => this.tugResultsStore.getById(change))
-        .filter((result) => result !== null);
-      if (newResults.length === 0)
-        return;
-
-      const newResultsVM = this.toResultVM(newResults);
-      this.tugResults.unshift(...newResults);
-      this.resultsVM.unshift(...newResultsVM);
-    } else {
-      this.tugResults = this.tugResultsStore.queryAll();
-      if (this.tugResults.length > 0) {
-        this.resultsVM = new ObservableArray(this.toResultVM(this.tugResults));
-      }
-    }
-
+  private updateTugResults(records: Record[]) {
+    this.tugResults = records as TugResult[];
+    this.resultsVM = new ObservableArray<TugResultVM>(this.toResultVM(this.tugResults));
     this.notifyPropertyChange("resultsVM", this.resultsVM);
   }
 
@@ -212,7 +201,7 @@ export class TugListViewModel extends Observable {
 
   private async runNtpSync(): Promise<boolean> {
     this.ntpSyncing = true;
-    const succeed = await getNTPTime().blockingSync();
+    const succeed = await getNTPTimeProvider().sync();
     this.ntpSyncing = false;
     return succeed;
   }
@@ -223,7 +212,7 @@ export class TugListViewModel extends Observable {
 
     if (this.countdown === 0) {
       this.runningCountdown = false;
-      wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+      this.emitEvent("start");
       return;
     }
 
@@ -233,9 +222,16 @@ export class TugListViewModel extends Observable {
         this.runningCountdown = false;
         clearInterval(id);
 
-        wearosSensors.emitEvent(buildLocalEvent("start"), { deviceId: this.localNode.id });
+        this.emitEvent("start");
       }
     }, 1000);
+  }
+
+  private emitEvent(action: "start" | "stop"): void {
+    awarns.emitEvent(LOCAL_DEVICE_COMMAND_EVT, {
+      action: buildAction(action),
+      nodeId: this.localNode.id
+    });
   }
 }
 
@@ -244,8 +240,8 @@ interface TugResultVM {
   duration: string
 }
 
-function buildLocalEvent(action: "start" | "stop") {
+function buildAction(action: "start" | "stop") {
   return getApplicationMode() === ApplicationMode.TUG
-    ? `${action}ExecutionCommand`
-    : `${action}CollectionCommand`;
+    ? `${action}-execution`
+    : `${action}-collection`;
 }

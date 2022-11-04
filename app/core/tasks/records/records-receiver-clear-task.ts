@@ -1,5 +1,4 @@
-import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
-import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
 import { getRecordsReceiver, RecordsReceiver } from "~/core/receiver/records-receiver";
 

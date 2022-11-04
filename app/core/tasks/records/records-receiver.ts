@@ -1,8 +1,7 @@
-import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
-import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { SensorRecords } from "nativescript-wearos-sensors/internal/sensors/sensor-record";
+import { DispatchableEvent, Task, TaskOutcome, TaskParams } from "@awarns/core/tasks";
 import { getRecordsReceiver, RecordsReceiver } from "~/core/receiver/records-receiver";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
+import { Sensor } from "~/core/sensors";
 
 export class RecordsReceiverTask extends Task {
 
@@ -20,8 +19,12 @@ export class RecordsReceiverTask extends Task {
     if (!this.tugManager.ongoing)
       throw new Error("Could not receive records. No ongoing execution!");
 
-    const sensorRecords: SensorRecords<any> = invocationEvent.data.records as SensorRecords<any>;
-    this.receiver.onRecordsReceived(sensorRecords);
+    const record = invocationEvent.data;
+
+    this.receiver.onRecordReceived({
+      sensor: record.type.includes("accelerometer") ? Sensor.ACCELEROMETER : Sensor.GYROSCOPE,
+      samples: record.samples
+    });
   }
 
 }

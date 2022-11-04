@@ -1,8 +1,8 @@
-import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
-import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
 import { TugResult } from "~/core/tug-test/result";
 import { getSensingDataSource } from "~/core/settings";
 import { DataSource } from "~/core/data-source";
+import { PlainMessage } from "@awarns/wear-os";
 
 export class PairedDeviceResultSenderChecker extends Task {
 
@@ -23,14 +23,10 @@ export class PairedDeviceResultSenderChecker extends Task {
       };
 
     const results = invocationEvent.data as TugResult;
-
+    const message: PlainMessage = { message: results.duration.toString() };
     return {
       eventName: this.outputEventNames[1],
-      result: {
-        nodeId: results.deviceId,
-        result: results.duration.toString(),
-        messagePath: "/result"
-      }
+      result: { plainMessage: message }
     }
   }
 }

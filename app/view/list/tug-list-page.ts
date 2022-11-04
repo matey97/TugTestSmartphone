@@ -1,8 +1,8 @@
 import { ActionItem, EventData, Frame, ItemEventData, Page, ShowModalOptions } from "@nativescript/core";
 import { TugListViewModel } from "~/view/list/tug-list-view-model";
-import { wearosSensors } from "nativescript-wearos-sensors";
 import { PowerSavings } from "~/core/power-savings";
-import { getModelManager } from "~/core/recognition/model/model-manager";
+import { getAppModelManager } from "~/core/ml/model/app-model-manager";
+import { awarns } from "@awarns/core";
 
 export function navigatingTo(args: EventData) {
   const page = <Page>args.object;
@@ -12,8 +12,8 @@ export function navigatingTo(args: EventData) {
   model.collectionSelectorLabel = page.getViewById("collectionSelector");
   page.bindingContext = model;
 
-  preparePlugin();
   prepareModels();
+  preparePlugin();
 }
 
 export function onTugResultTap(args: ItemEventData) {
@@ -42,12 +42,12 @@ export function onSettingsOptionTap(args: ItemEventData) {
 }
 
 async function preparePlugin() {
-  const isReady = await wearosSensors.isReady();
+  const isReady = await awarns.isReady();
   if (!isReady) {
     console.log("Plugin was not ready! Going to prepare...");
 
     try {
-      await wearosSensors.prepare();
+      await awarns.prepare();
     } catch (e) {
       console.log(`Could not prepare plugin. Reason: ${JSON.stringify(e)}`);
     }
@@ -62,7 +62,7 @@ async function preparePlugin() {
 }
 
 async function prepareModels() {
-  const modelManager = getModelManager();
+  const modelManager = getAppModelManager();
   return await modelManager.loadModels();
 }
 

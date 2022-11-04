@@ -1,8 +1,6 @@
-import { Task, TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
-import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
-import { getRecognizer } from "~/core/recognition/recognizer";
-import { getSensingDataSource } from "~/core/settings";
+import { Vibrate } from "nativescript-vibrate";
 
 export class EndTugTestTask extends Task {
 
@@ -21,14 +19,14 @@ export class EndTugTestTask extends Task {
     if (!this.tugManager.ongoing)
       return;
 
-    const tugResults = this.tugManager.endExecution();
+    const tugResult = this.tugManager.endExecution();
 
-    const recognizer = getRecognizer(getSensingDataSource());
-    recognizer.unloadModel();
+    const vibrator = new Vibrate();
+    vibrator.vibrate([500, 500, 500, 500]);
 
     return {
       eventName: this.outputEventNames[0],
-      result: tugResults
+      result: tugResult
     };
   }
 

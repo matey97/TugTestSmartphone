@@ -1,9 +1,5 @@
 // Add your native dependencies here:
-dependencies {
-  implementation 'org.tensorflow:tensorflow-lite:2.3.0'
-  implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
-  implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
-}
+
 
 // Uncomment to add recyclerview-v7 dependency
 //dependencies {
@@ -18,9 +14,5 @@ android {
   defaultConfig {
     minSdkVersion 22
     generatedDensities = []
-  }
-  aaptOptions {
-    additionalParameters "--no-version-vectors"
-    noCompress "tflite"
   }
 }

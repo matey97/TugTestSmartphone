@@ -1,6 +1,6 @@
-import { TriAxialSensorRecord } from "nativescript-wearos-sensors/internal/sensors/triaxial/record";
+import { TriAxialSample } from "~/core/receiver/index";
 
 export interface RecordsToProcess {
-  accelerometerRecords: TriAxialSensorRecord[],
-  gyroscopeRecords: TriAxialSensorRecord[]
+  accelerometerRecords: TriAxialSample[],
+  gyroscopeRecords: TriAxialSample[]
 }

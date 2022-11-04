@@ -4,19 +4,16 @@ import {
   setString,
   getString,
   flush,
-  setBoolean,
-  getBoolean
 } from "@nativescript/core/application-settings"
 import { ApplicationMode } from "~/core/application-mode";
 import { DataSource } from "~/core/data-source";
-import { ModelType } from "~/core/recognition/model/model-type";
+import { ModelArchitecture } from "@awarns/ml-kit";
 
 const APP_MODE_KEY = "app_mode";
 const SENSING_DATA_SOURCE_KEY = "sensing_data_source";
 function modelTypeKey(dataSource: DataSource): string {
   return `${dataSource.toLowerCase()}_model_type`;
 }
-const GPU_DELEGATE_KEY = "gpu_delegate_key";
 const LOCAL_START_COUNTDOWN = "local_start_countdown_key";
 
 export function setApplicationMode(mode: ApplicationMode): void {
@@ -43,16 +40,7 @@ export function setModelEnabledForDataSource(id: string, dataSource: DataSource)
 }
 
 export function getModelEnabledForDataSource(dataSource: DataSource): string {
-  return <ModelType>getString(modelTypeKey(dataSource));
-}
-
-export function setGPUDelegateEnabled(enabled: boolean): void {
-  setBoolean(GPU_DELEGATE_KEY, enabled);
-  flush();
-}
-
-export function isGPUDelegateEnabled(): boolean {
-  return getBoolean(GPU_DELEGATE_KEY, false);
+  return <ModelArchitecture>getString(modelTypeKey(dataSource));
 }
 
 export function setLocalDeviceStartCountdown(countdown: number): void {

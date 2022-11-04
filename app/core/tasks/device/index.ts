@@ -1,5 +1,5 @@
-import { StartSensorFromDeviceTask } from "./start-sensor-from-device-task";
-import { StopSensorFromDeviceTask } from "./stop-sensor-from-device-task";
+import { StartSensorFromDeviceTask } from "./start-sensor-from-device";
+import { StopSensorFromDeviceTask } from "./stop-sensor-from-device";
 import { localDeviceTasks } from "~/core/tasks/device/local";
 import { pairedDeviceTasks } from "~/core/tasks/device/paired";
 

@@ -1,8 +1,7 @@
-import { TriAxialSensorRecord } from "nativescript-wearos-sensors/internal/sensors/triaxial/record";
-import { SensorRecords } from "nativescript-wearos-sensors/internal/sensors/sensor-record";
-import { SensorType } from "nativescript-wearos-sensors/sensors";
-import { wearosSensors } from "nativescript-wearos-sensors";
+import { TriAxial, TriAxialSample } from "~/core/receiver/index";
+import { awarns } from "@awarns/core";
 import { RecordsToProcess } from "~/core/receiver/records-to-process";
+import { Sensor } from "~/core/sensors";
 
 const WINDOW_SIZE = 50;
 const WINDOW_STEP = WINDOW_SIZE / 2;
@@ -12,24 +11,24 @@ const ENOUGH_RECORDS = "enoughRecordsAcquired";
 export class RecordsReceiver {
 
   private seriesSynced = false;
-  private accelerometerRecords: TriAxialSensorRecord[] = [];
-  private gyroscopeRecords: TriAxialSensorRecord[] = [];
+  private accelerometerRecords: TriAxialSample[] = [];
+  private gyroscopeRecords: TriAxialSample[] = [];
 
   constructor(
   ) {
   }
 
-  onRecordsReceived(records: SensorRecords<TriAxialSensorRecord>) {
-    if (records.records.length === 0)
+  onRecordReceived(triAxial: TriAxial) {
+    if (triAxial.samples.length === 0)
       return;
 
-    this.storeNewRecords(records.type, records.records);
+    this.storeNewRecords(triAxial.sensor, triAxial.samples);
 
     if (!this.seriesSynced)
       this.doSync();
 
     while (this.enoughRecords()) {
-      wearosSensors.emitEvent(
+      awarns.emitEvent(
         ENOUGH_RECORDS,
         this.getRecordsToProcess()
       )
@@ -41,13 +40,13 @@ export class RecordsReceiver {
     this.gyroscopeRecords = [];
   }
 
-  private storeNewRecords(type: SensorType, records: TriAxialSensorRecord[]) {
+  private storeNewRecords(type: Sensor, samples: TriAxialSample[]) {
     switch (type) {
-      case SensorType.ACCELEROMETER:
-        this.accelerometerRecords.push(...records);
+      case Sensor.ACCELEROMETER:
+        this.accelerometerRecords.push(...samples);
         break;
-      case SensorType.GYROSCOPE:
-        this.gyroscopeRecords.push(...records);
+      case Sensor.GYROSCOPE:
+        this.gyroscopeRecords.push(...samples);
         break;
     }
   }
@@ -62,22 +61,11 @@ export class RecordsReceiver {
     const matchingThreshold = Math.max(oldestAcc, oldestGyro);
 
     if (matchingThreshold === oldestAcc)
-      this.gyroscopeRecords = this.remove(this.gyroscopeRecords, matchingThreshold);
+      this.gyroscopeRecords = remove(this.gyroscopeRecords, matchingThreshold);
     else
-      this.accelerometerRecords = this.remove(this.accelerometerRecords, matchingThreshold);
+      this.accelerometerRecords = remove(this.accelerometerRecords, matchingThreshold);
 
     this.seriesSynced = true;
-  }
-
-  private remove(from: TriAxialSensorRecord[], threshold: number) {
-    let i;
-    for (i = 0; i < from.length; i++) {
-      if (from[i].timestamp >= threshold) {
-        break;
-      }
-    }
-
-    return from.slice(i)
   }
 
   private enoughRecords(): boolean {
@@ -100,6 +88,17 @@ export class RecordsReceiver {
     this.accelerometerRecords.splice(0, WINDOW_STEP);
     this.gyroscopeRecords.splice(0, WINDOW_STEP);
   }
+}
+
+function remove(from: TriAxialSample[], threshold: number) {
+  let i;
+  for (i = 0; i < from.length; i++) {
+    if (from[i].timestamp >= threshold) {
+      break;
+    }
+  }
+
+  return from.slice(i)
 }
 
 let _instance;

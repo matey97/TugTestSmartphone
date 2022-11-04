@@ -1,15 +1,21 @@
-import { Task } from "nativescript-task-dispatcher/tasks";
+import { SimpleTask, Task } from "@awarns/core/tasks";
 import { deviceTasks } from "~/core/tasks/device";
 import { tugTestTasks } from "~/core/tasks/tug";
-import { collectionTasks } from "~/core/tasks/collection";
 import { recordsTasks } from "~/core/tasks/records";
 import { loggers } from "~/core/tasks/loggers";
 
-export const appTasks: Array<Task> = [
-  ...deviceTasks,     // Tasks related to the device as sensing unit: start/stop sensors, send information...
-  ...tugTestTasks,    // Tasks related to the TUG test: start, recognition, ending...
-  ...collectionTasks, // Tasks related to collection: start
-  ...recordsTasks,    // Tasks related to sensor records management: receive, forwarding, clear...
+import { getApplicationMode } from "~/core/settings";
+import { getViewModel } from "~/view/list/tug-list-page";
+import { ApplicationMode } from "~/core/application-mode";
 
-  ...loggers
+export const appTasks: Array<Task> = [
+  ...deviceTasks,     // Tasks to start/stop data collection from devices...
+  ...tugTestTasks,    // Tasks related to the TUG test: start, ml, ending...
+  ...recordsTasks,    // Tasks related to sensor records management: receive, forwarding, clear...
+  ...loggers,         // Loggers for prediction results
+
+  new SimpleTask('uiButtonUpdateTask', async () => {
+    if (getApplicationMode() === ApplicationMode.TUG)
+      getViewModel().runningLocal = false;
+  }),
 ];

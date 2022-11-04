@@ -5,11 +5,23 @@ purpose of the file is to pass control to the app’s first module.
 */
 
 import { Application } from '@nativescript/core'
-import { wearosSensors } from "nativescript-wearos-sensors";
+import { awarns } from '@awarns/core';
 import { appTasks } from "~/core/tasks";
 import { taskGraph } from "~/core/tasks/graph";
+import { registerWearOSPlugin, WatchSensor } from "@awarns/wear-os";
 
-wearosSensors.init(appTasks, taskGraph);
+awarns.init(
+  appTasks,
+  taskGraph,
+  [
+    registerWearOSPlugin({
+      sensors: [WatchSensor.ACCELEROMETER, WatchSensor.GYROSCOPE],
+      enablePlainMessaging: true,
+      enableWearCommands: true,
+    })
+  ]
+).then(() => console.log("ALL GOOD!"))
+  .catch((e) => console.log(e));
 
 Application.run({ moduleName: 'app-root' })
 
