@@ -8,12 +8,16 @@ import { Application } from '@nativescript/core'
 import { awarns } from '@awarns/core';
 import { appTasks } from "~/core/tasks";
 import { taskGraph } from "~/core/tasks/graph";
+import { registerPhoneSensorsPlugin } from "@awarns/phone-sensors";
 import { registerWearOSPlugin, WatchSensor } from "@awarns/wear-os";
 
 awarns.init(
   appTasks,
   taskGraph,
   [
+    registerPhoneSensorsPlugin({
+      enableVibrationOnStart: false,
+    }),
     registerWearOSPlugin({
       sensors: [WatchSensor.ACCELEROMETER, WatchSensor.GYROSCOPE],
       enablePlainMessaging: true,
