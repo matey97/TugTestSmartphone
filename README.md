@@ -23,8 +23,6 @@ When using the smartphone as the sensing device, the application has two functio
 - TUG mode: the collected sensor data is used to estimate the current activity of the user while performing the TUG test.
 - Collection mode: sensor data is collected and stored in a file.
 
-This application is part of the system developed and described in the [AIME 2022](https://aime22.aimedicine.info) conference paper
-*Instrumented Timed Up and Go test using inertial sensors from consumer wearable devices* [[1]](#1).
 
 ## Requirements
 
@@ -111,20 +109,17 @@ The collected sensor data is used to estimate current user's activity in the con
 the test, the application computes the duration of each activity performed during the test.
 
 #### Activity recognition
-The activity estimation is carried out by a machine learning model. The application has 4 embedded machine learning models:
+The activity estimation is carried out by a machine learning model. The application has 2 embedded machine learning models:
 - CNN Smartphone Actions Classifier: convolutional machine learning model for activity recognition for data coming from the smartphone sensors.
-- MLP Smartphone Actions Classifier: multi layered perceptron machine learning model for activity recognition for data coming from the smartphone sensors.
 - CNN Smartwatch Actions Classifier: convolutional machine learning model for activity recognition for data coming from the paired smartwatch sensors.
-- MLP Smartwatch Actions Classifier: multi layered perceptron machine learning model for activity recognition for data coming from the paired smartwatch sensors.
 
-The model to use can be changed from the settings of the application (see [Screenshots>Settings](#settings)). All models
-can be found in [app/ml-models](app/ml-models).
+All models can be found in [app/ml-models](app/ml-models).
 
 #### Add your models
 You can add new TensorFlow Lite models trained with your own data. The models must be capable of detecting the actions
 performed during the test, i.e., sit, standing, walking, turning and sitting.
 
-The only restriction is that the models has to include metadata and the **labels for the output layer** as an [associated file](https://www.tensorflow.org/lite/models/convert/metadata#pack_the_associated_files).
+The only restriction is that the models have to include metadata and the **labels for the output layer** as an [associated file](https://www.tensorflow.org/lite/models/convert/metadata#pack_the_associated_files).
 Check the requirements in [@awarns/ml-kit](https://github.com/GeoTecINIT/awarns-framework/blob/main/packages/ml-kit/).
 
 > **Note:** it's important that in the associated file, the activity labels must have the following names:
@@ -132,7 +127,11 @@ Check the requirements in [@awarns/ml-kit](https://github.com/GeoTecINIT/awarns-
 >
 > The importance of the labels file is to map the i<sub>th</sub> output of the model with the i<sub>th</sub> label.
 
-Once ready, the models new models can be added in [`app/ml-models/`](app/ml-models), using the following naming convention: `<device>_<model_name>-<cnn|mlp>-[version].tflite`.
+Once ready, the models new models can be added in [`app/ml-models/`](app/ml-models), using the following naming convention: `<device>_<model_name>-<type>-[version].tflite`, where:
+- `<device>` is the sensing device the model is meant to work with. Can be `local` (i.e., smartphone) or `paired` (i.e., smartwatch).
+- `<model_name>` is a name to identify the model file.
+- `<type>` is the architecture type of the model. Can bel  `cnn` (i.e., Convolutional Neural Network) or `mlp` (i.e., Multilayer Perceptron, ANN).
+- `[version]` is an optional version label.
 Check the examples in [`app/ml-models/`](app/ml-models).
 
 
@@ -143,28 +142,15 @@ Check the examples in [`app/ml-models/`](app/ml-models).
 #### Main view
 The application shows a list with the TUG executions done:
 
-![TUG list](screenshots/sp_list.png)
-
+<img src="screenshots/sp_list.jpg" alt="TUG list" width="400">
 
 #### Detail view
 You can tap any execution to see its detailed results:
 
-![TUG detail](screenshots/sp_detail.jpg)
-
-
-#### Settings
-The application settings allow you to change the model to use for activity recognition during TUG mode, to enable
-GPU acceleration (useful when using complex models), and to change the countdown value before the local device starts the
-data collection when the user taps the start button.
-
-![App settings](screenshots/sp_settings.png)
-
-## References
-<a id="1">[1]</a>
-Matey-Sanz, M., González-Pérez, A., Casteleyn, S., Granell, C. (2022). Instrumented Timed Up and Go Test Using Inertial Sensors from Consumer Wearable Devices. In: Michalowski, M., Abidi, S.S.R., Abidi, S. (eds) Artificial Intelligence in Medicine. AIME 2022. Lecture Notes in Computer Science(), vol 13263. Springer, Cham. https://doi.org/10.1007/978-3-031-09342-5_14
+<img src="screenshots/sp_detail.jpg" alt="TUG detail" width="400">
 
 ## License
 
-See [LICENSE](./LICENSE).
+Apache License 2.0. See [LICENSE](./LICENSE).
 
 
