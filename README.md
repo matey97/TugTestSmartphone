@@ -132,6 +132,7 @@ Once ready, the models new models can be added in [`app/ml-models/`](app/ml-mode
 - `<model_name>` is a name to identify the model file.
 - `<type>` is the architecture type of the model. Can bel  `cnn` (i.e., Convolutional Neural Network) or `mlp` (i.e., Multilayer Perceptron, ANN).
 - `[version]` is an optional version label.
+
 Check the examples in [`app/ml-models/`](app/ml-models).
 
 
