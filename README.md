@@ -122,7 +122,8 @@ performed during the test, i.e., sit, standing, walking, turning and sitting.
 The only restriction is that the models have to include metadata and the **labels for the output layer** as an [associated file](https://www.tensorflow.org/lite/models/convert/metadata#pack_the_associated_files).
 Check the requirements in [@awarns/ml-kit](https://github.com/GeoTecINIT/awarns-framework/blob/main/packages/ml-kit/).
 
-> **Note:** it's important that in the associated file, the activity labels must have the following names:
+> [!NOTE]
+> It's important that in the associated file, the activity labels must have the following names:
 > SIT, STANDING, WALKING, TURNING and SITTING.
 >
 > The importance of the labels file is to map the i<sub>th</sub> output of the model with the i<sub>th</sub> label.
@@ -136,7 +137,8 @@ Once ready, the models new models can be added in [`app/ml-models/`](app/ml-mode
 Check the examples in [`app/ml-models/`](app/ml-models).
 
 
-> **Note:** if you have modified the models' folder, and you have previously compiled the application, run `ns clean` before executing `ns run android` again.
+> [!NOTE]
+> If you have modified the models' folder, and you have previously compiled the application, run `ns clean` before executing `ns run android` again.
 
 ### Screenshots
 
@@ -153,5 +155,16 @@ You can tap any execution to see its detailed results:
 ## License
 
 Apache License 2.0. See [LICENSE](./LICENSE).
+
+## Author
+
+<a href="https://github.com/matey97" title="Miguel Matey Sanz">
+  <img src="https://avatars3.githubusercontent.com/u/25453537?s=120" alt="Miguel Matey Sanz" width="120"/>
+</a>
+
+
+## Acknowledgements
+
+The development of this application has been possible thanks to the Spanish Ministry of Universities [grant FPU19/05352] and by MCIN/AEI/10.13039/501100011033 [grants PID2020-120250RB-I00, PID2022-1404475OB-C21, PID2022-1404475OB-C22]
 
 
