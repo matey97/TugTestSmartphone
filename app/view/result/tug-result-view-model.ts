@@ -1,6 +1,6 @@
 import { Observable } from "@nativescript/core";
 import { TugResult } from "~/core/tug-test/result";
-import { toLegibleDate, toLegibleDuration } from "~/view/utils";
+import { toFailedStatus, toFailedStatusText, toLegibleDate, toLegibleDuration } from "~/view/utils";
 import { TugAction } from "~/core/tug-test/tug-action";
 
 export class TugResultViewModel extends Observable {
@@ -15,7 +15,7 @@ export class TugResultViewModel extends Observable {
 
   private toResultVM(tugResult: TugResult): ResultVM {
     return {
-      successful: tugResult.duration !== -1,
+      successful: tugResult.successful,
       date: toLegibleDate(tugResult.startTime),
       duration: toLegibleDuration(tugResult.duration),
       standUp: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.STANDING_UP])),
@@ -23,7 +23,8 @@ export class TugResultViewModel extends Observable {
       firstTurn: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.FIRST_TURN])),
       secondWalk: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.SECOND_WALK])),
       secondTurn: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.SECOND_TURN])),
-      sitDown: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.SITTING_DOWN]))
+      sitDown: toLegibleDuration(this.getDuration(tugResult.activitiesResults[TugAction.SITTING_DOWN])),
+      failedStatusText: !tugResult.successful ? toFailedStatusText(tugResult.duration) : undefined
     };
   }
 
@@ -42,4 +43,5 @@ interface ResultVM {
   secondWalk: string,
   secondTurn: string,
   sitDown: string,
+  failedStatusText?: string
 }

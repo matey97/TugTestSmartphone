@@ -1,6 +1,6 @@
 import { Dialogs, EventData, knownFolders, Label, Observable, ObservableArray } from "@nativescript/core";
 import { TUG_RECORD_TYPE, TugResult } from "~/core/tug-test/result";
-import { toLegibleDate, toLegibleDuration } from "~/view/utils";
+import { toLegibleDate, toLegibleDuration, toFailedStatus } from "~/view/utils";
 import { getApplicationMode, getLocalDeviceStartCountdown, setApplicationMode } from "~/core/settings";
 import { Vibrate } from "nativescript-vibrate";
 import { ToastDuration, Toasty } from "@triniwiz/nativescript-toasty";
@@ -188,8 +188,10 @@ export class TugListViewModel extends Observable {
   private toResultVM(results: TugResult[]): TugResultVM[] {
     return results.map((result) => {
       return {
+        successful: result.successful,
         date: toLegibleDate(result.startTime),
-        duration: toLegibleDuration(result.duration)
+        duration: toLegibleDuration(result.duration),
+        failedStatusText: !result.successful ? toFailedStatus(result.duration) : undefined
       }
     });
   }
@@ -236,8 +238,10 @@ export class TugListViewModel extends Observable {
 }
 
 interface TugResultVM {
+  successful: boolean,
   date: string,
-  duration: string
+  duration: string,
+  failedStatusText?: string
 }
 
 function buildAction(action: "start" | "stop") {
