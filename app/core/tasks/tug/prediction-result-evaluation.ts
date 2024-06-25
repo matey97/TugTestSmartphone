@@ -1,4 +1,4 @@
-import { Task, TaskOutcome, TaskParams, DispatchableEvent } from "@awarns/core/tasks";
+import { DispatchableEvent, Task, TaskOutcome, TaskParams } from "@awarns/core/tasks";
 import { Activity, fromString } from "~/core/tug-test/activities";
 import { getTugManager, TugManager } from "~/core/tug-test/manager";
 import { highestScorePrediction, Status } from "~/core/tug-test/execution";
@@ -8,6 +8,7 @@ const SIGNIFICANCE_THRESHOLD = 0.7;
 
 const DEFAULT_EVENT = "testEvaluationTaskFinished";
 const TEST_ENDING_EVENT = "detectedTugTestEnding";
+const PROCEDURAL_BREACH_EVENT = "proceduralBreachDetected";
 
 export class PredictionResultEvaluationTask extends Task {
 
@@ -15,7 +16,7 @@ export class PredictionResultEvaluationTask extends Task {
     private tugManager: TugManager = getTugManager()
   ) {
     super("predictionResultEvaluationTask", {
-      outputEventNames: [DEFAULT_EVENT, TEST_ENDING_EVENT]
+      outputEventNames: [DEFAULT_EVENT, TEST_ENDING_EVENT, PROCEDURAL_BREACH_EVENT]
     });
   }
 
@@ -34,33 +35,64 @@ export class PredictionResultEvaluationTask extends Task {
     const lastThreePredictions = lastThree.map((classification) => highestScorePrediction(classification.classificationResult))
     const activity = fromString(highestScorePrediction(lastThree[0].classificationResult).label);
 
-    // If the last three estimations are the same activity and
-    // that activity is different than the current one update the current activity
-    if (
-      areRecognitionsEqualAndSignificant(lastThreePredictions) &&
-      activity !== currentExecution.current
-    ) {
-      const previous = currentExecution.current;
-      currentExecution.current = activity;
+    if (areRecognitionsEqualAndSignificant(lastThreePredictions)) {
+      if (activity === Activity.SIT && currentExecution.status === Status.YET_TO_START) {
+        currentExecution.status = Status.STARTED;
+        return { eventName: DEFAULT_EVENT };
+      }
 
-      // If the previous activity was SIT, set the execution as started
-      if (previous === Activity.SIT) {
-        currentExecution.status = Status.STARTED
+      if (activity !== currentExecution.current && currentExecution.status === Status.STARTED) {
+        currentExecution.current = activity;
+
+        if (activity === Activity.SIT) {
+          currentExecution.status = Status.FINISHED;
+          return {
+            eventName: TEST_ENDING_EVENT
+          }
+        }
       }
     }
+
+    if (
+      currentExecution.status === Status.YET_TO_START &&
+      !areSomeRecognitionsEqualTo(Activity.SIT, lastThreePredictions)
+    ) {
+      currentExecution.status = Status.PROCEDURAL_BREACH;
+      return {
+        eventName: PROCEDURAL_BREACH_EVENT
+      }
+    }
+
+    // If the last three estimations are the same activity and
+    // that activity is different than the current one update the current activity
+    //if (
+    //  areRecognitionsEqualAndSignificant(lastThreePredictions) &&
+    //  activity !== currentExecution.current
+    //) {
+    //  const previous = currentExecution.current;
+    //  currentExecution.current = activity;
+//
+    //  // If the previous activity was SIT, set the execution as started
+    //  if (previous === Activity.SIT) {
+    //    currentExecution.status = Status.STARTED
+    //    return {
+    //      eventName: DEFAULT_EVENT
+    //    }
+    //  }
+    //}
 
     // If the execution has started, the last three estimations are the same activity
     // and that activity is SIT, then finish the execution
-    if (
-      currentExecution.status === Status.STARTED &&
-      areRecognitionsEqualAndSignificant(lastThreePredictions) &&
-      activity === Activity.SIT
-    ) {
-      currentExecution.status = Status.FINISHED;
-      return {
-        eventName: TEST_ENDING_EVENT
-      }
-    }
+    //if (
+    //  currentExecution.status === Status.STARTED &&
+    //  areRecognitionsEqualAndSignificant(lastThreePredictions) &&
+    //  activity === Activity.SIT
+    //) {
+    //  currentExecution.status = Status.FINISHED;
+    //  return {
+    //    eventName: TEST_ENDING_EVENT
+    //  }
+    //}
 
     return {
       eventName: DEFAULT_EVENT
@@ -76,6 +108,12 @@ function areRecognitionsEqual(classificationPredictions: ClassificationPredictio
   return classificationPredictions
     .map((classificationPrediction) => fromString(classificationPrediction.label))
     .every((prediction, i, predictions) => prediction === predictions[0]);
+}
+
+function areSomeRecognitionsEqualTo(activity: Activity, classificationPredictions: ClassificationPrediction[]): boolean {
+  return classificationPredictions
+    .map((classificationPrediction) => fromString(classificationPrediction.label))
+    .some((prediction) => prediction === activity)
 }
 
 function areRecognitionsSignificant(classificationPredictions: ClassificationPrediction[]): boolean {

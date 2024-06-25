@@ -44,6 +44,7 @@ class TugTestTaskGraph implements TaskGraph {
     on("humanActivityPredicted", run("predictionResultEvaluationTask"));
     on("humanActivityPredicted", run("predictionResultLogger"));
 
+    on("proceduralBreachDetected", run("endTugTestTask"));
     on("detectedTugTestEnding", run("endTugTestTask"));
     on("stopTugCommand", run("endTugTestTask"));
 
