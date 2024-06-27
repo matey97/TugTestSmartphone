@@ -20,7 +20,7 @@
       <Label col="0" row="0" rowSpan="2" text="&#xe426;" class="mdi-ro"/>
       <Label col="1" row="0" text="Execution failed" class="label-header bold v-align"/>
       <Label col="1" row="1"
-             text="The application was not able to detect the duration of the test due to recognition errors."
+             text="{{ resultVM.failedStatusText }}"
              textWrap="true"/>
     </GridLayout>
     <StackLayout visibility="{{ resultVM.successful ? 'visible' : 'collapsed' }}">

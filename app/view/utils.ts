@@ -8,7 +8,25 @@ export function toLegibleDate(timestamp: number): string {
 }
 
 export function toLegibleDuration(duration: number): string {
-  return duration !== -1
+  return duration > 0
     ? `${Math.round(duration/1000 * 100) / 100} seconds`
     : "Unknown";
+}
+
+export function toFailedStatus(duration: number): string {
+  switch (duration) {
+    case -1:
+      return "Unable to compute results";
+    case -2:
+      return "Procedural breach detected";
+  }
+}
+
+export function toFailedStatusText(status: number): string {
+  switch (status) {
+    case -1:
+      return "The application was not able to detect the duration of the test due to recognition errors."
+    case -2:
+      return "The TUG test was aborted due to procedural breaches during its execution."
+  }
 }

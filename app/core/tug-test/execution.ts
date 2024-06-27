@@ -65,6 +65,10 @@ export class TugExecution {
   }
 
   computeResults(): TugResult {
+    if (this.status === Status.PROCEDURAL_BREACH) {
+      return this.buildProceduralBreachResult();
+    }
+
     const predictions = this.classifications.map((classification) => highestScorePrediction(classification.classificationResult).label);
     const changes = this.computeChanges(predictions);
     const results: ActivityResults = {};
@@ -193,6 +197,17 @@ export class TugExecution {
       this.classifications
     );
   }
+
+  private buildProceduralBreachResult(): TugResult {
+    return new TugResult(
+      this.sourceDeviceId,
+      this.starTime,
+      false,
+      -2,
+      {},
+      this.classifications
+    );
+  }
 }
 
 export function highestScorePrediction(classificationResult: ClassificationResult): ClassificationPrediction {
@@ -211,4 +226,5 @@ export enum Status {
   YET_TO_START,
   STARTED,
   FINISHED,
+  PROCEDURAL_BREACH
 }

@@ -83,10 +83,15 @@
                                     <Span text="{{ date }}" class="label-header"/>
                                 </FormattedString>
                             </Label>
-                            <Label col="1" row="1">
-                                <FormattedString>
+                            <Label col="1" row="1" visibility="{{ successful ? 'visible' : 'collapsed' }}">
+                                <FormattedString >
                                     <Span text="Duration: " class="label-header bold"/>
                                     <Span text="{{ duration }}" class="label-header"/>
+                                </FormattedString>
+                            </Label>
+                            <Label col="1" row="1" visibility="{{ successful ? 'collapsed' : 'visible' }}">
+                                <FormattedString >
+                                    <Span text="{{ failedStatusText }}" class="label-header"/>
                                 </FormattedString>
                             </Label>
                         </GridLayout>

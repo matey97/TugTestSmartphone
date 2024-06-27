@@ -13,6 +13,7 @@
 android {
   defaultConfig {
     minSdkVersion 22
+    targetSdkVersion 31
     generatedDensities = []
   }
 }

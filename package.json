@@ -1,7 +1,7 @@
 {
   "name": "tug-test",
   "main": "./app/app.ts",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Miguel Matey Sanz",
   "description": "NativeScript Application for automating the TUG test.",
   "license": "SEE LICENSE IN LICENSE",
